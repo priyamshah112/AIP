@@ -1,0 +1,183 @@
+
+    @import url('https://fonts.googleapis.com/css?family=Muli');
+
+html {
+  width: 100%;
+  height: 100%;
+  font-family: 'Muli', sans-serif;
+}
+/* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#1e5799+0,2989d8+50,207cca+51,7db9e8+100;Blue+Gloss+Default */
+body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Muli', sans-serif;
+}
+section {
+  width: 100%;
+  height: 100%;
+}
+.first-sec {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#b3dced+0,29b8e5+48,bce0ee+99;Blue+Pipe */
+  background: #b3dced; /* Old browsers */
+  background: -moz-linear-gradient(
+    -45deg,
+    #b3dced 0%,
+    #29b8e5 48%,
+    #bce0ee 99%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    -45deg,
+    #b3dced 0%,
+    #29b8e5 48%,
+    #bce0ee 99%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    135deg,
+    #b3dced 0%,
+    #29b8e5 48%,
+    #bce0ee 99%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b3dced', endColorstr='#bce0ee',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+
+
+.intro-text{
+    padding-left: 13%;
+    padding-top:30%;
+}
+
+.signup-button{
+align-items: left;
+margin-top: 1px;
+}
+
+.first-sec > .container-fluid {
+  width: 100%;
+  height: 100%;
+}
+.first-sec > .container-fluid > .row1 {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.first-sec > .container-fluid > .row1 > .image-col {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5%;
+}
+
+.text-col>.intro-text>h1,h2,h3{
+    top:10%;
+    text-align: left;
+    color:#fff;
+}
+
+.text-col>.intro-text>h1{
+    font-size: 60px;
+    letter-spacing:1px
+
+}
+
+.text-col>.intro-text>h2{
+    font-size: 40px;
+    letter-spacing:1px
+
+}
+
+
+.fast{
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+#wrapper{
+    text-align: left;
+}
+
+#word-holder:after {
+    content: "dog";
+    color: #fff;
+    text-align: left;
+    animation: word-switcher infinite 8s ease;
+  }
+  
+  @-webkit-keyframes word-switcher {
+    0%  {content: "sentence"; opacity:0;}
+    15% {content: "sentence"; opacity:1}
+    19% {content: "sentence"; opacity:0;}
+    20% {content: "thing that doesn't work on iOS"; opacity:0;}
+    35% {content: "thing that doesn't work on iOS"; opacity:1;}
+    39% {content: "thing that doesn't work on iOS"; opacity:0;}
+    40% {content: "really long word"; opacity:0;}
+    55% {content: "really long word"; opacity:1;}
+    59% {content: "really long word"; opacity:0;}
+    60% {content: "soda"; opacity:0;}
+    75% {content: "soda"; opacity:1}
+    79% {content: "soda"; opacity:0;}
+    80% {content: "pop"; opacity:0;}
+    95% {content: "pop"; opacity:1;}
+    99% {content: "pop"; opacity:0;}
+    100% {content: "pop"; opacity:0;}
+  }
+  
+  @-moz-keyframes word-switcher {
+    0%  {content: "sentence"; opacity:0;}
+    15% {content: "sentence"; opacity:1}
+    19% {content: "sentence"; opacity:0;}
+    20% {content: "thing that doesn't work on iOS"; opacity:0;}
+    35% {content: "thing that doesn't work on iOS"; opacity:1;}
+    39% {content: "thing that doesn't work on iOS"; opacity:0;}
+    40% {content: "really long word"; opacity:0;}
+    55% {content: "really long word"; opacity:1;}
+    59% {content: "really long word"; opacity:0;}
+    60% {content: "soda"; opacity:0;}
+    75% {content: "soda"; opacity:1}
+    79% {content: "soda"; opacity:0;}
+    80% {content: "pop"; opacity:0;}
+    95% {content: "pop"; opacity:1;}
+    99% {content: "pop"; opacity:0;}
+    100% {content: "pop"; opacity:0;}
+  }
+  
+  @keyframes word-switcher {
+    0%  {content: "sentence"; opacity:0;}
+    15% {content: "sentence"; opacity:1}
+    19% {content: "sentence"; opacity:0;}
+    20% {content: "thing that doesn't work on iOS"; opacity:0;}
+    35% {content: "thing that doesn't work on iOS"; opacity:1;}
+    39% {content: "thing that doesn't work on iOS"; opacity:0;}
+    40% {content: "really long word"; opacity:0;}
+    55% {content: "really long word"; opacity:1;}
+    59% {content: "really long word"; opacity:0;}
+    60% {content: "soda"; opacity:0;}
+    75% {content: "soda"; opacity:1}
+    79% {content: "soda"; opacity:0;}
+    80% {content: "pop"; opacity:0;}
+    95% {content: "pop"; opacity:1;}
+    99% {content: "pop"; opacity:0;}
+    100% {content: "pop"; opacity:0;}
+  }
+
+  .fourth {
+    border:1.5px solid;
+    border-color: #fff;
+    color: #fff;
+    font-size: 20px;
+    background-image: linear-gradient(45deg, #fff 50%, transparent 50%);
+    background-position: 100%;
+    background-size: 400%;
+    transition: background 300ms ease-in-out;
+}
+.fourth:hover {
+    background-position: 0;
+    color: #29b8e5;
+}
+
+
