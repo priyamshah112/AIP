@@ -13,8 +13,6 @@ def login(request):
     return render(request,'AIP/signin.html')
 
 
-def candidate_signup(request):
-    return render(request,'candidate/candidate signup.html')
 
 
 def recruiter_signup(request):

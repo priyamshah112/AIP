@@ -8,7 +8,6 @@ urlpatterns = [
     re_path(r'^$', views.index , name='index'),
     re_path(r'^nav/', views.nav , name='nav'),
     re_path(r'^login/', views.login , name='signin'),
-    re_path(r'^candidate signup/', views.candidate_signup , name='signup'),
     re_path(r'^recruiter signup/', views.recruiter_signup , name='signup'),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^accounts/', include('accounts.urls')),
