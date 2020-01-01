@@ -1,3 +1,93 @@
-<html>
-recruiter signup
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}" >
+    <title>AmpTech | Recruiter Signup</title>
+  </head>
+  <body>
+    <div class="container">
+        <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+            <div class="card-body">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <h5 class="card-title text-center">Recruiter SignUp</h5>
+                <form class="form-signin" method="POST" action="recruiter_signup">
+                {% csrf_token %}
+
+                    <div class="form-label-group">
+                        <input type="text" name="name" id="name" class="form-control" placeholder="First Middle Last Name" required autofocus>
+                        <label for="name">Full Name</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        <input type="text" name="cname" id="cname" class="form-control" placeholder="Company Name" required autofocus>
+                        <label for="cname">Company Name</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                        <label for="inputEmail">Work Email address</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        <input type="password" name="inputPassword" id="inputPassword" class="form-control redBorderGlow" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                        <label for="inputPassword">Password</label>
+                    </div>
+                    <div class="form-label-group">
+                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control redBorderGlow" value="" placeholder="confirm password" required>
+                        <label for="confirmPassword">Confirm Password</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        <label for="position" align="center" class='txt'><b>Position</b></label>
+                        <br><br>                    
+                        <div class="form-check">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="HR" checked>
+                        <label class="form-check-label" for="inlineRadio1" class='txt'><b>HR</b></label>
+                        </div>
+                        <br>
+                        <div class="form-check">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="CEO">
+                        <label class="form-check-label" for="inlineRadio2" class='txt'><b>CEO</b></label>
+                        </div>
+                        <br>
+                        <div class="form-check">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Manager">
+                        <label class="form-check-label" for="inlineRadio2" class='txt'><b>Manager</b></label>
+                        </div>
+                        <br>
+                        <div class="form-check">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Other">
+                        <label class="form-check-label" for="inlineRadio2" class='txt'><b>Other</b></label>
+                        </div>
+                        <br>
+                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">SignUp</button>
+
+                </form>
+                <hr>
+                 <h6><b>Note:</b>Password must contain 8 or more characters that are of at least one number, and one uppercase and lowercase letter.</h6>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'accounts/js/login.js' %}"></script>
+  </body>
 </html>

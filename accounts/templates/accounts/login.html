@@ -1,3 +1,70 @@
-<html>
-login
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}" >
+    <title>AMP Tech | Login</title>
+    <style>
+    .rou{
+        border-radius : 25rem;
+    }
+    div #fp{
+        text-align:center;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+            <div class="card-body">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <h5 class="card-title text-center">Login</h5>
+                <form class="form-signin" method="POST" action="login">
+                    {% csrf_token %}
+                    <div class="form-label-group">
+                        <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                        <label for="inputEmail">Work Email address</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+                        <label for="inputPassword">Password</label>
+                    </div>
+
+                    <div class="custom-control custom-checkbox mb-3">&nbsp;&nbsp;
+                        <input type="checkbox" class="custom-control-input" id="customCheck1">
+                        <label class="custom-control-label" for="customCheck1">Remember password</label>
+                    </div>
+                    <button class="btn-lg btn-primary btn-block text-uppercase txt rou" type="submit"><b>Login</b></button>
+                    <div style="margin: 0 auto;" id="fp">
+                    <br>
+                    <hr>
+
+                    </div>
+                </form>
+                
+                {% comment %} <a href="{% url 'signup'  %}" ><button class="btn btn-lg btn-primary btn-block text-uppercase rou" >Sign Up</button></a> {% endcomment %}
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
