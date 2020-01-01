@@ -1,0 +1,5 @@
+ {% for user_package in user_packages %}
+                                    <option value="{{user_package}}"
+                     {% if user_package == 'sample' %} selected {% endif %} >
+                                    {{user_package}}</option>
+                                    {% endfor %}

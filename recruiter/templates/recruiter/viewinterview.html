@@ -1,0 +1,350 @@
+{% extends 'recruiter/base.html' %}
+{% load static %}
+
+{% block Stylesheet %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'recruiter/css/viewinterview.css' %}">
+<div class="row">
+
+    <div class="modal fade bd-example2-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <object height="600" data="{{application_dict.video_resume}}">
+                </object>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <object height="600" data="{{application_dict.candidate_resume}}">
+                </object>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-3">
+        <div class="card profile container">
+            <div style="padding: 30px;">
+                <img src="{{application_dict.candidate_image}}" class="profilepic card-img-top">
+            </div>
+            <div class="card-body">
+                <div class="card-title" align="center"><b>{{application_dict.candidate_name}}</b></div>
+                <div class="card-text">
+                    <b>Email : </b>{{application_dict.candidate_email}}
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-center">
+                    <button style="line-height: 1.0;margin-top: 8px;" type="button" class="btn btn-customblue"
+                        data-toggle="modal" data-target=".bd-example-modal-xl">View
+                        Resume</button>
+                </li>
+                <li class="list-group-item text-center">
+                    <button style="line-height: 1.0;margin-top: 8px;" type="button" class="btn btn-customblue "
+                        data-toggle="modal" data-target=".bd-example2-modal-xl">View
+                        Video Resume</button>
+                </li>
+                <li class="list-group-item"><b>Resume Score : </b>{{application_dict.resume_score}}</li>
+                <li class="list-group-item"><b>Video Resume Score : </b>{{application_dict.video_resume_score}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="card">
+
+
+
+            <div class="card-header">
+                <h4 id="question-text"></h4>
+            </div>
+            <div class="card-body">
+                <div class="container p-1">
+                    <div class="row" style="margin: 0;">
+                    <div class="embed-responsive embed-responsive-16by9" style="width: 90%">
+                        <iframe id="videoframe" src="https://www.youtube.com/embed/dhYOPzcsbGM" frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+                    <div class="list-group justify-content-center mx-auto">
+                        <h5>Grade:</h5>
+                        <div class="btn-group-vertical" id="grade">
+                            <button class="btn btn-outline-success btn-lg">1</button>
+                            <button class="btn btn-outline-success">2</button>
+                            <button class="btn btn-outline-success">3</button>
+                            <button class="btn btn-outline-success">4</button>
+                            <button class="btn btn-outline-success">5</button>
+                            <button class="btn btn-outline-success">6</button>
+                            <button class="btn btn-outline-success">7</button>
+                            <button class="btn btn-outline-success">8</button>
+                            <button class="btn btn-outline-success">9</button>
+                            <button class="btn btn-outline-success">10</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-3">
+                        <textarea class="container form-control" rows="2" id="comment"></textarea>
+                </div>
+
+                <div class="row float-right"> <div class="btn btn-customblue mr-3" id="save-comment">Save Comment</div></div>
+                <!-- <div class="list-group list-group-flush">
+                    <li class="list-group-item">College Name</li>
+                    <li class="list-group-item">Current Year</li>
+                    <li class="list-group-item">Application Date</li>
+                </div> -->
+                
+            </div>
+                
+
+            </div>
+
+            <div class="card-footer mb-2">
+                <nav aria-label="NavBar">
+                    <ul class="pagination justify-content-center" id="question-nav">
+                        <li class="page-item"><a class="page-link" href="#question-text" id="prev-ques">Previous</a></li>
+                        {% for question in questions %}
+
+                        {% if forloop.counter  == 1 %}
+
+                        <li class="page-item active"><a class="page-link" href="#question-text" id="ques-1">1</a></li>
+
+                        {% else %}
+
+                        <li class="page-item"><a class="page-link" href="#question-text"
+                                id="ques-{{ forloop.counter }}">{{ forloop.counter }}</a>
+                        </li>
+
+                        {% endif %}
+
+
+                        {% endfor %}
+                        <li class="page-item"><a class="page-link" href="#question-text" id="next-ques">Next</a></li>
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+
+    let questions = [];
+    let candidate_id = "{{application_dict.candidate_id}}";
+    let jid = "{{application_dict.jid}}";
+    {% for question in questions %}
+
+    questions.push({
+        no: "{{ forloop.counter }}",
+        question: "{{question.question}}",
+        video: "{{question.video}}",
+        grade: "{{question.grade}}",
+        comments: "{{question.comment}}"
+    });
+
+    {% endfor %}
+
+    var videoframe = $('#videoframe');
+    var question_text = $('#question-text');
+    var comment_text = $('#comment');
+    var current_question = 1;
+
+    function init() {
+        videoframe.attr("src", questions[0].video);
+        question_text.text(questions[0].question);
+        comment_text.val(questions[0].comments);
+        $('#grade :nth-child(' + questions[0].grade + ')').toggleClass('btn-outline-success btn-success');
+    }
+
+    function change_question() {
+        var new_question = parseInt(this.id.slice(-1));
+        var temp_new = questions[new_question - 1];
+        var temp_current = questions[current_question - 1];
+        $(this).parent().toggleClass('active');
+        $('#ques-' + current_question).parent().toggleClass('active');
+        videoframe.attr("src", temp_new.video);
+        question_text.text(temp_new.question);
+        $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
+        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        comment_text.val(temp_new.comments);
+        current_question = new_question;
+    }
+
+    function change_grade() {
+        var temp_current = questions[current_question - 1];
+        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        $(this).toggleClass('btn-outline-success btn-success');
+        var new_grade = parseInt($(this).text());
+        temp_current.grade = new_grade;
+        updateGrade(temp_current.grade, temp_current.no, jid, candidate_id);
+
+    }
+
+    function previous_question() {
+        if (current_question == 1) return;
+        var new_question = current_question - 1;
+        var temp_new = questions[new_question - 1];
+        var temp_current = questions[current_question - 1];
+        $('#ques-' + new_question).parent().toggleClass('active');
+        $('#ques-' + current_question).parent().toggleClass('active');
+        videoframe.attr("src", temp_new.video);
+        question_text.text(temp_new.question);
+        $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
+        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        comment_text.val(temp_new.comments);
+        current_question = new_question;
+    }
+
+    function next_question() {
+        if (current_question == 4) return;
+        var new_question = current_question + 1;
+        var temp_new = questions[new_question - 1];
+        var temp_current = questions[current_question - 1];
+        $('#ques-' + new_question).parent().toggleClass('active');
+        $('#ques-' + current_question).parent().toggleClass('active');
+        videoframe.attr("src", temp_new.video);
+        question_text.text(temp_new.question);
+        $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
+        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        comment_text.val(temp_new.comments);
+        current_question = new_question;
+    }
+
+    function save_comment() {
+        var temp_current = questions[current_question - 1]
+        temp_current.comments = comment_text.val();
+        updateComment(temp_current.comments,temp_current.no,jid,candidate_id);
+    }
+
+    init();
+    $('#prev-ques').on('click', previous_question);
+    $('#next-ques').on('click', next_question);
+    $('#save-comment').on('click', save_comment);
+    $('[id^=ques-').on('click', change_question);
+    $('#grade').on('click', 'button', change_grade);
+
+
+</script>
+
+
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function updateGrade(grade, number, jid, candidate_id) {
+        let currentUrl = window.location.href;
+        // window.location.href = "/";
+        let currentUrlArray = currentUrl.split('/');
+        currentUrlArray.pop();
+        currentUrlArray.pop();
+        currentUrlArray.pop();
+        currentUrlArray.pop();
+
+        let newUrl = currentUrlArray.join('/')
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                    // Send the token to same-origin, relative URLs only.
+                    // Send the token only if the method warrants CSRF protection
+                    // Using the CSRFToken value acquired earlier
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        data = {
+            'jid': jid,
+            'candidate_id': candidate_id,
+            'grade': grade,
+            'number': number
+        }
+        $.ajax({
+            url: newUrl + '/update_grade',
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                // window.location.reload();
+            }
+
+        });
+    }
+
+    function updateComment(comment, number, jid, candidate_id) {
+        let currentUrl = window.location.href;
+        // window.location.href = "/";
+        let currentUrlArray = currentUrl.split('/');
+        currentUrlArray.pop();
+        currentUrlArray.pop();
+        currentUrlArray.pop();
+        currentUrlArray.pop();
+
+        let newUrl = currentUrlArray.join('/')
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                    // Send the token to same-origin, relative URLs only.
+                    // Send the token only if the method warrants CSRF protection
+                    // Using the CSRFToken value acquired earlier
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        data = {
+            'jid': jid,
+            'candidate_id': candidate_id,
+            'comment': comment,
+            'number': number
+        }
+        $.ajax({
+            url: newUrl + '/update_comment',
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                // window.location.reload();
+            }
+
+        });
+    }
+
+</script>
+{% endblock %}

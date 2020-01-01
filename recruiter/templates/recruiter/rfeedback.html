@@ -1,0 +1,246 @@
+{% extends "recruiter/base.html" %}
+{% block title %}Apli.ai | Feedback{% endblock title %}
+{% block content %}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.js"></script>
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}
+  <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+
+  {% endfor %}
+</ul>
+{% endif %}
+<div class="row" style="height: 100%">
+  <div class="col-sm-4 col-lg-6 col-xl-6">
+    <div class="row">
+      <div class="col-sm-4 col-lg-12 col-xl-12">
+        <h1 style="margin:16px;" align="center"> Feedback Form</h1>
+        {% comment %} here form will go {% endcomment %}
+        <form method="post" action="rfeedback" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="name1">Name</label>
+            <input class="form-control" id="name1" type="text" placeholder="Name" value="{{recruitername}}" readonly>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput1">Email address</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com"
+              value="{{recruiteremail}}" readonly>
+          </div>
+          <div class="form-group">
+            <label for="subject1">Subject</label>
+            <input class="form-control" id="subject1" type="text" name="subject" placeholder="Subject"
+              value="{{subject}}" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Feedback</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Feedback Message"
+              name="fmessage" rows="8" required>{{feedback}}</textarea>
+          </div>
+          <div class="input-group">
+            <label class="input-group-btn">
+              <span class="btn btn-customblue">
+                Browse&hellip; <input type="file" style="display: none;" id="uploadeddata" name='uploadeddata'
+                  accept=".png, .jpg, .jpeg" data-file-maxsize="5000" multiple />
+              </span>
+            </label>
+            <input type="text" class="form-control" readonly>
+          </div>
+          <label for="uploadeddata">Select Your File(Must be .PNG .JPEG and less than 5MB)</label>
+          <div align='center'>
+            <button type="submit" class="btn btn-customblue btn-lg container">Submit</button>
+          </div>
+        </form>
+      </div>
+
+
+    </div>
+  </div>
+  {% comment %} column one ends here {% endcomment %}
+  <div class="col-sm-4 col-lg-6 col-xl-6 card" style="background-color: #f7f9fa">
+
+    <h1 align="center" style="margin: 16px;">Frequently Asked Questions</h1>
+
+    <main>
+      <div class="topic">
+        <div class="open">
+          <h2 class="question">1. What is Apli.ai?</h2>
+          <span class="faq-t"></span>
+        </div>
+        <p class="answer">Apli.ai is Indian born company founded at Global Entrepreneurship Boot camp at Indonesia which works towards helping Students to improve on their personality
+         and to grab better opportunities with Artificial Intelligence at IIT Bombay</p>
+      </div>
+      <div class="topic">
+        <div class="open">
+          <h2 class="question">2. I want to post a complaint/comment on the website's functionality.
+          Where can I do that from?
+          </h2><span class="faq-t"></span>
+        </div>
+        <p class="answer">If you want to lodge/register a complaint about any of the site's disfunctionality or abnormality
+        then we would love to help you out. Its simple. Log into your account then under the feedback tab lodge/register your
+        complaint with relevant screenshots(optional).We will contact you back as soon as possible.</p>
+      </div>
+      <div class="topic">
+        <div class="open">
+          <h2 class="question">3. How can I add another user to my team?
+          </h2><span class="faq-t"></span>
+        </div>
+        <p class="answer">If you want to invite a user to your team then log into your respective account then under the Team tan there
+        is a button with the name "Add Member". Click on that button and enter the relevant details. An email would be sent to inform the person
+        that he has been invited to a team with the name of the person and the role alloted to him.He can signup further to be added to your team.</p>
+      </div>
+      <div class="topic">
+        <div class="open">
+          <h2 class="question">4. I have forgot my password . What should I do ?
+          </h2><span class="faq-t"></span>
+        </div>
+        <p class="answer">If you have forgot your password then do not worry because we have got you covered with the option of resetting your password.
+        To reset your password simply click on the "Forgot Password?" under the Login button. An email with a password reset link would be sent to Your
+        registered email-id. You can then click on the link and follow the procedure to successfully reset your password.</p>
+      </div>
+      <div class="topic">
+        <div class="open">
+          <h2 class="question">5. What is the Timeline for ?
+          </h2><span class="faq-t"></span>
+        </div>
+        <p class="answer">The timeline as the name represents shows your recent activities and actions that you have done.
+        From adding a user to a team to removing a user from the team , editing the user,its role,deleting the user from the team ,
+        to posting the jobs and any other kind of changes that you make will be shown on the timeline.</p>
+      </div>
+      <div class="topic">
+        <div class="open">
+          <h2 class="question">6. Where can I can get answers to my other Questions?
+          </h2><span class="faq-t"></span>
+        </div>
+        <p class="answer">If you want to ask something more or something you couldn't fathom then feel free to 
+        ping us using ReachUs. We will try to get back to you as soon as possible.</p>
+      </div>
+    </main>
+  </div>
+</div>
+<script type="text/javascript">
+  //refresh logic
+
+  if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
+  }
+
+  //main logic
+  $(".open").click(function () {
+    var container = $(this).parents(".topic");
+    var answer = container.find(".answer");
+    var trigger = container.find(".faq-t");
+
+    answer.slideToggle(200);
+
+    if (trigger.hasClass("faq-o")) {
+      trigger.removeClass("faq-o");
+    }
+    else {
+      trigger.addClass("faq-o");
+    }
+
+    if (container.hasClass("expanded")) {
+      container.removeClass("expanded");
+    }
+    else {
+      container.addClass("expanded");
+    }
+  });
+
+  // file input styling code
+  $(function () {
+
+    // We can attach the `fileselect` event to all file inputs on the page
+    $(document).on('change', ':file', function () {
+      var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+      input.trigger('fileselect', [numFiles, label]);
+    });
+
+    // We can watch for our custom `fileselect` event like this
+    $(document).ready(function () {
+      $(':file').on('fileselect', function (event, numFiles, label) {
+
+        var input = $(this).parents('.input-group').find(':text'),
+          log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+        if (input.length) {
+          input.val(log);
+        } else {
+          if (log) alert(log);
+        }
+
+      });
+    });
+
+  });
+</script>
+<style>
+  .topic {
+    padding: 20px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-bottom: solid 1px #ebebeb;
+    transition: background-color 0.5s;
+  }
+
+  .open {
+    cursor: pointer;
+    display: block;
+    padding: 0px;
+  }
+
+  .open:hover {
+    opacity: 0.7;
+  }
+
+  .expanded {
+    background-color: #ecebeb;
+    transition: all .3s ease-in-out;
+  }
+
+  .question {
+    padding-top: 30px;
+    padding-right: 40px;
+    padding-bottom: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #34495e;
+  }
+
+  .answer {
+    font-size: 16px;
+    line-height: 26px;
+    display: none;
+    margin-bottom: 30px;
+    text-align: justify;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .faq-t {
+    transform: rotate(-45deg);
+    display: inline-block;
+    float: right;
+    position: relative;
+    top: -55px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border-left: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+    transition: all .3s ease-in-out;
+  }
+
+  .faq-o {
+    top: -50px;
+    transform: rotate(-224deg);
+  }
+</style>
+
+{% endblock content %}

@@ -1,0 +1,21 @@
+<canvas  width=30 id="myChart{{ job_app.appid| slice:'1:'}}"></canvas>
+<li style="color:green;font-weight : bold;" id="averageScore{{ job_app.appid| slice:'1:'}}" class="list-unstyled text-center"> </li>
+
+<script>
+  var ctx{{ job_app.appid| slice:'1:'}} = document.getElementById("myChart{{ job_app.appid| slice:'1:'}}").getContext("2d");
+  let resume_score{{ job_app.appid| slice:'1:'}} = {{ job_app.resume_score }};
+  let video_resume_score{{ job_app.appid| slice:'1:'}} = {{ job_app.video_resume_score }}; 
+  let average{{ job_app.appid| slice:'1:'}} = (resume_score{{ job_app.appid| slice:'1:'}} + video_resume_score{{ job_app.appid| slice:'1:'}})/ 2 ;
+  var myChart{{ job_app.appid| slice:'1:'}} = new Chart(ctx{{ job_app.appid| slice:'1:'}}, {
+    type: "pie",
+    data: {
+      labels: ["Resume Score", "Video Resume Score", "Average Score"],
+      datasets: [
+        {
+          backgroundColor: ["#FFDA83", "#A3A1FB", "#FF8373"],
+          data: [resume_score{{ job_app.appid| slice:'1:'}},video_resume_score{{ job_app.appid| slice:'1:'}},average{{ job_app.appid| slice:'1:'}}]
+        }
+      ]
+    }
+  });
+</script>

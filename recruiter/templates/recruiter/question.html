@@ -1,0 +1,206 @@
+{% extends "recruiter/base.html" %}
+{% block title %}Apli.ai | Question{% endblock title %}
+{% block content %}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.js"></script>
+
+
+<div class="container" style="margin: 0px; width: 100;max-width: inherit;">
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Add Question</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="questionType">Type</label>
+              </div>
+              <select name="type" class="custom-select" id="questionType">
+                <option value="BEHAVIORAL" selected>BEHAVIORAL</option>
+                <option value="TECHNICAL">TECHNICAL</option>
+                <option value="USER EXPERIENCE">USER EXPERIENCE</option>
+                <option value="MARKETING">MARKETING</option>
+                <option value="SALES">SALES</option>
+                <option value="CUSTOMER SERVICE">CUSTOMER SERVICE</option>
+                <option value="ENGLISH PROFICIENCY TEST">ENGLISH PROFICIENCY TEST</option>
+              </select>
+            </div>
+
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="far fa-question-circle"></i></span>
+              </div>
+              <input type="text" id="question" class="form-control" placeholder="Your Question" aria-label="Username"
+                aria-describedby="basic-addon1">
+            </div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="addQuestionBtn" type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal 1 -->
+  <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle1">Add Package</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon13"><i class="far fa-folder"></i></span>
+              </div>
+              <input type="text" id="package1" class="form-control" placeholder="Package Name" aria-label="Username"
+                aria-describedby="basic-addon13">
+            </div>
+
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="questionType1">Type</label>
+              </div>
+              <select id="questionType1" class="custom-select">
+                <option value="BEHAVIORAL" selected>BEHAVIORAL</option>
+                <option value="TECHNICAL">TECHNICAL</option>
+                <option value="USER EXPERIENCE">USER EXPERIENCE</option>
+                <option value="MARKETING">MARKETING</option>
+                <option value="SALES">SALES</option>
+                <option value="CUSTOMER SERVICE">CUSTOMER SERVICE</option>
+                <option value="ENGLISH PROFICIENCY TEST">ENGLISH PROFICIENCY TEST</option>
+              </select>
+            </div>
+
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon12"><i class="far fa-question-circle"></i></span>
+              </div>
+              <input type="text" id="question1" class="form-control" placeholder="Your Question" aria-label="Username"
+                aria-describedby="basic-addon12">
+            </div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="addPackageBtn" type="submit" class="btn btn-primary">Add Package</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="height: 100%">
+    <div style="background-color: #e7edf0;" class="col-sm-4 col-lg-6 col-xl-5">
+      <div class="row">
+        <div class="col-sm-4 col-lg-12 col-xl-12">
+          <h4 style="margin:16px;"> Question Bank</h4>
+        </div>
+
+        <div class="col-sm-4 col-lg-12 col-xl-12">
+          <div class="shadow-sm p-3 mb-2 bg-white rounded">
+            <!-- Small button groups (default and split) -->
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="builtInQuestions">CHOOSE CATEGORY</label>
+              </div>
+              <select id="builtInQuestions" class="custom-select">
+                <option value="BEHAVIORAL" selected>BEHAVIORAL</option>
+                <option value="TECHNICAL">TECHNICAL</option>
+                <option value="USER EXPERIENCE">USER EXPERIENCE</option>
+                <option value="MARKETING">MARKETING</option>
+                <option value="SALES">SALES</option>
+                <option value="CUSTOMER SERVICE">CUSTOMER SERVICE</option>
+                <option value="ENGLISH PROFICIENCY TEST">ENGLISH PROFICIENCY TEST</option>
+              </select>
+            </div>
+
+
+          </div>
+        </div>
+
+
+
+        <div class="col-sm-4 col-lg-12 col-xl-12">
+          <div id="builtInQuestionsArea" class="questions">
+            {% for built_in_question in built_in_questions %}
+            <div id={{built_in_question.id}} name='{{built_in_question.type}}' draggable="true"
+              class=" fill shadow-sm p-4 mb-2 bg-white rounded">
+              {{built_in_question.question}}
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-sm-4 col-lg-6 col-xl-7 card" style="background-color: #f7f9fa">
+      <nav class="navbar navbar-light bg-light">
+        <div class="form-inline">
+          <button class="btn" data-toggle="modal" data-target="#exampleModalCenter"><i
+              class="fa fa-plus-circle"></i></button>
+          <button class="btn" data-toggle="modal" data-target="#exampleModalCenter1"><i
+              class="fas fa-folder-plus"></i></button>
+
+          <div class="dropdown">
+            <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">sample</a>
+
+            <div id="dropdownMenuLinkselect" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              {% for user_package in user_packages %}
+              <a class="dropdown-item" href="#">{{user_package}}</a>
+              {% endfor %}
+
+            </div>
+          </div>
+        </div>
+
+
+      </nav>
+      <!-- <div id="rightLoader">
+
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border m-5" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="questions empty " id="sortable">
+        {% for user_question in user_questions %}
+
+        <div name='{{user_question.type}}' draggable="true" class="border shadow-sm m-2 p-3 bg-white rounded">
+            <button id={{user_question.id}} class="delete-btn btn float-right m-0 p-0" style="color:grey"><i class="fas fa-trash-alt"></i></button>
+
+          {{user_question.question}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+{% include "./questionjs.html" %}
+
+{% endblock content %}

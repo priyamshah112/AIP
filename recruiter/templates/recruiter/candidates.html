@@ -1,0 +1,423 @@
+{% extends "recruiter/base.html" %}
+{% block title %}Apli.ai | Candidates {%endblock title %}
+{% block content %}
+{% load static %}
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<style>
+  .app {
+    display: flex;
+    height: 300px;
+    width: 300px;
+  }
+
+  /* styles for candidate row colors */
+  .tr-APPLIED{
+    background-color: #ffecc1;
+  }
+  .tr-ACCEPTED{
+    background-color: #caf3ea;
+  }
+  .tr-REJECTED{
+    background-color: #ffcdc7;
+  }
+</style>
+<!-- Icon Cards-->
+<div class="row">
+  <div class="col-xl-4 col-sm-6 mb-4">
+    <div class="card text-white pjob o-hidden h-100">
+      <div class="card-body">
+        <div class="card-body-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h2>Applications</h2>
+        <div class="mr-5">{{applied}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-sm-6 mb-4">
+    <div class="card text-white pjob o-hidden h-100">
+      <div class="card-body">
+        <div class="card-body-icon">
+          <i class="fas fa-frown"></i>
+        </div>
+        <h2>Rejected</h2>
+        <div class="mr-5">{{rejected}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-sm-6 mb-4">
+    <div class="card text-white pjob o-hidden h-100">
+      <div class="card-body">
+        <div class="card-body-icon">
+          <i class="far fa-thumbs-up"></i>
+        </div>
+        <h2>Accepted</h2>
+        <div class="mr-5">{{recruited}}</div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+
+
+<!-- Extra large modal -->
+
+
+
+
+<!-- DataTables Example -->
+<div class="card mb-3">
+  <div class="card-header">
+    <i class="fas fa-table"></i>
+    Applications
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <!--<div class="row">
+        <div class="col-xl-12 col-sm-6 mb-2">
+          <div class="float-right">
+            Post : <input style="border: 1px solid #ced4da;border-radius: 0.2rem;" type="text" id="post" name="post">
+            Place : <input style="border: 1px solid #ced4da;border-radius: 0.2rem;" type="text" id="place" name="place">
+          </div>
+        </div>
+      </div>-->
+
+      <table class="table overflow-hidden" id="jobsTable" width="100%" cellspacing="0">
+        <thead class="text-white" style="background-color: #A3A1FB">
+          <tr style="font-size: 1.15rem">
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 0px" class="text-center">Profile</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px" class="text-center">Post</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px" class="text-center">Place</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px" class="text-center">Skill</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px" class="text-center">Result</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 0px 0px 1px" class="text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {% for job_app in job_apps%}
+
+
+          <div class="modal fade bd-example2-modal-xl" tabindex="-1" role="dialog"
+            aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <object height="600" data="{{job_app.video_resume}}">
+                  <!-- <object height="600" data="{% static 'recruiter/pdf/resume.pdf' %}"> -->
+                </object>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog"
+            aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <object height="600" data="{{job_app.candidate_resume}}">
+                  <!-- <object height="600" data="{% static 'recruiter/pdf/resume.pdf' %}"> -->
+                </object>
+              </div>
+            </div>
+          </div>
+
+
+          <tr class="tr-{{ job_app.status }}">
+            <td width="150px" class="align-bottom">
+              <img src="{{ job_app.candidate_image }}" class="rounded-circle mx-auto d-block img-fluid" alt="Cinque Terre"/>
+              <li class="font-weight-bolder text-center list-unstyled" style="margin-top:16px;">
+                {{ job_app.candidate_name }}
+              </li>
+              <li class="text-decoration-none text-center list-unstyled">
+                <!-- <a href="{% url 'view_interview' %}">See Audio Video Interview</a> -->
+                <button onclick="viewInterview('{{job_app.jid}}','{{job_app.candidate_id}}')" type="button" class="btn btn-customblue">View Interview</button>
+              </li>
+            </td>
+            <td class="align-middle">
+                <b>{{job_app.job_info.post}}</b>
+            </td>
+            <td class="align-middle">
+                <b>{{job_app.job_info.place}}</b>
+            </td>
+            <td>
+              {% include "recruiter/radarchart.html" %}
+
+            </td>
+            <td>
+              {% include "recruiter/piechart.html" %}
+
+              <li class="list-unstyled">
+                <div class="row">
+                  <div class="col-xl-12 col-sm-6 btn-group">
+                    <button type="button" class="btn btn-customblue"
+                      data-toggle="modal" data-target=".bd-example-modal-xl">View
+                      Resume</button>
+                    <button type="button"
+                      class="btn btn-customblue" data-toggle="modal"
+                      data-target=".bd-example2-modal-xl">View
+                      Video Resume</button>
+                  </div>
+                </div>
+              </li>
+
+            </td>
+            <td width="15%" class="align-middle position-relative">
+              <li class="list-unstyled text-center" style="color:#34495e;font-weight: bold">
+              <div style="font-size: 1.5rem">{{ job_app.status }}</div>
+            </li>
+            {% if job_app.status == "APPLIED" %}
+              <li class="list-unstyled">
+                <div class="row">
+                  <div class="col-xl-12 col-sm-6 btn-group position-absolute" style="bottom: 12px">
+                    <button type="button" class="btn btn-success"
+                      data-toggle="modal" data-target="#acceptModal{{job_app.appid}}">Accept</button>
+                    <button type="button" class="btn btn-danger" 
+                      data-toggle="modal" data-target="#rejectModal{{job_app.appid}}">Reject</button>
+
+                  </div>
+                </div>
+              </li>
+
+{% endif%}
+            </td>
+          </tr>
+<script>
+    let averagee{{ job_app.appid| slice:'1:'}} = (resume_score{{ job_app.appid| slice:'1:'}} + video_resume_score{{ job_app.appid| slice:'1:'}})/ 2 ;
+
+ $("#averageScore{{ job_app.appid| slice:'1:'}}").text("Average Score : " + averagee{{ job_app.appid| slice:'1:'}});
+
+</script>
+
+          {% endfor%}
+        </tbody>
+      </table>
+      {% for job_app in job_apps %}
+        <!-- Modal 1 -->
+        <div class="modal fade" id="acceptModal{{job_app.appid}}" tabindex="-1" role="dialog" aria-labelledby="acceptModelTitle"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="acceptModel">Send Acceptance Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div>
+                  <form action="#" method="POST">
+                  {% csrf_token %}
+
+                    <div class="form-group">
+                      <label>Email address</label>
+                      <input type="email" class="form-control" id="{{job_app.appid}}h" placeholder="name@example.com" value="{{job_app.candidate_email}}" readonly>
+                    </div>
+                    <div class="form-group">
+                      <label >Subject</label>
+                      <input class="form-control" id="subject{{job_app.candidate_email}}accept" type="text" placeholder="Subject" required value="{{ssubject}}">
+                    </div>
+                    <div class="form-group">
+                      <label>Message</label>
+                      <textarea class="form-control" id="message{{job_app.candidate_email}}accept" placeholder="Message" rows="8" required>{{smessage}}</textarea>
+                    </div>
+
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-customblue float-right" onClick="hireMail('{{job_app.candidate_email}}','{{job_app.candidate_name}}','{{job_app.job_info.post}}','{{job_app.jid}}','{{job_app.candidate_id}}')">Send Email</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="rejectModal{{job_app.appid}}" tabindex="-1" role="dialog" aria-labelledby="rejectModelTitle"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="rejectModel">Send Rejection Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div>
+                  <form action="#" method="POST">
+                  {% csrf_token %}
+                    <div class="form-group">
+                      <label>Email address</label>
+                      <input type="email" class="form-control" id="{{job_app.appid}}r"  placeholder="name@example.com" value="{{job_app.candidate_email}}" readonly>
+                    </div>
+                    <div class="form-group">
+                      <label >Subject</label>
+                      <input class="form-control" id="subject{{job_app.candidate_email}}rej" type="text"  placeholder="Subject" required value="{{rsubject}}">
+                    </div>
+                    <div class="form-group">
+                      <label >Message</label>
+                      <textarea class="form-control" id="message{{job_app.candidate_email}}rej" placeholder="Message" rows="8" required>{{rmessage}}</textarea>
+                    </div>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-customblue float-right" onClick="rejMail('{{job_app.candidate_email}}','{{job_app.candidate_name}}','{{job_app.job_info.post}}','{{job_app.jid}}','{{job_app.candidate_id}}')">Send Email</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<script>
+
+  /* Custom filtering function which will search data in column four between two values */
+
+
+
+  $(document).ready(function () {
+    var jobTable = $('#jobsTable').DataTable(
+      {
+        "pageLength": 10
+      }
+    );
+
+    // Event listener to the two range filtering inputs to redraw on input
+    $('#post').keyup(function () {
+      jobTable
+        .columns(1)
+        .search(this.value)
+        .draw();
+    });
+
+    $('#place').on('keyup', function () {
+      jobTable
+        .columns(2)
+        .search(this.value)
+        .draw();
+    });
+
+  });
+</script>
+  <script>
+    //refresh logic
+
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+    //Main ajax logic for hire/reject
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+      // test that a given url is a same-origin URL
+      // url could be relative or scheme relative or absolute
+      var host = document.location.host; // host + port
+      var protocol = document.location.protocol;
+      var sr_origin = '//' + host;
+      var origin = protocol + sr_origin;
+      // Allow absolute or scheme relative URLs to same origin
+      return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function hireMail(c_email,c_name,c_post,jid,candidate_id) {
+
+      $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+      data = {
+        'c_email':c_email,
+        'c_name':c_name,
+        'c_post':c_post,
+        'c_sub':document.getElementById('subject'+c_email+'accept').value,
+        'c_messg':document.getElementById('message'+c_email+'accept').value,
+        'jid' : jid,
+        'candidate_id' : candidate_id
+      }
+      $.ajax({
+        url: 'hiremail',
+        type: 'POST',
+        dataType: "json",
+        data: data,
+        success: function (data) {
+         // window.location.reload();
+        }
+
+      });
+    }
+    function rejMail(c_email,c_name,c_post,jid,candidate_id) {
+
+      $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+      data = {
+        'c_email':c_email,
+        'c_name':c_name,
+        'c_post':c_post,
+        'c_sub':document.getElementById('subject'+c_email+'rej').value,
+        'c_messg':document.getElementById('message'+c_email+'rej').value,
+        'jid' : jid,
+        'candidate_id' : candidate_id
+      }
+      $.ajax({
+        url: 'rejmail',
+        type: 'POST',
+        dataType: "json",
+        data: data,
+        success: function (data) {
+        //  window.location.reload();
+        }
+
+      });
+    }
+
+    function viewInterview(jid,candidate_id) {
+
+      currentUrl = window.location.href;
+      // window.location.href = "/";
+currentUrlArray = currentUrl.split('/');
+currentUrlArray.pop();
+newUrl = currentUrlArray.join('/')
+window.location.href = newUrl + '/view_interview/' + jid.trim() +  '/'+ candidate_id.trim();
+}
+
+  </script>
+{% endblock content %}

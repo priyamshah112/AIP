@@ -1,0 +1,327 @@
+{% extends "recruiter/base.html" %}
+{% block title %}Apli.ai | Team{% endblock title %}
+{% block content %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+<style>
+    /* css for overriding default stripe colors */
+  .table-striped>tbody>tr:nth-child(odd)>td,
+  .table-striped>tbody>tr:nth-child(odd)>th {
+     background-color: #e3e2fd; // Choose your own color here
+   }
+  </style>
+
+<!-- Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalCenterTitle">Add Member</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">Email</span>
+          </div>
+          <input type="text" class="form-control" id="inviteEmail" placeholder="Email" aria-label="Username"
+            aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="role">Role</label>
+          </div>
+          <select class="custom-select" id="role">
+            <option value="Interviewer" selected>Interviewer</option>
+            <option value="Staff">Staff</option>
+            <option value="Librarian">Librarian</option>
+          </select>
+        </div>
+
+        <hr />
+
+        <div class="row mb-2">
+          <div class="col-sm-2 col-lg-12 col-xl-4">
+            <strong>Interviewer</strong>
+          </div>
+          <div class="col-sm-2 col-lg-12 col-xl-8">
+            Allow access to candidates applied only
+
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-2 col-lg-12 col-xl-4">
+            <strong>Staff</strong>
+          </div>
+          <div class="col-sm-2 col-lg-12 col-xl-8">
+            Allow access to post job,library only
+
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-2 col-lg-12 col-xl-4">
+            <strong>Librarian</strong>
+          </div>
+          <div class="col-sm-2 col-lg-12 col-xl-8">
+            Allow access to Library only
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+        <button id="sendInviteBtn" type="button" class="btn btn-customblue">Send Invite</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal1 -->
+<div class="modal fade" id="changeRoleModal" tabindex="-1" role="dialog" aria-labelledby="changeRoleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changeRoleModalCenterTitle">Change Role</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="changerole">Role</label>
+          </div>
+          <select class="custom-select" id="changerole">
+            <option value="Interviewer" selected>Interviewer</option>
+            <option value="Staff">Staff</option>
+            <option value="Librarian">Librarian</option>
+          </select>
+        </div>
+
+        <hr />
+
+        <div class="row mb-2">
+          <div class="col-sm-2 col-lg-12 col-xl-4" style="font-size: 14px;">
+            <strong>Interviewer</strong>
+          </div>
+          <div class="col-sm-2 col-lg-12 col-xl-8" style="font-size: 13px;">
+            Allow access to candidates applied only
+
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-2 col-lg-12 col-xl-4" style="font-size: 14px;">
+            <strong>Staff</strong>
+          </div>
+          <div class="col-sm-2 col-lg-12 col-xl-8" style="font-size: 13px;">
+            Allow access to post job,library only
+
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-2 col-lg-12 col-xl-4" style="font-size: 14px;">
+            <strong>Librarian</strong>
+          </div>
+          <div class="col-sm-2 col-lg-12 col-xl-8" style="font-size: 13px;">
+            Allow access to Library only
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+        <button id="saveRoleBtn" type="button" class="btn btn-customblue">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<button type="button" class="btn btn-customblue btn-block mb-4" data-toggle="modal" data-target="#addUserModal"><i
+    class="fas fa-user-plus"></i> Add Member</button>
+
+<table class="table table-striped overflow-hidden">
+  <thead class="text-white" style="background-color: #A3A1FB">
+    <tr style="font-size: 1.2rem">
+      <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 0px" class="text-center" scope="col"><b>Member Email</b></th>
+      <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px" class="text-center" scope="col"><b>Status</b></th>
+      <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px" class="text-center" scope="col"><b>Action</b></th>
+      <th style="border: 1px solid #8280c8; border-width: 0px 0px 0px 1px" class="text-center" scope="col"><b>Role</b></th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for team in teams %}
+    <tr style="font-size: 1.15rem">
+      <td class="text-center">{{team.email}}</td>
+      <td class="text-center">{{team.role}}</td>
+      <td class="text-center">{{team.status}}</td>
+      <td class="w-25">
+        <button use="edit" name="{{team.email}}" class="btn btn-customblue m-1 float-right" data-toggle="modal" data-target="#changeRoleModal"><i
+            class="fa fa-edit"></i> Edit Member</button>
+            <button use="delete" name="{{team.email}}" class="btn btn-customblue m-1 float-right"><i class="fa fa-trash"></i> Delete Member</button>
+
+      </td>
+
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<script>
+
+  $("[use='delete']").click(function () {
+    let uid = this.name.trim();
+    //console.log(uid);
+    deleteTeamUser(uid);
+  });
+
+  $("[use='edit']").click(function () {
+    let uid = this.name.trim();
+    //deleteTeamUser(uid);
+
+    $("#saveRoleBtn").click(function () {
+      let role = $("#changerole").val();
+      $('#changeRoleModal').modal('hide');
+      changeTeamUserRole(uid,role);
+
+    });
+
+  });
+
+  $("#sendInviteBtn").click(function () {
+    let role = $("#role").val();
+    let email = $("#inviteEmail").val().trim();
+    inviteTeamUser(email, role);
+    $('#addUserModal').modal('hide')
+
+  });
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = jQuery.trim(cookies[i]);
+        // Does this cookie string begin with the name we want?
+        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  var csrftoken = getCookie('csrftoken');
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+      (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+      // or any other URL that isn't scheme relative or absolute i.e relative.
+      !(/^(\/\/|http:|https:).*/.test(url));
+  }
+  function deleteTeamUser(uid) {
+
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+          // Send the token to same-origin, relative URLs only.
+          // Send the token only if the method warrants CSRF protection
+          // Using the CSRFToken value acquired earlier
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+    data = {
+      'uid': uid,
+    }
+    $.ajax({
+      url: 'deleteteamuser',
+      type: 'POST',
+      dataType: "json",
+      data: data,
+      success: function (data) {
+        window.location.reload();
+      }
+
+    });
+  }
+
+  function inviteTeamUser(email, role) {
+
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+          // Send the token to same-origin, relative URLs only.
+          // Send the token only if the method warrants CSRF protection
+          // Using the CSRFToken value acquired earlier
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+    data = {
+      'email': email,
+      'role': role
+    }
+    $.ajax({
+      url: 'inviteteamuser',
+      type: 'POST',
+      dataType: "json",
+      data: data,
+      success: function (data) {
+        window.location.reload();
+      }
+
+    });
+  }
+
+  function changeTeamUserRole(uid, role) {
+
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+          // Send the token to same-origin, relative URLs only.
+          // Send the token only if the method warrants CSRF protection
+          // Using the CSRFToken value acquired earlier
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+    data = {
+      'uid': uid,
+      'role': role
+    }
+    $.ajax({
+      url: 'changeteamuserrole',
+      type: 'POST',
+      dataType: "json",
+      data: data,
+      success: function (data) {
+        window.location.reload();
+      }
+
+    });
+  }
+
+
+
+</script>
+
+{% endblock content %}
