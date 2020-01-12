@@ -1,0 +1,233 @@
+
+{% extends "maintainer/mbase.html" %}
+{% block title %}AMP Tech | Question Management{% endblock title %}
+{% block content %}
+<div class="container-fluid">
+<form action="post_question" method="post">
+{% csrf_token %}
+  
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Type</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="qtype">
+      <option>SoftSkills</option>
+      <option>SubjectSkills</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="exampleFormControlInput1">Please enter the Question</label>
+    <input type="text" class="form-control" name="post-questions">
+  </div>
+  <div class="d-flex">
+  <button class="btn btn-primary mr-auto p-2" type="submit">Submit</button>
+</form>
+<form method="POST" action="{% url 'post_csv_question' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+<input class="btn btn-secondary p-2" value="Upload from CSV" name="post_csv_question" type="file" onchange="form.submit()"></input>
+</form>
+</div>
+
+</div>
+<br>
+<br>
+<div class="card mb-3">
+    <div class="card-header">
+      <i class="fas fa-table"></i>
+      APLI AI QUESTIONS</div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="quesdataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Question ID</th>
+              <th>Question</th>
+              <th>Question Type</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+          <form action="#" method="post">
+          {% csrf_token %}
+            {% for key,value in questions.items %}
+            <!-- Modal -->
+<div class="modal fade" id="edit{{key}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+    <label for="exampleFormControlSelect1">Select Type</label>
+    <select class="form-control" id="{{key}}select1" value="{{value.type}}"">
+      <option>SoftSkills</option>
+      <option>SubjectSkills</option>
+    </select>
+      <label for="exampleFormControlInput1">Please enter the Question</label>
+      <input type="text" id="{{key}}questn" class="form-control" value="{{value.question}}">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-custom" onClick="updateQuestion('{{key}}')">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+            <tr>
+              <td></td>
+              <td>{{ key }}</td>
+              <td>{{ value.question }}</td>
+              <td>{{ value.type }}</td>
+              <th ><a href="#" class="card-link" data-toggle="modal" data-target="#edit{{key}}"><i class="fas fa-edit" title="Edit"></i></a></th>
+            </tr>
+            </form>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <style>
+    .dropdown{padding:10px;}
+    .options{
+      margin:7px;
+    }
+    </style>
+        <script>
+        //refresh logic for avoiding resubmissions
+
+        if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+        }
+        //Main ajax calls
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                }
+            }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        function sameOrigin(url) {
+            // test that a given url is a same-origin URL
+            // url could be relative or scheme relative or absolute
+            var host = document.location.host; // host + port
+            var protocol = document.location.protocol;
+            var sr_origin = '//' + host;
+            var origin = protocol + sr_origin;
+            // Allow absolute or scheme relative URLs to same origin
+            return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+        }
+
+
+        function updateQuestion(key) {
+
+            $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+                $('#wait').show();
+            }
+            });
+
+            data = {
+            'questionid': key,
+            'equestion' : document.getElementById(key+'questn').value,
+            'eqtype' : document.getElementById(key+'select1').options[document.getElementById(key+"select1").selectedIndex].value,
+            }
+
+            $.ajax({
+            url: `{% url 'edit_question' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                //console.log(data);
+                window.location.reload();
+            }
+
+            });
+
+        }
+
+    var table = $('#quesdataTable').DataTable({
+        dom: 'Bfrtip',
+        select: true,
+        buttons: {
+            dom: {
+                button: {
+                    tag: 'button',
+                    className: ''
+                }
+            },
+            buttons: [
+                { extend: 'selectAll', className: 'btn btn-info options' },
+                { extend: 'selectNone', className: 'btn btn-info options' },
+                
+                {
+                    text: 'Delete',
+                    action: function() {
+                        var deletion = [];
+                        var count = table.rows({ selected: true }).count();
+                        var data = table.rows({ selected: true }).data();
+                        dele = {}
+                        for (i = 0; i < count; i++) {
+                            deletion.push(data[i][1])
+                        };
+                        
+                        var response = confirm("Are you sure you want to continue? Changes can't be undone");
+                        if (response == true) {
+                            table.rows({ selected: true }).remove().draw();
+                            $.ajax({
+                                url: 'delete_question',
+                                type: 'POST',
+                                data: { 'deletion': deletion },
+                                success: function(data) {
+                                    // console.log(data);
+                                }
+
+                            });
+                        }
+                    },
+                    className: 'btn btn-danger options'
+
+                },
+                { extend: 'excel', className: 'btn btn-dark options', text:'Export as CSV' }
+
+            ],
+        },
+        'columnDefs': [{
+            'targets': 0,
+            'orderable': false,
+            'className': 'select-checkbox',
+            'checkboxes': {
+                'selectRow': true
+            }
+        }],
+        'select': {
+            'style': 'multi',
+        }
+    });
+        </script>
+{% endblock content %}
