@@ -25,8 +25,8 @@ web_db = firestore.client()
 
 
 def jobs(request):
-    try:
-        email=request.session['email']
+    # try:
+        main_email=request.session['email']
 
         if request.method == "POST":
             try:
@@ -61,7 +61,7 @@ def jobs(request):
                     u'salary': salary,
                     u'add_detail': add_detail,
                     u'status': status,
-                    u'email': email,
+                    u'email': main_email,
                     u'packageId': packageId,
                     u'timestamp':datetime.now()
                 })
@@ -72,7 +72,7 @@ def jobs(request):
                 messages.error(request, 'Something went wrong! Try Again Later.')
 
         # get jobs data
-        docs = web_db.collection(u'jobs').where(u'email', u'==', email).get()
+        docs = web_db.collection(u'jobs').where(u'email', u'==', main_email).get()
         jobs = []
         open_count = 0
         for doc in docs:
@@ -103,9 +103,9 @@ def jobs(request):
                             'name': request.session['name'], 'jc': len(jobs),
                             'oc': open_count, 'cc': close_count, 'user_packages': user_packages})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')
 
 
 def deletepost(request):
@@ -132,7 +132,7 @@ def deletepost(request):
 
 
 def candidates(request):
-    try:
+    # try:
         
         return render(request, 'recruiter/candidates.html',{ 'name': request.session['name'], 'new_user': 'True',
                             'appcount': 0})
@@ -191,9 +191,9 @@ def candidates(request):
             #                 {'role': request.session['role'], 'name': request.session['name'], 'new_user': 'True',
             #                 'appcount': 0})
     
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')
 
 
 def view_interview(request, jid, candidate_id):
@@ -269,7 +269,7 @@ def rejmail(request):
 
 
 def question(request):
-    try:
+    # try:
         main_email=request.session['email']
         user_packages_docs = web_db.collection(u'users').document(main_email).collection(
             u'packages').get()
@@ -290,17 +290,17 @@ def question(request):
             built_in_questions.append(doc.to_dict())
 
         return render(request, 'recruiter/question.html',
-                        {'role': request.session['role'], 'user_questions': user_questions,
+                        { 'user_questions': user_questions,
                         'built_in_questions': built_in_questions,
                         'user_packages': user_packages, 'name': request.session['name']})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')
 
 
 def addpackage(request):
-    try:
+    # try:
         main_email=request.session['email']
         # From post job form
         if request.method == "POST":
@@ -324,13 +324,13 @@ def addpackage(request):
             except:
                 return JsonResponse({"success": "false"})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')
 
 
 def changepackage(request):
-    try:
+    # try:
         main_email=request.session['email']
         if request.method == "POST":
             try:
@@ -347,13 +347,13 @@ def changepackage(request):
             except:
                 return JsonResponse({"success": "false"})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        pass
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     pass
 
 
 def loadquestions(request):
-    try:
+    # try:
         main_email=request.session['email']
         if request.method == "POST":
             try:
@@ -369,13 +369,13 @@ def loadquestions(request):
             except:
                 return JsonResponse({"success": "false"})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        pass
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     pass
 
 
 def addquestion(request):
-    try:
+    # try:
         main_email=request.session['email']
 
         if request.method == "POST":
@@ -397,13 +397,13 @@ def addquestion(request):
                 return JsonResponse({"success": "true"})
             except:
                 return JsonResponse({"success": "false"})
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')
 
 
 def getPackages(request):
-    try:
+    # try:
         main_email = request.session['email']
 
         if request.method == "GET":
@@ -417,13 +417,13 @@ def getPackages(request):
             except:
                 return JsonResponse({"success": "false"})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')
 
 
 def deletequestion(request):
-    try:
+    # try:
         main_email=request.session['email']
         if request.method == "POST":
             try:
@@ -437,6 +437,6 @@ def deletequestion(request):
                 messages.error(request, 'Something went wrong! Try Again Later.')
                 return JsonResponse({"success": "false"})
 
-    except:
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    # except:
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+    #     return HttpResponseRedirect('/')

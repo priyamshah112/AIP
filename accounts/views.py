@@ -122,7 +122,8 @@ def recruiter_signup(request):
                     })
 
                 messages.success(request, 'Signup completed successfully.')
-                return render(request, 'recruiter/dashboard.html')
+                return render(request, 'recruiter/jobs.html')
+
             else:
                 messages.error(request, 'Email already exists.Proceed to login')
                 return render(request, 'accounts/login.html')
@@ -162,4 +163,4 @@ def candidate_signup(request):
 
 def logout(request):
     request.session.flush()
-    return render(request, 'apliai/index.html')
+    return render(request, 'AIP/index.html')
