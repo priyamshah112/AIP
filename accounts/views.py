@@ -106,6 +106,21 @@ def recruiter_signup(request):
                     u'timestamp': datetime.now()
                 })
 
+                db.collection(u'users').document(email).collection(
+                    u'packages').document(u'sample').set({u'id': 'sample'})
+                sample_questions = ['Tell us about your education.', 'What kind of salary do you expect?',
+                                    'What makes you passionate about this work?','What can you tell me about our company?',
+                                    'Why did you leave your last job?']
+
+                for ques in sample_questions:
+                    ques_ref= db.collection(u'users').document(email).collection(
+                            u'packages').document(u'sample').collection('questions').document()
+                    ques_ref.set({
+                        u'id' : ques_ref.id,
+                        u'type' : 'SoftSkills',
+                        u'question' : ques
+                    })
+
                 messages.success(request, 'Signup completed successfully.')
                 return render(request, 'recruiter/dashboard.html')
             else:
