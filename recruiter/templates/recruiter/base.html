@@ -92,8 +92,8 @@
         <button style="color:#42425C;" class="btn btn-link btn-sm order-1 order-sm-0" id="sidebarToggle" href="#">
             <i class="fas fa-bars"></i>
         </button>
-        <a style="color:#42425C;" class="navbar-brand mr-1" href="{% url 'dashboard'  %}"><img
-                src="{% static 'recruiter/image/apli_logo.png' %}" alt="Apli.ai" srcset=""></a>
+        <a style="color:#42425C;" class="navbar-brand mr-1" href="{% url 'jobs'  %}"><img
+                src="{% static 'recruiter/image/apli_logo.png' %}" alt="AMP Tech" srcset=""></a>
 
         <!-- Navbar -->
         <ul class="navbar-nav ml-auto">
@@ -143,55 +143,27 @@
             </li>
             {% endif %}
 
-            <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'dashboard'  %}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            {% if role == "Recruiter" or role == "Staff" %}
 
             <li class="nav-item {% if request.resolver_match.url_name == 'jobs' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'jobs'  %}">
                     <i class="fas fa-fw fa-tasks"></i>
                     <span>Post Job</span></a>
             </li>
-            {% endif %}
-            {% if role == "Recruiter" or role == "Interviewer" %}
+
 
             <li class="nav-item {% if request.resolver_match.url_name == 'candidates' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'candidates'  %}">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Candidates Applied</span></a>
             </li>
-            {% endif %}
 
-            {% if role == "Recruiter" %}
 
-            <li class="nav-item {% if request.resolver_match.url_name == 'team' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'team'  %}">
-                    <i class="fas fa-fw fa-user-plus"></i>
-                    <span>Team</span></a>
-            </li>
-            {% endif %}
-
-            {% if role == "Recruiter" or role == "Librarian" or role == "Staff"  %}
 
             <li class="nav-item {% if request.resolver_match.url_name == 'question' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'question'  %}">
                     <i class="fas fa-fw fa-atlas"></i>
                     <span>Library</span></a>
             </li>
-            {% endif %}
-
-            {% if role == "Recruiter" or role == "Librarian" or role == "Interviewer" or role == "Staff"  %}
-
-            <li class="nav-item {% if request.resolver_match.url_name == 'rfeedback' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'rfeedback'  %}">
-                    <i class="fas fa-fw fa-comments"></i>
-                    <span>Feedback</span></a>
-            </li>
-            {% endif %}
 
             <li class="nav-item {% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'accounts:logout'  %}">
@@ -213,7 +185,7 @@
         <footer class="sticky-footer" style="z-index: -1">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright © Apli.ai 2019</span>
+                    <span>Copyright © AMP Tech 2020</span>
                 </div>
             </div>
         </footer>
