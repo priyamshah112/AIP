@@ -3,9 +3,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from firebase_admin import firestore
-from recruiter.views import log_notification, increment_link_count, add_application, get_notifications
 from django.conf import settings
-from accounts.views import signup
+#from accounts.views import signup
 from datetime import datetime
 from . import jsonParser, isme
 import copy
@@ -59,35 +58,6 @@ class NotAvailable(Exception):
     pass
 
 
-def candidate_login(func):
-    """
-    This is a custom decorator to manage candidate section authentication.
-    :use:
-    >>> @candidate_login
-    >>> your_function(request, other_arguments_if_any)
-
-    Please ensure `request` is always the first argument (non-keyword) in your function.
-    """
-
-    def wrapper(*args, **kwargs):
-        request = args[0]
-
-        if 'email' in request.session.keys():
-            if request.session.get('user_type', None) == 'Candidate':
-                if not db.collection('candidates').document(request.session['email']).get().exists:
-                    db.collection('candidates').document(request.session['email']).set({
-                        'email': request.session['email'],
-                        'profile_status': 'empty',
-                        'job_applications': [],
-                        'video_resume': None,
-                        'pdfResume': None,
-                    })
-                return func(*args, **kwargs)
-
-        return HttpResponseRedirect('/')
-
-    return wrapper
-
 def remove_saved_job_relation(job_id,cand_id):
     saved_job   =   list(db.collection('rel_candidate_savedjob').where(u'job_id','==',job_id).where(u'cand_id','==',cand_id).get())
     if not saved_job:
@@ -97,7 +67,7 @@ def remove_saved_job_relation(job_id,cand_id):
         saved_job.reference.delete()
 
 
-@candidate_login
+
 def profile(request):
     if request.method == 'GET':
         try:
@@ -106,32 +76,9 @@ def profile(request):
             profile_status = candidate_ref.get('profile_status')
             if profile_status == 'empty':
                 messages.error(request, 'please complete your basic details')
-                batch = list(db.collection('rel_batch_candidates').where(
-                    'candidate_id', '==', request.session['email']).get())
 
-                if not batch:
-                    messages.error(request, 'You have been removed from the batch')
-                    return HttpResponseRedirect('/')
 
-                batch = batch[0].to_dict()['batch_id']
-
-                batch = db.collection('batches').document(batch).get().to_dict()
-                current_course = batch['course']
-                branch = batch['branch']
-                duration = batch['batch_year'].split('-')
-                current_start = int(duration[0])
-                current_end = int(duration[1])
-                total_sems = batch['total_semester']
-
-                return render(request, 'candidate/resume_profile_buildup.html', {'profile_status': profile_status,
-                                                                                 'current_education': {
-                                                                                     'course': current_course,
-                                                                                     'start': current_start,
-                                                                                     'end': current_end,
-                                                                                     'total_sem': range(1, total_sems+1),
-                                                                                     'branch': branch,
-                                                                                 }
-                                                                                 })
+                return render(request, 'candidate/resume_profile_buildup.html', {'profile_status': profile_status})
 
             candidate_dict = candidate_ref.to_dict()
             candidate_dict['dob'] = candidate_dict['dob'].strftime('%B %d, %Y')
@@ -160,51 +107,8 @@ def profile(request):
             for award in candidate_dict['award']:
                 award['date'] = award['date'].strftime('%B %Y')
             
-            context = {
-                'candidate': candidate_dict
-            }
-            
-            # patch
-            if context['candidate']['psycho_ques'] is not None:
-                # def ques_sort(ques):
-                #     q_no = ques.ques_id[1:]
-                #     return int(q_no)
 
-                # ques_with_ans.sort(key=ques_sort)
-                
-                all_ques = db.collection('candPsychoQues').document('all_ques').get().to_dict()
-                quesorder = ['Q'+str(i) for i in range(1,31)] #gicing key order
-                all_ques = sorted(all_ques.items(), key=lambda i:quesorder.index(i[0])) #sorting according to keyorder
-                context['candidate']['psycho_ques'] = sorted(context['candidate']['psycho_ques'].items(),
-                                                             key=lambda i:quesorder.index(i[0])
-                                                             )
-                for i in range(0, len(context['candidate']['psycho_ques'])):
-                    context['candidate']['psycho_ques'][i] = (context['candidate']['psycho_ques'][i][0],
-                                                              all_ques[i][1],
-                                                              context['candidate']['psycho_ques'][i][1])
-            # print(context)
-            #pscho on the profile page update
-            questions = db.collection('candPsychoQues').document('all_ques').get().to_dict()
-            question = namedtuple('question', ['ques_id', 'ques', 'response'])
-            ques_with_ans = []
-
-            answers = candidate_ref.to_dict().get('psycho_ques', None)
-            if answers is None:
-                answers = dict()
-
-            for key, ques in questions.items():
-                response = int(answers.get(key, -1))
-                question_ = question(key, ques, response)
-                ques_with_ans.append(question_)
-
-            def ques_sort(ques):
-                q_no = ques.ques_id[1:]
-                return int(q_no)
-
-            ques_with_ans.sort(key=ques_sort)
-            context['questions'] = ques_with_ans
-
-            return render(request, 'candidate/profile.html', context)
+            return render(request, 'candidate/profile.html')
             
         except (KeyError, AttributeError):
             raise
@@ -769,7 +673,7 @@ def profile(request):
         return JsonResponse({'success': True})
     
 
-@candidate_login
+
 def jobsboard(request):
     if request.session.get('hidename', None) is not None:
         return HttpResponseRedirect('/')
@@ -898,7 +802,7 @@ def jobsboard(request):
     return render(request, 'candidate/jobs.html', {'jobsss': jobs_opnd})
 
 
-@candidate_login
+
 def resume(request):
     if request.method == 'GET':
         candidate_id = request.session.get('email')
@@ -914,16 +818,20 @@ def resume(request):
         candidate_dict = candidate_ref.to_dict()
         current_education = None
 
-        for education in candidate_dict['education']:
-            if education['is_current']:
-                current_education = education
+        # for education in candidate_dict['education']:
+        #     if education['is_current']:
+        #         current_education = education
 
         # get batch info
-        batch_id = get_batch(candidate_id)
-        batch = db.collection(u'batches').document(batch_id).get().to_dict()
+        #batch_id = get_batch(candidate_id)
+        #batch = db.collection(u'batches').document(batch_id).get().to_dict()
 
-        current_education['duration'] = batch['batch_year']
-        current_education['branch'] = batch['branch']
+        #current_education['duration'] = batch['batch_year']
+        #current_education['branch'] = batch['branch']
+        batch_id=101
+        batch = 'B3'
+        current_education['duration']='2020'
+        current_eductaion['branch']='Computer Engineering'
 
         return render(request, 'candidate/resume.html',
                       {'candidate': candidate_ref.to_dict(),
@@ -1464,7 +1372,7 @@ def resume(request):
 
 
 
-@candidate_login
+
 def applications(request):
     email = request.session.get('email')
     """
@@ -1646,7 +1554,7 @@ def saved(request):
             
         return JsonResponse({'success': 'True'})
 '''
-@candidate_login
+
 def resume(request):
     if request.method == 'GET':
         candidate_id = request.session.get('email')
@@ -1921,7 +1829,7 @@ def resume(request):
 
 
 
-@candidate_login
+
 def jobInterview(request, ifext=False):
     if request.method == 'POST':
         # print(request.POST)

@@ -78,7 +78,8 @@ def login(request):
                     return redirect('accounts:login')
             else:
                 messages.error(request, 'Account does not exists')
-        except:
+        except Exception as e:
+            print(e)
             messages.error(request, 'Something went wrong! Try Again Later.')
     return render(request, 'accounts/login.html')
 
@@ -152,8 +153,21 @@ def candidate_signup(request):
                     u'timestamp': datetime.now()
                 })
 
+                db.collection('candidates').document(email).set({
+                    'name':
+                    name,
+                    'profile_picture':
+                    settings.DEFAULT_CAND_PICTURE,
+                    'profile_status':
+                    'empty',
+                    'email':
+                    email,
+                    'job_applications':
+                    list(),
+                })
+
                 messages.success(request, 'Signup completed successfully.')
-                return render(request, 'candidate/dashboard.html')
+                return render(request, 'candidate/profile.html')
             else:
                 messages.error(request, 'Email already exists.Proceed to login')
                 return render(request, 'accounts/login.html')
