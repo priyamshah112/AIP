@@ -3,6 +3,7 @@
 
 {% block Stylesheet %}
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
 {% endblock %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'recruiter/css/viewinterview.css' %}">
@@ -12,7 +13,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <object height="600" data="{{application_dict.video_resume}}">
+                <object height="600" data="{{job_app.cand_profile.video_resume}}">
                 </object>
             </div>
         </div>
@@ -24,24 +25,110 @@
         aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <object height="600" data="{{application_dict.candidate_resume}}">
+                <object height="600" data="{{job_app.cand_profile.pdfResume}}">
                 </object>
             </div>
         </div>
     </div>
 
 
-    <div class="col-3">
-        <div class="card profile container">
+    <div class="col-4">
+        <div class="card profile container" style="width:390px;" >
             <div style="padding: 30px;">
-                <img src="{{application_dict.candidate_image}}" class="profilepic card-img-top">
+                <img src="{{job_app.cand_profile.profile_picture}}" class="profilepic card-img-top"  style="width:40%;" align="left">
+                <div class="card-title" align="center" ><b>{{job_app.app_dict.candidate_name}}</b>
             </div>
-            <div class="card-body">
-                <div class="card-title" align="center"><b>{{application_dict.candidate_name}}</b></div>
-                <div class="card-text">
-                    <b>Email : </b>{{application_dict.candidate_email}}
+        </div>
+                <div style="padding-top:10px;">
+                    
+                    <div style="padding-left:30px;float:left;"><h4><b>INTERVIEW SCORE</b></h4></div>
+                    <div style="float:right;padding-right:40px;">
+                    <div class="circle" id="circle">0</div>
+
+                    </div>
                 </div>
+
+                <div style="padding:0px;"></div>
+                    <div id="chart-container_1">
+                        <a id="chart-container"></a>
+                    </div>
+        </div>
+    </div>
+                
+<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
+<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
+ 
+<script>
+
+
+                        FusionCharts.ready(function(){
+                                var chartObj = new FusionCharts({
+                        type: 'radar',
+                        renderAt: 'chart-container',
+                        width: '360',
+                        height: '380',
+                        dataFormat: 'json',
+                        dataSource: {
+                            "chart": {
+                                "yAxisMaxValue":'5',
+                                "bgColor": "#ffffff",
+                                "chartLeftMargin": "10",
+                                "chartTopMargin": "0",
+                                "chartRightMargin": "0",
+                                "chartBottomMargin": "0",
+                                "borderColor": "#ffffff",
+                                "theme": "fusion",
+                                "radarfillcolor": "#ffffff",
+                                "baseFontSize": "12",
+                                "labelDisplay": "rotate",
+                            },
+    
+                            "categories": [{
+                                "category": [{
+                                    "label": "Openness"
+                                }, {
+                                    "label": "Conscientiousness"
+                                }, {
+                                    "label": "Extroversion"
+                                }, {
+                                    "label": "Agreeableness"
+                                }, {
+                                    "label": "Neuroticism"
+                                }]
+                            }],
+                            "dataset": [{
+                                //  "seriesname": "SKILLSET",
+                                "data": [{
+                                    "value": "{{ job_app.skills_score.o}}"
+                                }, {
+                                    "value": "{{ job_app.skills_score.c}}"
+                                }, {
+                                    "value": "{{ job_app.skills_score.e}}"
+                                }, {
+                                    "value": "{{ job_app.skills_score.a}}"
+                                }, {
+                                    "value": "{{ job_app.skills_score.n}}"
+                                }]
+                            }]
+                        }
+                    }
+                    );
+                                chartObj.render();
+                            });
+    </script>
+
             </div>
+            <!--
+            <div class="card-body">
+                
+                <div class="card-title" align="center"><b>{{job_app.app_dict.candidate_name}}</b></div>
+                <div class="card-text">
+                    <b>Email : </b>{{job_app.app_dict.candidate_email}}
+                </div>
+                
+            </div>
+            -->
+            <!--
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
                     <button style="line-height: 1.0;margin-top: 8px;" type="button" class="btn btn-customblue"
@@ -53,60 +140,16 @@
                         data-toggle="modal" data-target=".bd-example2-modal-xl">View
                         Video Resume</button>
                 </li>
-                <li class="list-group-item"><b>Resume Score : </b>{{application_dict.resume_score}}</li>
-                <li class="list-group-item"><b>Video Resume Score : </b>{{application_dict.video_resume_score}}</li>
+                <li class="list-group-item"><b>Resume Score : </b>{{job_app.app_dict.resume_score}}</li>
+                <li class="list-group-item"><b>Video Resume Score : </b>{{job_app.app_dict.video_resume_score}}</li>
             </ul>
+            -->
         </div>
     </div>
-    <div class="col-9">
-        <div class="card">
-
-
-
-            <div class="card-header">
-                <h4 id="question-text"></h4>
-            </div>
-            <div class="card-body">
-                <div class="container p-1">
-                    <div class="row" style="margin: 0;">
-                    <div class="embed-responsive embed-responsive-16by9" style="width: 90%">
-                        <iframe id="videoframe" src="https://www.youtube.com/embed/dhYOPzcsbGM" frameborder="0"
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen></iframe>
-                    </div>
-                    <div class="list-group justify-content-center mx-auto">
-                        <h5>Grade:</h5>
-                        <div class="btn-group-vertical" id="grade">
-                            <button class="btn btn-outline-success btn-lg">1</button>
-                            <button class="btn btn-outline-success">2</button>
-                            <button class="btn btn-outline-success">3</button>
-                            <button class="btn btn-outline-success">4</button>
-                            <button class="btn btn-outline-success">5</button>
-                            <button class="btn btn-outline-success">6</button>
-                            <button class="btn btn-outline-success">7</button>
-                            <button class="btn btn-outline-success">8</button>
-                            <button class="btn btn-outline-success">9</button>
-                            <button class="btn btn-outline-success">10</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row p-3">
-                        <textarea class="container form-control" rows="2" id="comment"></textarea>
-                </div>
-
-                <div class="row float-right"> <div class="btn btn-customblue mr-3" id="save-comment">Save Comment</div></div>
-                <!-- <div class="list-group list-group-flush">
-                    <li class="list-group-item">College Name</li>
-                    <li class="list-group-item">Current Year</li>
-                    <li class="list-group-item">Application Date</li>
-                </div> -->
-                
-            </div>
-                
-
-            </div>
-
-            <div class="card-footer mb-2">
+    <div class="col-8" >
+        <div class="card"  id="right" >
+<div >
+            <div class="card-header mb-0" >
                 <nav aria-label="NavBar">
                     <ul class="pagination justify-content-center" id="question-nav">
                         <li class="page-item"><a class="page-link" href="#question-text" id="prev-ques">Previous</a></li>
@@ -114,12 +157,12 @@
 
                         {% if forloop.counter  == 1 %}
 
-                        <li class="page-item active"><a class="page-link" href="#question-text" id="ques-1">1</a></li>
+                        <li class="page-item active"><a class="page-link" href="#question-text" id="ques-1">Q 1</a></li>
 
                         {% else %}
 
                         <li class="page-item"><a class="page-link" href="#question-text"
-                                id="ques-{{ forloop.counter }}">{{ forloop.counter }}</a>
+                                id="ques-{{ forloop.counter }}">Q {{ forloop.counter }}</a>
                         </li>
 
                         {% endif %}
@@ -129,28 +172,57 @@
                         <li class="page-item"><a class="page-link" href="#question-text" id="next-ques">Next</a></li>
                     </ul>
                 </nav>
+            </div>
+
+            <div class="card-header">
+                <h4 id="question-text"></h4>
+            </div>
+            <div class="card-body" >
+                <div class="container p-1" >
+                    <div class="row" style="margin: 0;" id="r2" >
+                    <div class="embed-responsive embed-responsive-16by9"  >
+                        <iframe id="videoframe" src="https://www.youtube.com/embed/dhYOPzcsbGM" frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+
+
+                </div>
+                
+            </div>
+                
 
             </div>
+
         </div>
-    </div>
+        
+ 
 </div>
+    </div>
+
+</div>
+
+
+
+
 <script>
-
-
-
     let questions = [];
-    let candidate_id = "{{application_dict.candidate_id}}";
-    let jid = "{{application_dict.jid}}";
+    let candidate_id = "{{job_app.cand_profile.email}}";
+    let jid = "{{job_app.job_info.id}}";
+    let re=document.getElementById("right").innerHTML;
+    let ug=[];
     {% for question in questions %}
-
+    
     questions.push({
-        no: "{{ forloop.counter }}",
+        no: "{{ question.id }}",
         question: "{{question.question}}",
         video: "{{question.video}}",
         grade: "{{question.grade}}",
         comments: "{{question.comment}}"
     });
-
+    ug.push({{question.grade}});
+    
+    document.getElementById("circle").innerHTML=+document.getElementById("circle").innerHTML+{{question.grade}}
     {% endfor %}
 
     var videoframe = $('#videoframe');
@@ -163,9 +235,10 @@
         question_text.text(questions[0].question);
         comment_text.val(questions[0].comments);
         $('#grade :nth-child(' + questions[0].grade + ')').toggleClass('btn-outline-success btn-success');
-    }
-
+        
+    } 
     function change_question() {
+
         var new_question = parseInt(this.id.slice(-1));
         var temp_new = questions[new_question - 1];
         var temp_current = questions[current_question - 1];
@@ -184,8 +257,14 @@
         $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         $(this).toggleClass('btn-outline-success btn-success');
         var new_grade = parseInt($(this).text());
+
+        var temp=+document.getElementById("circle").innerHTML;
+        temp=temp+new_grade-temp_current.grade;
+        document.getElementById("circle").innerHTML=temp;
+
         temp_current.grade = new_grade;
         updateGrade(temp_current.grade, temp_current.no, jid, candidate_id);
+        
 
     }
 
@@ -205,7 +284,23 @@
     }
 
     function next_question() {
-        if (current_question == 4) return;
+        if (current_question == 4) {
+            let ht="";
+            ht=ht+"<div id='ree'>";
+            {% for question in questions %}
+            
+            ht=ht+"<br>";
+            ht=ht+"<a class='page-link' href='' id='ques-{{forloop.counter}}'> Q{{forloop.counter}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QUESTION:&nbsp;&nbsp;&nbsp;{{question.question}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COMMENT:  {{question.comment}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SCORE:&nbsp;&nbsp;&nbsp;&nbsp; ";
+            ht=ht+ug[{{forloop.counter}}-1]+"</a>";
+            {% endfor %}
+            ht=ht+"</div>";
+            
+            re=document.getElementById("right").innerHTML;
+            //console.log(re);
+            document.getElementById("right").innerHTML=ht;
+
+                }
+          else{      
         var new_question = current_question + 1;
         var temp_new = questions[new_question - 1];
         var temp_current = questions[current_question - 1];
@@ -217,6 +312,7 @@
         $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         comment_text.val(temp_new.comments);
         current_question = new_question;
+          }
     }
 
     function save_comment() {
@@ -231,12 +327,10 @@
     $('#save-comment').on('click', save_comment);
     $('[id^=ques-').on('click', change_question);
     $('#grade').on('click', 'button', change_grade);
+    
 
 
-</script>
 
-
-<script>
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -273,6 +367,7 @@
     function updateGrade(grade, number, jid, candidate_id) {
         let currentUrl = window.location.href;
         // window.location.href = "/";
+        ug[number-1]=grade;
         let currentUrlArray = currentUrl.split('/');
         currentUrlArray.pop();
         currentUrlArray.pop();
@@ -294,7 +389,7 @@
             'jid': jid,
             'candidate_id': candidate_id,
             'grade': grade,
-            'number': number
+            'id': number
         }
         $.ajax({
             url: newUrl + '/update_grade',

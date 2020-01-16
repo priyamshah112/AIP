@@ -33,34 +33,36 @@
 </div>
 <div id="interviewDiv" style="display:none">
     <div class="row" id="quesandvid" style="padding-top:20px;">
-        <div class="col-lg-6 col-sm-12 " >
-            <div class="row">
+        
+            
                 <div class="col-12 text-center" id="questionSpan">
 
                 </div>
-            </div>
-            <div class="row" style="margin-top:15px">
-                <div class="col-12 text-center mb-3">
+            <div style="margin-top:15px;padding-left:450px;"> 
+                <div class="col-12"  id="playerDiv"  >
+                    <center><video id="player" autoplay controls playsinline height="480" width="100%"></video></center>
+                </div>
+                <div class="col-12 text-center mb-3" style="padding-left:200px;">
                     <p id="minfo"></p>
                     <p id="timer"></p>
                 </div>
             </div>
-            <div class="row ">
+        
+
+            <div class="row" >
+
+            </div>
+
+            
+
+                <div class="col-12  text-center mb-3">
+                    <button type="button" name="button" id="btn-stop-recording" class="btn btn-sm btn-danger shadow-cus" disabled>Stop</button>
+                </div>
                 <div class="col-12 text-center mb-3">
                     <button type="button" class="btn btn-primary shadow-cus" name="button" id="loadNext" onclick="addVideo(event);">Next</button>
                 </div>
-            </div>
-        </div>
-        <div class="col-lg-6 col-sm-12">
-            <div class="row">
-                <div class="col-12  text-center">
-                    <button type="button" name="button" id="btn-stop-recording" class="btn btn-sm btn-danger shadow-cus" disabled>Stop</button>
-                </div>
-            </div>
-            <div class="col-12" style="display:none;" id="playerDiv">
-                <center><video id="player" autoplay controls playsinline height="480" width="100%"></video></center>
-            </div>
-        </div>
+            
+
     </div>
     <div class="row" id="submitButtonDiv" style="display:none">
         <div class="container col-12" style="padding:10px;">
@@ -191,6 +193,7 @@ function startEverything() {
                 recorder.camera = camera;
                 document.getElementById('btn-stop-recording').disabled = false;
                 $('#minfo').html("<h4>Recording...</h4>");
+                //$('#minfo').css('padding-left':'-200px');
             });
         };
 
@@ -198,6 +201,7 @@ function startEverything() {
             this.disabled = true;
             recorder.stopRecording(stopRecordingCallback);
             $('#minfo').html("<h4>Stopped</h4>");
+
         };
 
 </script>

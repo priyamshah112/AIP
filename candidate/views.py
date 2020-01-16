@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.views import View
@@ -491,22 +491,29 @@ def applications(request):
                                                            'pend_apps': pend_apps}
                   )
 
-
-
-def jobInterview(request):
+def jobInterview(request, ifext=False):
     if request.method == 'POST':
-        jobId = request.POST.get('job')
+        # print(request.POST)
+        if ifext:
+            jobId = request.session.get('job_id')
+        else:
+            jobId = request.POST['job'].strip()
+        # print(jobId)
         candidate = request.session.get('email')
-        if not db.collection(u'applications').document(jobId).collection(u'applicants').document(candidate).get().exists:
+        candidate_dict = db.collection('candidates').document(candidate).get().to_dict()
+
+        if not db.collection(u'applications').document(jobId).collection(u'applicants').document(
+                candidate).get().exists:
             job_doc = db.collection(u'jobs').document(jobId).get().to_dict()
-            questions = db.collection(u'users').document(job_doc['email']).collection(u'packages').document(job_doc['packageId']).collection(u'questions').get()
+            questions = db.collection(u'users').document(job_doc['email']).collection(u'packages').document(
+                job_doc['packageId']).collection(u'questions').get()
             que = []
             for q in questions:
                 que.append(q.to_dict())
 
             db.collection(u'applications').document(jobId).set({})
             db.collection(u'applications').document(jobId).collection(u'applicants').document(candidate).set({
-                'candidate_name': request.session.get('name'),
+                'candidate_name': candidate_dict['name'],
                 'status': "PENDING",
                 'video_interview_links': {},
                 'resume_score': "7",
@@ -515,30 +522,36 @@ def jobInterview(request):
                 'grades': {'1': 3, '2': 6, '3': 6, '4': 5},
             })
 
-            return render(request, 'candidate/job_interview.html', {'jobId': jobId, 'job': job_doc, 'questions': que, 'startFrom': 0})
+            # increment_link_count(jobId, )
+
+            return render(request, 'candidate/job_interview.html',
+                          {'jobId': jobId, 'job': job_doc, 'questions': que, 'startFrom': 0})
         else:
             ap = db.collection(u'applications').document(jobId).collection(u'applicants').document(candidate).get()
             apdic = ap.to_dict()
             if apdic['status'] == 'PENDING':
                 job_doc = db.collection(u'jobs').document(jobId).get().to_dict()
-                questions = db.collection(u'users').document(job_doc['email']).collection(u'packages').document(job_doc['packageId']).collection(u'questions').get()
+                questions = db.collection(u'users').document(job_doc['email']).collection(u'packages').document(
+                    job_doc['packageId']).collection(u'questions').get()
                 que = []
                 for q in questions:
                     que.append(q.to_dict())
-                d = {k:v for k,v in apdic['video_interview_links'].items() if v != ""}
+                d = {k: v for k, v in apdic['video_interview_links'].items() if v != ""}
                 startFrom = len(d)
                 messages.success(request, 'Continue the mock interview')
                 # print("lmao bruh")
-                return render(request, 'candidate/job_interview.html', {'jobId': jobId, 'job': job_doc, 'questions': que, 'startFrom': startFrom})
+                return render(request, 'candidate/job_interview.html',
+                              {'jobId': jobId, 'job': job_doc, 'questions': que, 'startFrom': startFrom})
             if apdic['status'] == 'APPLIED':
                 messages.success(request, 'Your Application will be soon reviewed.')
                 # print("yeee haw")
-                return HttpResponseRedirect('applications')
+                return redirect('/candidates/applications')
     else:
         return HttpResponseRedirect('jobsboard')
 
 
 def addApplication(request):
+    print(request.POST)
     type = request.POST.get('type')
     if type == 'final':
         candidate = request.session.get('email')
@@ -547,7 +560,6 @@ def addApplication(request):
             'status': "APPLIED"
         })
         messages.success(request, 'Application added successfully.')
-        job_doc = db.collection('jobs').document(request.POST.get('job')).get().to_dict()
 
         return JsonResponse({"success": "True"})
     if type == 'addVideo':
@@ -563,5 +575,6 @@ def addApplication(request):
         })
 
         messages.success(request, 'Application added successfully.')
+
         return JsonResponse({"success": "True"})
 

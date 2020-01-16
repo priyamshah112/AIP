@@ -15,7 +15,7 @@ from datetime import datetime
 import shutil
 import os
 from random import randint
-
+from collections import namedtuple
 # Database init
 # Use a service account
 
@@ -183,13 +183,12 @@ def candidates(request):
             job_info = web_db.collection('jobs').document(job_id).get().to_dict()
             job_info['id'] = job_id
 
-            if job_info['applicat_req']['vid_interview']:
-                questions = web_db.collection(u'users').document(main_email).collection(
-                    u'packages').document(job_info['packageId']).collection(u'questions').get()
 
-                vid_interview_score = True
-            else:
-                vid_interview_score = False
+            questions = web_db.collection(u'users').document(main_email).collection(
+                u'packages').document(job_info['packageId']).collection(u'questions').get()
+
+            vid_interview_score = True
+
 
             for applicant in applicants:
                 # print(job_id)
@@ -231,7 +230,7 @@ def candidates(request):
                     # get profile dict of each candidate
                     cand_profile['cand_id'] = applicant.id
 
-                if job_info['applicat_req']['vid_interview']:
+
                     vid_interviews = []
 
                     questions_dict = {}
@@ -254,13 +253,6 @@ def candidates(request):
                             vid_interviews.append(ques_vid)
                     except AttributeError:
                         vid_interviews = None
-                else:
-                    vid_interviews = False
-
-                if job_info['applicat_req']['vid_resume']:
-                    vid_resume = app_info.get('vid_resume_link', None)
-                else:
-                    vid_resume = False
 
                 if cand_profile is not None:
                     resume = cand_profile.get('pdfResume', None)
@@ -269,7 +261,7 @@ def candidates(request):
 
                 app = application(job_info=job_info, cand_profile=cand_profile, resume=resume,
                                     app_dict=app_info, appid=appid.replace('@', '').replace('.', ''),
-                                    video_interview=vid_interviews, video_resume=vid_resume,
+                                    video_interview=vid_interviews,video_resume=False,
                                     video_interview_score=vid_interview_score)
                 # print(app)
                 """
@@ -317,11 +309,7 @@ def candidates(request):
         return render(request, 'recruiter/candidates.html',
                         {'job_apps': job_apps, 'counts': counts, 'smessage': smessage,
                         'ssubject': ssubject, 'rmessage': rmessage, 'rsubject': rsubject,
-                        'account_type': account_type,
-                        'notifications': notifications,
-                        'interviewers': interviewers,
-                        'role': request.session['role'],
-                        'unique_jobs': unique_jobs,'company_name':request.session['cname'],
+                        'unique_jobs': unique_jobs,'company_name':request.session['cname'],'name':request.session['name']
                         }
                         )
 
@@ -335,177 +323,103 @@ def candidates(request):
         #                    'unique_jobs': unique_jobs,
         #                    })
 
-    elif request.method == 'POST':
-
-        def get_(x):
-            ans = request.POST.get(x, None)
-            if isinstance(ans, str):
-                return ans.strip()
-            return ans
-
-        job_id = get_('job_id')
-        cand_id = get_('cand_email')
-        cand_name = get_('cand_name')
-        job_dict = web_db.collection('jobs').document(job_id).get().to_dict()
-        print(job_id, cand_id)
-        rec_email = job_dict['email']
-
-        if web_db.collection('applications').document(job_id).collection(
-                'applicants').document(cand_id).get().exists:
-            messages.error(request, 'This candidate has already applied for this job')
-            return redirect('/recruiter/candidates')
-
-        app_dict = {'candidate_name': cand_name,
-                    'grades': None,
-                    'resume_score': None,
-                    'skills_score': None,
-                    'status': 'INVITED',
-                    'video_interview_links': None,
-                    'videos_resume_score': None,
-                    }
-
-        web_db.collection('applications').document(job_id).collection(
-            'applicants').document(cand_id).set(app_dict)
-
-        recruiter = web_db.collection('users').document(rec_email).get().to_dict()
-        cname = recruiter['company_name']
-        # print(reverse('job_detail', kwargs={'jid': get_('job_id')}))
-
-        message = render_to_string('recruiter/add_candidate.html',
-                                   {'name': get_('cand_name'),
-                                    'post': job_dict['post'],
-                                    'cname': cname,
-                                    'rec_name': recruiter['name'],
-                                    'link_target': 'https://apli-ai.herokuapp.com' + reverse('job_detail',
-                                                                                             kwargs={'jid': job_id})}
-                                   )
-        email_recruiter = EmailMessage(subject='Job invitation from Apli.ai',
-                                       body=message,
-                                       from_email=settings.EMAIL_HOST_USER,
-                                       to=[get_('cand_email')]
-                                       )
-        email_recruiter.content_subtype = 'html'
-        email_recruiter.send()
-
-        if not web_db.collection('links').document(job_id).get().exists:
-            dict_ = {
-                u'anonymous': 0,
-                'career_site': 0,
-                'referral': 0,
-                'internal_referral': 1,
-                u'facebook': 0,
-                u'linkedin': 0,
-                u'job_id': job_id,
-                u'type': 'job',
-                u'parent': rec_email
-            }
-            web_db.collection(u'links').document(job_id).set(dict_)
-
-        else:
-            count = web_db.collection('links').document(job_id).get().to_dict()['internal_referral']
-            web_db.collection(u'links').document(job_id).update({
-                'internal_referral': int(count) + 1,
-            })
-
-        return redirect('/recruiter/candidates')
 
 
 def view_interview(request, jid, candidate_id):
-    try:
 
-        application_dict = web_db.collection('applications').document(jid).collection(
-            'applicants').document(candidate_id).get().to_dict()
-        job_doc = web_db.collection('jobs').document(jid).get().to_dict()
 
-        application_dict['jid'] = jid
-        application_dict['candidate_id'] = candidate_id
+    application_dict = web_db.collection('applications').document(jid).collection(
+        'applicants').document(candidate_id).get().to_dict()
+    job_doc = web_db.collection('jobs').document(jid).get().to_dict()
 
-        questions_doc = web_db.collection(u'users').document(job_doc['email']).collection(u'packages').document(
-            job_doc['packageId']).collection(u'questions').get()
-        que = []
-        for q in questions_doc:
-            que.append(q.to_dict())
+    application_dict['jid'] = jid
+    application_dict['candidate_id'] = candidate_id
 
-        if 'video_interview_grades' not in application_dict.keys():
-            grades = dict()
-            for ques in que:
-                grades[ques['id']] = None
+    questions_doc = web_db.collection(u'users').document(job_doc['email']).collection(u'packages').document(
+        job_doc['packageId']).collection(u'questions').get()
+    que = []
+    for q in questions_doc:
+        que.append(q.to_dict())
 
-            web_db.collection('applications').document(jid).collection(
-                'applicants').document(candidate_id).update({'video_interview_grades': grades})
-            application_dict['video_interview_grades'] = grades
-
-        if 'video_interview_comments' not in application_dict.keys():
-            comments = dict()
-            for ques in que:
-                comments[ques['id']] = None
-
-            web_db.collection('applications').document(jid).collection(
-                'applicants').document(candidate_id).update({'video_interview_comments': comments})
-            application_dict['video_interview_comments'] = comments
-
-        if 'video_interview_links' not in application_dict.keys():
-            links = dict()
-            for ques in que:
-                links[ques['id']] = None
-
-            web_db.collection('applications').document(jid).collection(
-                'applicants').document(candidate_id).update({'video_interview_links': links})
-            application_dict['video_interview_links'] = links
-
-        # print(application_dict['video_interview_grades'])
-        questions = []
+    if 'video_interview_grades' not in application_dict.keys():
+        grades = dict()
         for ques in que:
-            question_dict = dict()
-            question_dict['question'] = ques['question']
-            question_dict['id'] = ques['id']
-            question_dict['video'] = application_dict['video_interview_links'].get(ques['id'], None)
-            # print(question_dict['video'])
-            question_dict['grade'] = application_dict['video_interview_grades'].get(ques['id'], None)
+            grades[ques['id']] = None
 
-            if question_dict['grade'] is None:
-                question_dict['grade'] = 0
+        web_db.collection('applications').document(jid).collection(
+            'applicants').document(candidate_id).update({'video_interview_grades': grades})
+        application_dict['video_interview_grades'] = grades
 
-            question_dict['comment'] = application_dict['video_interview_comments'].get(ques['id'], None)
-            questions.append(question_dict)
+    if 'video_interview_comments' not in application_dict.keys():
+        comments = dict()
+        for ques in que:
+            comments[ques['id']] = None
 
-        questions_length = len(questions)
+        web_db.collection('applications').document(jid).collection(
+            'applicants').document(candidate_id).update({'video_interview_comments': comments})
+        application_dict['video_interview_comments'] = comments
 
-        # 'ocean' radar data
-        job_info = web_db.collection('jobs').document(jid).get().to_dict()
-        job_info['id'] = jid
+    if 'video_interview_links' not in application_dict.keys():
+        links = dict()
+        for ques in que:
+            links[ques['id']] = None
 
-        cand_profile = web_db.collection('candidates').document(candidate_id).get().to_dict()
+        web_db.collection('applications').document(jid).collection(
+            'applicants').document(candidate_id).update({'video_interview_links': links})
+        application_dict['video_interview_links'] = links
 
-        app_info = web_db.collection('applications').document(jid).collection('applicants').document(
-            candidate_id).get().to_dict()
+    # print(application_dict['video_interview_grades'])
+    questions = []
+    for ques in que:
+        question_dict = dict()
+        question_dict['question'] = ques['question']
+        question_dict['id'] = ques['id']
+        question_dict['video'] = application_dict['video_interview_links'].get(ques['id'], None)
+        # print(question_dict['video'])
+        question_dict['grade'] = application_dict['video_interview_grades'].get(ques['id'], None)
 
-        appid = candidate_id + jid
-        application = collections.namedtuple('application', ['job_info',
-                                                             'cand_profile',
-                                                             'app_dict',
-                                                             'appid',
-                                                             'skills_score'])
-        skills_score = app_info['skills_score']
-        # print(skills_score)
-        app = application(job_info=job_info, cand_profile=cand_profile, app_dict=app_info,
-                          appid=appid.replace('@', '').replace('.', ''), skills_score=skills_score)
+        if question_dict['grade'] is None:
+            question_dict['grade'] = 0
 
-        # job_apps = [app]
-        # print(job_apps[0].skills_score)
-        return render(request, 'recruiter/viewinterview.html',
-                        {'application_dict': application_dict, 'questions': questions,
-                        'questions_length': questions_length, 'role': 'video-interview',
-                        'name': request.session['name'],
-                        'company_name': request.session['cname'],
-                        'notifications': notifications,
-                         'job_app': app,
-                        })
+        question_dict['comment'] = application_dict['video_interview_comments'].get(ques['id'], None)
+        questions.append(question_dict)
 
-    except Exception as e:
-        print(e)
-        messages.error(request, 'Something went wrong! Try Again Later.')
-        return HttpResponseRedirect('/')
+    questions_length = len(questions)
+
+    # 'ocean' radar data
+    job_info = web_db.collection('jobs').document(jid).get().to_dict()
+    job_info['id'] = jid
+
+    cand_profile = web_db.collection('candidates').document(candidate_id).get().to_dict()
+
+    app_info = web_db.collection('applications').document(jid).collection('applicants').document(
+        candidate_id).get().to_dict()
+
+    appid = candidate_id + jid
+    application = namedtuple('application', ['job_info',
+                                                            'cand_profile',
+                                                            'app_dict',
+                                                            'appid',
+                                                            'skills_score'])
+    skills_score = app_info['skills_score']
+    # print(skills_score)
+    app = application(job_info=job_info, cand_profile=cand_profile, app_dict=app_info,
+                        appid=appid.replace('@', '').replace('.', ''), skills_score=skills_score)
+
+    # job_apps = [app]
+    # print(job_apps[0].skills_score)
+    return render(request, 'recruiter/viewinterview.html',
+                    {'application_dict': application_dict, 'questions': questions,
+                    'questions_length': questions_length, 
+                    'name': request.session['name'],
+                    'company_name': request.session['cname'],
+                        'job_app': app,
+                    })
+
+    # except Exception as e:
+    #     print(e)
+    #     messages.error(request, 'Something went wrong! Try Again Later.')
+        #return HttpResponseRedirect('/')
 
 
 
