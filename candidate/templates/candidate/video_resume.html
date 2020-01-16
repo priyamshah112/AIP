@@ -1,95 +1,45 @@
 {% extends "candidate/base.html" %}
-{% block title %}AMP Tech | Jobs{% endblock title %}
+{% block title %}Apli.ai | Profile{% endblock title %}
 {% load static %}
-{% block additionalCSS %}
-
-{% endblock additionalCSS%}
-
 {% block content %}
-<Style>
-    .btns{
-        background:transparent;
-        border: 0;
-        letter-spacing: 0.1rem;
-        text-transform: uppercase;
-        font-weight: 10;
-    }
-    .btns:enabled{
-        color:#071a99;
 
-    }
-    .btns:enabled:hover{
-       border-bottom: 1px solid #64b4f5;
-       background: #eee;
-       border-radius:3px;
-    }
-</Style>
-<div class="container">
-    <div class="card shadow-cus">
-        <div class="card-header border-info">
-            <div class="row">
-                <div class="col-8">
-                    <h4>Video Resume</h4>
-                </div>
-                <div class="col-4" style="padding : 0 10px 0 10px;">
-                    <button type="button" name="button" id="btn-start-recording" class="btns" >Start</button>
-                    <button type="button" name="button" id="btn-stop-recording" class="btns" disabled>Stop</button>
-                    <button type="button" name="button" id="btn-reset-recording" class="btns" disabled>Reset</button>
-                    <button onclick="uploadToFirebase()" type="button" name="button" id="upload" class="btns" disabled>Upload</button>
+    <div class="container">
+        <div class="card shadow-cus">
+            <div class="card-header border-info">
+                <div class="row">
+                    <div class="col-8">
+                        <h4>Video Resume</h4>
+                    </div>
+                    <div class="col-4" style="padding : 0 10px 0 10px;">
+                        <button type="button" name="button" id="btn-start-recording" class="btn btn-sm btn-primary shadow-cus" >Start</button>
+                        <button type="button" name="button" id="btn-stop-recording" class="btn btn-sm btn-secondary shadow-cus" disabled>Stop</button>
+                        <button type="button" name="button" id="btn-reset-recording" class="btn btn-sm btn-warning shadow-cus" disabled>Reset</button>
+                        <button onclick="uploadToFirebase()" type="button" name="button" id="upload" class="btn btn-success shadow-cus" disabled>Upload</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body" >
-            <h6 class="card-title">Tell us about Yourself</h6>
-            <small>The recoding will automatically stop after 60 Secs</small>
-            <div class="row">
-                <p class="muted col-12 text-center" id="msg" ></p>
-            </div>
-            <div class="row" >
-                <div class="col-12" style="height:500px;">
-                    <center><video id="player" autoplay controls playsinline></video></center>
+            <div class="card-body" >
+                <h6 class="card-title">Tell us about Yourself</h6>
+                <small>The recoding will automatically stop after 60 Secs</small>
+                <div class="row">
+                    <p class="muted col-12 text-center" id="msg" ></p>
+                </div>
+                <div class="row" >
+                    <div class="col-12" style="height:500px;">
+                        <center><video id="player" autoplay controls playsinline></video></center>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <div class="col-12 text-center">
+            <div class="card-footer">
+                <div class="col-12 text-center">
 
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% if applicat_req.personality_ques %}
-{% url 'external_interview_part' part=3 as destination %}
-        <form action="{% url 'external_interview_part' part=3 %}" method="get">{% csrf_token %}
-          <div style="display: none">
-               <input type="text" name="job" value="{{job}}" hidden>
-                <button type="submit" name="button" id="jobInterviewButton"></button>
-            </div>
-        </form>
-{% elif applicat_req.vid_interview %}
-{% url 'external_interview_part' part=4 as destination %}
-        <form action="{% url 'external_interview_part' part=4 %}" method="get">{% csrf_token %}
-          <div style="display: none">
-               <input type="text" name="job" value="{{job}}" hidden>
-                <button type="submit" name="button" id="jobInterviewButton"></button>
-            </div>
-        </form>
-{% else %}
-{% url 'external_interview_part' part=5 as destination %}
-        <form action="{% url 'external_interview_part' part=5 %}" method="get">{% csrf_token %}
-          <div style="display: none">
-               <input type="text" name="job" value="{{job}}" hidden>
-                <button type="submit" name="button" id="jobInterviewButton"></button>
-            </div>
-        </form>
-{% endif %}
 
-<!--<button onclick="window.location.href={{destination}}" id="jobInterviewButton" formmethod="get"></button>-->
 {% endblock content %}
-
 {% block additionalJS %}
-
-
 <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <script>
 var video = document.querySelector('video');
@@ -200,27 +150,22 @@ document.getElementById('btn-reset-recording').onclick = function() {
         }
         });
         data = {
-            'video_link' : url,
-            'job' : '{{jobId}}',
-            'type' : 'final'
+            'video_resume' : url
         }
         event.preventDefault();
         $.ajax({
-            url: `{% url 'external_interview_part' part=2 %}`,
+            url: `{% url 'videoResume' %}`,
             type: 'POST',
             dataType: "json",
             data: data,
             success: function (data) {
-                //window.location.href = "{% url 'profile' %}";
-                $('#jobInterviewButton').click();
+                window.location.href = "{% url 'profile' %}";
             },
             complete: function() {
                 $('#wait').hide();
              },
         });
     }
-    //from here
-    
 </script>
 
 <!-- Firebase -->
@@ -270,7 +215,4 @@ document.getElementById('btn-reset-recording').onclick = function() {
     }
 
 </script>
-<!--
-
--->
 {% endblock additionalJS%}

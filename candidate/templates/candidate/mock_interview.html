@@ -1,27 +1,71 @@
 {% extends "candidate/base.html" %}
-{% block title %}Apli.ai | Jobs{% endblock title %}
+{% block title %}Apli.ai | Mock{% endblock title %}
 {% load static %}
 {% block additionalCSS %}
-
 {% endblock additionalCSS%}
-
 {% block content %}
+
+{% if interviewPackages%}
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <h3>Select an Interview Pack</h3>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+        {% for pack in interviewPackages %}
+        <div class="col-lg-4">
+        <div class="card shadow-cus mb-3" style="min-height:185px;">
+            <div class="card-body row">
+                    <div class="col-12">
+                        <h4>{{pack}}</h4>
+                    </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-12">
+                        <form class="form-inline" action="{% url 'mockInterview' %}" method="post" style="width:100%">
+                            {% csrf_token %}
+                            <input type="text" name="packName" value="{{pack}}" hidden>
+                            <input type="text" name="type" value="startInterview" hidden>
+                            {% if pack in mockSubmitted %}
+                            <small>You've already submitted the interview.</small>
+                            <small>Please wait for the report card.</small>
+                            {% else %}
+                            <button type="submit" name="button" {% if pack in mockTaken %} class="btn btn-warning" {% else %} class="btn btn-info" {% endif %}>
+                                {% if pack in mockTaken %}
+                                Resume
+                                {% else %}
+                                Start Interview
+                                {% endif %}
+                            </button>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% if pack%}
 <div class="container" id="startDiv">
     <div class="row">
     <div class="col-12 text-center">
-        <h3>{{job.post}}</h3>
+        <h3>{{packName}}</h3>
         <h6 id="msg">Click "START" whenever you are ready.</h6>
     </div>
     <div class="col-12 text-center" style="padding:8px">
         <button type="button" name="button" class="btn btn-info" onclick="startEverything()">Start Interview</button>
     </div>
     <div class="container" style="padding:10px;">
-        <div class="card-body shadow-cus" style="background:#eeeeee;">
+        <div class="card-body shadow-cus" style=" background:#eeeeee;">
             <p>Please read the following Instruction carefully.</p>
             <ul class="list-group">
-                <li class="list-group-item">PLEASE DO NOT CLOSE THIS WINDOW.</li>
                 <li class="list-group-item">You'll be given 60secs for answering each question.</li>
-                <li class="list-group-item">A rest period of 10 secs will be given after each question.</li>
+                <li class="list-group-item">You'll be given 30secs for reading each question.</li>
                 <li class="list-group-item">Do not close/reload the window in between the interview.</li>
                 <li class="list-group-item">You have to attemp all the questions.</li>
                 <li class="list-group-item">You cannot pause the interview in between.</li>
@@ -35,7 +79,7 @@
     <div class="row" id="quesandvid" style="padding-top:20px;">
         <div class="col-lg-6 col-sm-12 " >
             <div class="row">
-                <div class="col-12 text-center" id="questionSpan">
+                <div class="col-12 text-center" id="questionSpan" >
 
                 </div>
             </div>
@@ -47,7 +91,7 @@
             </div>
             <div class="row ">
                 <div class="col-12 text-center mb-3">
-                    <button type="button" class="btn btn-primary shadow-cus" name="button" id="loadNext" onclick="addVideo(event);">Next</button>
+                    <button type="button" class="btn btn-primary shadow-cus" name="button" id="loadNext" onclick="submitInterview(event)">Next</button>
                 </div>
             </div>
         </div>
@@ -63,32 +107,33 @@
         </div>
     </div>
     <div class="row" id="submitButtonDiv" style="display:none">
-        <div class="container col-12" style="padding:10px;">
-            <div class="card-body shadow-cus" style="background:#eeeeee;">
-                <p>Thank You for Applying.</p>
-                <ul class="list-group">
-                    <li class="list-group-item">PLEASE DO NOT CLOSE THIS WINDOW.</li>
-                    <li class="list-group-item">Your Application will be soon reviewed.</li>
-                    <li class="list-group-item">You can practice giving mock interviews.</li>
-                    <li class="list-group-item">You can choose interview packs based on their difficulty level.</li>
-                    <li class="list-group-item">You can search Jobs in the job sections.</li>
-                    <li class="list-group-item">Apply on more and more jobs.</li>
-                </ul>
+            <div class="container col-12" style="padding:10px;" >
+                <div class="card-body shadow-cus" style="background:#eeeeee;">
+                    <p>Thank You for taking the Test.</p>
+                    <ul class="list-group">
+                        <li class="list-group-item">A mentor will soon evaluate your interview.</li>
+                        <li class="list-group-item">You'll recieve a full report with scores and remarks.</li>
+                        <li class="list-group-item">Our mentors are trained experts.</li>
+                        <li class="list-group-item">You can choose interview packs based on their difficulty level.</li>
+                        <li class="list-group-item">You can search Jobs in the job sections.</li>
+                        <li class="list-group-item">Job application interviews are done in the same way.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="col-12 text-center" >
-            <button onclick="submitInterview(event)" id="submitButton" type="button" name="button" class="btn btn-success shadow-cus">
+            <div class="col-12 text-center" >
+                <button type="button" name="button" class="btn btn-success shadow-cus" id="submitButton" onclick="finalSubmit(event)">
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Submitting
-            </button>
+                </button>
+            </div>
+            <div class="col 12 text-center">
+                <small class="muted">Sending interview to a mentor . Please donot reload this window, You'll be automayically redirected.</small>
+            </div>
         </div>
-        <div class="col 12 text-center">
-            <small class="muted">Sending interview to a mentor . Please donot reload this window, You'll be automayically redirected.</small>
-        </div>
-    </div>
 </div>
-{% endblock content %}
 
+{% endif %}
+{% endblock content %}
 {% block additionalJS %}
 
 <script>
@@ -107,12 +152,10 @@
 
 <script>
 
-var i = {{startFrom}};
 var qi = 0;
-var id = "";
-ids = [{% for x in questions%}'{{x.id}}',{% endfor %}];
-qu = [{% for x in questions%}'{{x.question}}',{% endfor%}];
-
+var i = {{startFrom}};
+ind = [{% for x in pack%}'{{x}}',{% endfor %}];
+qu = [{% for x,q in pack.items%}'{{q}}',{% endfor %}];
 
 async function loadQuestions(){
 
@@ -120,9 +163,8 @@ async function loadQuestions(){
 
     if (i < qu.length){
         qi = i+1;
-        id = ids[i];
         $('#playerDiv').slideUp();
-        $('#questionSpan').html("<h5>"+qi+"."+qu[i]+"</h5>");
+        $('#questionSpan').html("<h5>"+ind[i]+"."+qu[i]+"</h5>");
         $('#minfo').html("<h4>Read the Question</h4>");
         updateTimer(30);
         await sleep(30*1000);
@@ -135,7 +177,7 @@ async function loadQuestions(){
     }
 }
 
-async function finalize() {
+function finalize() {
         $('#quesandvid').slideUp("slow");
         // stopRecording();
         $('#submitButtonDiv').slideDown();
@@ -166,12 +208,13 @@ function startEverything() {
         }
         function stopRecordingCallback() {
             video.src = video.srcObject = null;
-            video.muted = true;
-            video.volume = 0;
+            video.muted = false;
+            video.volume = 1;
             video.src = URL.createObjectURL(recorder.getBlob());
             // console.log("call back called now");
             fireBaseUpload(recorder.getBlob());
             recorder.camera.stop();
+            recorder.clearRecordedData();
         }
         var recorder; // globally accessible
         function startRecordingFun() {
@@ -191,6 +234,7 @@ function startEverything() {
                 recorder.camera = camera;
                 document.getElementById('btn-stop-recording').disabled = false;
                 $('#minfo').html("<h4>Recording...</h4>");
+
             });
         };
 
@@ -244,14 +288,13 @@ function startEverything() {
         !(/^(\/\/|http:|https:).*/.test(url));
     }
 
-    var links = "";
-
+    var links = ""
     function addVideoUrl(url) {
         links = url;
-        // console.log(links);
+        // console.log("link added at"+ qi +"= "+ links[qi]);
     }
 
-    function addVideo(event) {
+    function finalSubmit(event) {
         $('#submitButton').disabled = true;
         $.ajaxSetup({
         beforeSend: function (xhr, settings) {
@@ -261,23 +304,24 @@ function startEverything() {
             // Using the CSRFToken value acquired earlier
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
+            $('#loadNext').attr("disabled", true);
+            $('#minfo').html("<h4>Please Wait</h4>");
             $('#wait').show();
         }
         });
         data = {
-            'job' : '{{jobId}}',
-            'type' : 'addVideo',
-            'ids' : ids[i-1],
-            'video_link' : links ,
-            }
+            'type' : 'finalSubmit',
+            'docId' : '{{docId}}'
+        }
+        console.log("Sending final data");
         event.preventDefault();
         $.ajax({
-            url: `{% url 'addApplication' %}`,
+            url: `{% url 'mockInterview' %}`,
             type: 'POST',
             dataType: "json",
             data: data,
             success: function (data) {
-                loadQuestions();
+                window.location.href = "{% url 'mockInterview' %}";
             },
             complete: function() {
                 $('#wait').hide();
@@ -294,21 +338,28 @@ function startEverything() {
             // Using the CSRFToken value acquired earlier
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
+            $('#loadNext').attr("disabled", true);
+            $('#minfo').html("<h4>Please Wait</h4>");
             $('#wait').show();
         }
         });
         data = {
-            'job' : '{{jobId}}',
-            'type' : 'final',
-            }
+            'type' : 'submitInterview',
+            'video_link' : links ,
+            'que' : ind[i-1],
+            'pack' : '{{packName}}',
+            'docId' : '{{docId}}'
+        }
         event.preventDefault();
+        console.log("sending data");
         $.ajax({
-            url: `{% url 'addApplication' %}`,
+            url: `{% url 'mockInterview' %}`,
             type: 'POST',
             dataType: "json",
             data: data,
             success: function (data) {
-                window.location.href = "{% url 'applications' %}";
+                // console.log("Yuppp");
+                loadQuestions();
             },
             complete: function() {
                 $('#wait').hide();
@@ -327,7 +378,7 @@ function startEverything() {
     function fireBaseUpload(file) {
         if (file) {
             var storageRef = firebase.storage().ref();
-            var videoResume = storageRef.child('jobInterviews/{{jobId}}/{{request.session.email}}/'+id);
+            var videoResume = storageRef.child('mockInterviews/{{request.session.email}}/{{packName}}/'+qi+'.webm');
             var uploadTask = videoResume.put(file);
             uploadTask.on('state_changed', function(snapshot){
               // Observe state change events such as progress, pause, and resume
@@ -337,7 +388,7 @@ function startEverything() {
               $('#minfo').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><h5>Uploading ' + progress + '% </h5>');
               switch (snapshot.state) {
                 case firebase.storage.TaskState.PAUSED: // or 'paused'
-                  console.log('Upload is paused');
+                  // console.log('Upload is paused');
                   $('#minfo').html('<h5>Upload is paused</h5>');
                   break;
                 case firebase.storage.TaskState.RUNNING: // or 'running'
@@ -358,6 +409,7 @@ function startEverything() {
             });
         } else {
             console.log("File not saved properly");
+            $('#loadNext').attr("disabled", false);
         }
     }
 </script>

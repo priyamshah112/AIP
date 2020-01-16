@@ -1,121 +1,257 @@
 {% extends "candidate/base.html" %}
-{% block title %}AMP Tech | Jobs{% endblock title %}
+{% block title %}Apli.ai | Jobs{% endblock title %}
 {% block additionalCSS %}
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" type="text/css"
     href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/sl-1.3.0/datatables.min.css" />
 <!-- Page level plugin JavaScript-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/dataTables.bootstrap4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+<script type="text/javascript"
+    src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/sl-1.3.0/datatables.min.js"></script>
 {% endblock additionalCSS%}
-<style media="screen">
-    .modal-lg {
-        max-width: 80% !important;
+{% block content %}
+<style>
+    .new-card {
+        margin-left: 150px;
+        max-height: 250px;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        padding: 20px;
+        margin: 10px;
+        margin-bottom: 20px;
+        margin-top: 15px;
+        /* border: 1px solid rgb(148, 148, 148); */
+        border-radius: 5px;
+        /* box-shadow: 1px 1px 10px #a8a8a8; */
+        min-width: 80%;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: stretch;
+        align-items: flex-start;
+        justify-content: flex-start;
+        transition: max-height 0.5s, background-color 0.5s;
+    }
+
+
+    .new-card img {
+        display: block;
+        align-self: stretch;
+        height: 3rem;
+        width: 9rem;
+    }
+
+    .sorting {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+    }
+
+    .sorting th {
+        margin-left: 5px;
+        padding-top: 3px !important;
+        padding-bottom: 3px !important;
+        border-bottom: none !important;
+    }
+
+    .jobdesc {
+        flex: 1 0 90%;
+    }
+
+    .imp {
+        color: #4482C1;
+        font-size: 1.25rem;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .top-row {
+        padding-bottom: 0 !important;
+    }
+
+    .btn-group {
+        top: 40px;
+        position: relative;
+    }
+
+    .btn-cust {
+        background-color: #00838F;
+        color: #fff;
+    }
+
+    .options {
+        margin-right: 2px;
+    }
+
+    .searchbox {
+        text-align: center !important;
+        margin-right: 10px;
+        position: absolute;
+        top: 1.25em;
+        width: 100vw;
+    }
+
+    .searchbox label {
+        display: inline-block;
+    }
+
+    .searchbox input {
+        max-width: 40vw;
+    }
+
+    .break {
+        flex-basis: 100%;
+        height: 0;
+        padding: 0 !important;
+    }
+
+    .extra-info {
+        display: none
+    }
+
+    .blue-grey {
+        color: #fff;
+        background-color: #4482C1;
+        border: none;
+    }
+
+    .selected {
+        background-color: #C3E0E5 !important;
     }
 </style>
-{% block content %}
-<!--{% if messages %}-->
-<!--<ul class="messages">-->
-<!--    {% for message in messages %}-->
-<!--    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
-<!--    {% endfor %}-->
-<!--</ul>-->
-{% endif %}
-<div class="row" style="margin:20px;">
-    <div class="col-12">
-        <div class="card text-white bg-dark">
-            <div class="card-body">
-                <ul>
-                    <li>Click on "View" button for more details about the job.</li>
-                    <li>After applying you'll be redirected to the interview section.</li>
-                </ul>
-            </div>
-        </div>
+<div class="">
+    <div class="table-responsive">
+        <table id="jobsOpeneddataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr class="sorting d-none">
+                    <th class="d-none"></th>
+                    <!-- <th>Job ID</th> -->
+                    <!-- <th>Add Detail</th> -->
+                    <!-- <th>Bond</th> -->
+                    <th class="d-none">image</th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">Post&emsp;</th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">&nbsp;Company Name&emsp;</th>
+                    <th class="d-none">button-group</th>
+                    <th class="d-none">break</th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">Location&emsp;</th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">Salary&emsp;</th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">DeadLine&emsp;</th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">Start Date&emsp;</th>
+                    <!-- <th class="d-none">Email </th> -->
+                    <th class="d-none">Job Description&emsp;</th>
+                    <th class="d-none">Key Responsibility&emsp;</th>
+                    <th class="d-none">Other Responsibilities&emsp;</th>
+                    <th class="d-none">Package ID</th>
+                    <th class="d-none">Soft Skills </th>
+                    <th class="d-none">Technical Skill </th>
+                    <th class="btn btn-cust shadow-cus" style="font-weight: 100;">TimeStamp&emsp;</th>
+                </tr>
+            </thead>
+            <tbody class="">
+                    {% for key,value in jobsss.items %}
+                    <tr class="new-card shadow-cus">
+                        <td class="d-none"></td>
+                        <!-- <td>{{ key }}</td> -->
+                        <!-- <td>{{value.add_detail}}</td> -->
+                        <!-- <td>{{value.bond}}</td> -->
+                        <td class="top-row"><img src="" alt=""></td>
+                        <td class="top-row">
+                            <h1>{{value.post}},</h1>
+                        </td>
+                        <td class="top-row" style="flex-grow: 1">
+                            <h1>{{value.cmpnm}}</h1>
+                        </td>
+
+                        <td class="btn-group top-row">
+                            <button class="btn btn-info more-info"><i class="fas fa-eye"></i></button>
+                            <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
+                                <input type="text" name="job" value="{{key}}" hidden>
+                                <button class="btn blue-grey apply" type="submit">Apply Now</button>
+                            </form>
+                        </td>
+                        <td class="break"></td>
+                        <!-- <td class="imp"><b>Contact Email: </b>{{value.email}}</td> -->
+                        <td class="imp"><b>Location: </b>
+                            <div class="badge blue-grey">{{value.place}}</div>
+                        </td>
+                        <td class="imp"><b>Salary: </b>{{value.salary}}</td>
+                        <td class="imp"><b>Deadline: </b>{{value.deadline}}</td>
+                        <td class="imp"><b>Start Date: </b>{{value.start_date}}</td>
+                        <td class="jobdesc extra-info"><b>Job Description: </b>{{value.job_description}}</td>
+                        <td class="extra-info"><b>Key Responsibilities: </b>{{value.key_responsibility}}</td>
+                        <td class="extra-info"><b>Other Responsibilities: </b>
+                            <ul class="list-group">{% for i in value.other %}
+                                <li class="list-group-item">{{i}}</li>
+                                {%endfor%}</ul>
+                        </td>
+                        <td class="extra-info">{{value.package_id}}</td>
+                        <td class="extra-info"><b>Soft Skills: </b>
+                            <ul class="list-group">{% for j in value.sskill %}
+                                <li class="list-group-item">{{j}}</li>
+                                {%endfor%}</ul>
+                        </td>
+                        <td class="extra-info"><b>Technical Skills: </b>
+                            <ul class="list-group">{% for k in value.tskill %}
+                                <li class="list-group-item">{{k}}</li>
+                                {%endfor%}</ul>
+                        </td>
+                        <td class="extra-info"><b>Time: </b>{{value.timestamp}}</td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
-<div>
-    <div class="row">
-        {% for key,value in jobsss.items %}
+<script>
 
-        <!-- Modal -->
-        <div class="modal fade" id="{{key}}" tabindex="-1" role="dialog" aria-labelledby="{{key}}" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h2 class="modal-title" id="{{key}}Title">{{value.post}}, {{value.cmpnm}}</h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body" style="padding:10px;">
-                <h6><b>Location</b>: {{value.location}}</h6>
-                <h6><b>CTC</b> : {{value.salary}}</h6>
-                <h6><b>Start date</b>: {{value.start_date}}</h6>
-                <h6><b>Job description</b>: {{value.job_description}}</h6>
-                <h6><b>Key Responsibilities</b>: {{value.key_responsibility}}</h6>
-                <h6><b>Other Responsibilities</b>: {%for res in value.other%} {{res}}, {% endfor %}</h6>
-                <h6><b>Soft Skills</b>: {%for skill in value.sskill%} {{skill}}, {% endfor %}</h6>
-                <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}}, {% endfor %}</h6>
-                <h6><b>DeadLine</b>: {{value.deadline}}</h6>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form action="{% url 'new_application'%}" method="post">{% csrf_token %}
-                    <input type="text" name="job" value="{{key}}" hidden>
-                    <button class="btn btn-success" type="submit">Apply Now</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="container">
-        <div class="col-12" style="padding-bottom:20px;">
-            <div class="card shadow-cus">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-lg-6">
-                            <h3>{{value.post}}, {{value.cmpnm}}</h3>
-                        </div>
-                        <!--<div class="col-12 col-lg-6">
-                            <h5 class="float-right">Salary:{{value.salary}}</h5>
-                        </div>-->
-                        <div class="col-12">
-                            <hr>
-                            <div class="row">
-                                <div class="col-12 col-lg-8">
-                                    <h6><b>Location</b>: {{value.place}}</h6>
-                                    <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}}, {% endfor %}</h6>
-                                    <h6 style="color:red"><b>DeadLine</b>: {{value.deadline}}</h6>
-                                </div>
-                                <div class="col-12 col-lg-4">
-                                    <button type="button" name="button" class="btn btn-success float-right" data-toggle="modal" data-target="#{{key}}">View</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-<!-- <div class="pagination">
-    <span class="step-links">
-        {% if jobsss.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ jobsss.previous_page_number }}">previous</a>
-        {% endif %}
+    var table = $('#jobsOpeneddataTable').DataTable({
+        dom: 'Bfrtip',
+        select: true,
+        buttons: {
+            dom: {
+                button: {
+                    tag: 'button',
+                    className: ''
+                }
+            },
+            buttons: [
+                { extend: 'selectAll', className: 'btn btn-info options shadow-cus' },
+                { extend: 'selectNone', className: 'btn btn-info options shadow-cus' },
+                // { extend: 'excel', className: 'btn btn-secondary options shadow-cus', text: 'Export as XLXS' },
+                // { extend: 'csv', className: 'btn btn-primary options shadow-cus', text: 'Export as CSV' }
+            ],
+        },
+        'columnDefs': [{
+            'targets': 0,
+            'orderable': false,
+            'className': 'select-checkbox',
+            'checkboxes': {
+                'selectRow': true
+            }
+        }],
+        'select': {
+            'style': 'multi',
+        }
+    });
 
-        <span class="current">
-            Page {{ jobsss.number }} of {{ jobsss.paginator.num_pages }}.
-        </span>
+    $("#jobsOpeneddataTable_filter").addClass("searchbox");
+    $("#jobsOpeneddataTable_filter input").addClass("form-control");
+    // $(".new-card").each(function (i, c) {
+    //     if (!(c.offsetHeight < c.scrollHeight ||
+    //         c.offsetWidth < c.scrollWidth))
+    //         $(c).find($(".new-card .more-info")).hide();
+    // });
+    $(".new-card .more-info").click(function (ev) {
+        var tr = $(this).parents().get(1);
+        ev.stopPropagation();
+        tr.style.maxHeight = tr.style.maxHeight == '100vh' ? '250px' : '100vh';
+        $(tr).children(".extra-info").toggle();
+    });
+    $(".new-card .apply").click(function (ev) {
+        ev.stopPropagation();
+        // rest of code here
+    });
 
-        {% if jobsss.has_next %}
-            <a href="?page={{ jobsss.next_page_number }}">next</a>
-            <a href="?page={{ jobsss.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-</div> -->
+</script>
 {% endblock %}

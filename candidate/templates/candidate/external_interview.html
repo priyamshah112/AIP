@@ -1,79 +1,59 @@
 {% extends "candidate/base.html" %}
 {% load static %}
-{% block title %}AMP Tech | Resume{% endblock title %}
+{% block title %}Apli.ai | Resume{% endblock title %}
 {% block additionalCSS%}
-<style>
 
-    input::placeholder{
-        color: #ddd !important;
-    }
-</style>
 {% endblock additionalCSS%}
 {% block content %}
-<link rel="stylesheet" href="{% static 'candidate/css/external.css' %}" type="text/css">
-<div class="container" style="height:100%; padding-top:5%" >
-
-<!--        <div class="row"  id="ref">-->
-<!--                <div class="col-4"></div>-->
-<!--                <div class="col-4 text-center" >-->
-<!--                    <label for="refer">Referred by : </label>-->
-<!--                    <input type="text" class="form-control" name="refer" value="" id="refer">-->
-<!--                    <small class="text-muted">Let us know how you found us.</small>-->
-<!--                </div>-->
-<!--                <div class="col-4"></div>-->
-
-<!--            -->
-<!--            <div class="f">-->
-<!--                    <a class="next">Next &raquo;</a>-->
-<!--            </div>-->
-<!--        </div>-->
-
-        
+    <div class="container" style="height:100%; padding-top:15%" id="resumeUploadDiv">
+        <div class="row">
+            <div class="col-12 text-center" >
+                <h2>Upload Your Resume and Get Started</h2>
+            </div>
         </div>
-
-            <div id="resumeUploadDiv">
-            <div class="row">
-                <div class="col-12 text-center" >
-                    <h2>Upload Your Resume and Get Started</h2>
-                </div>
+        <div class="row"style="padding:3%;" >
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Upload</span>
+              </div>
+              <div class="custom-file">
+                <input type="file" accept=".pdf" onchange="uploadGetURL()" class="custom-file-input" id="resumePDF">
+                <label class="custom-file-label" for="resumePDF">Resume</label>
+              </div>
+              <div class="text-center" id="msg" style="width:100%">
+                    <small>Only PDFs are allowed</small>
+              </div>
             </div>
-            <div class="row"style="padding:3%; ">
-                <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Upload</span>
-                </div>
-                <div class="custom-file">
-                    <input type="file" accept=".pdf" onchange="uploadGetURL()" class="custom-file-input" id="resumePDF">
-                    <label class="custom-file-label" for="resumePDF">Resume</label>
-                </div>
-                <div class="text-center" id="msg" style="width:100%">
-                        <small>Only PDFs are allowed</small>
-                </div>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4 text-center">
+                <label for="refer">Referred by : </label>
+                <input type="text" class="form-control" name="refer" value="" id="refer">
+                <small class="text-muted">Let us know how you found us.</small>
             </div>
+            <div class="col-4"></div>
             <div class="col-12 text-center">
-                    <input type="text" name="link" value="" id="resumeLink" hidden>
-                    <button type="submit" id="getInterview" onclick="addPDF(event);" class="btn btn-success" name="button" disabled>Submit</button>
-                </div>
-
+                <input type="text" name="link" value="" id="resumeLink" hidden>
+                <button type="submit" id="getInterview" onclick="addPDF(event);" class="btn btn-success" name="button" disabled>Get to the Interview Page</button>
+            </div>
         </div>
-        
-        {% url 'profile' as destination %}
-    
- <button onclick="window.location.href='{{destination}}'" style="display:none;" id="theNextButton" formmethod="get"></button>
-<!--        <form action="{% url 'jobInterview' %}" method="post">{% csrf_token %}-->
-<!--            <div style="display: none">-->
-<!--                <input type="text" name="job" value="{{job}}" hidden>-->
-<!--                <button type="submit" name="button" id="jobInterviewButton"></button>-->
-<!--            </div>-->
-<!--        </form>-->
-
-
+        <form action="{% url 'jobInterview' %}" method="post">{% csrf_token %}
+            <div style="display: none">
+                <input type="text" name="job" value="{{job}}" hidden>
+                <button type="submit" name="button" id="jobInterviewButton"></button>
+            </div>
+        </form>
     </div>
- 
 {% endblock content %}
 
 {% block additionalJS %}
+<script>
+        $('#sidebar').remove();
+        $('.overlay').remove();
+        $('#profileLi').remove();
+</script>
+
 <script>
     //refresh logic for avoiding resubmissions
 
@@ -133,12 +113,12 @@
             }
         event.preventDefault();
         $.ajax({
-            url: `{% url 'Resume_upload' %}`,
+            url: `{% url 'externalInterview' %}`,
             type: 'POST',
             dataType: "json",
             data: data,
             success: function (data) {
-                $('#theNextButton').click();
+                $('#jobInterviewButton').click();
             },
             complete: function() {
                 $('#wait').hide();
