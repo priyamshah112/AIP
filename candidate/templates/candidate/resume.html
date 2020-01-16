@@ -1,0 +1,3327 @@
+{% extends "candidate/base.html" %}
+{% load static %}
+{% block title %}AMP Tech | Resume{% endblock title %}
+{% block additionalCSS%}
+        <link rel="stylesheet" href="{% static 'candidate/css/selectize.css' %}" type="text/css">
+        <style media="screen">
+            .editnavbar {
+              overflow: hidden;
+              background-color: #333;
+              width: 100%;
+            }
+
+            .editnavbar a {
+              float: left;
+              display: block;
+              color: #f2f2f2;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+              font-size: 17px;
+            }
+
+            .editnavbar a:hover {
+              background: #b2dfdb;
+              color: black;
+            }
+            .editactive {
+                background: #007c91;
+                color: #000000;
+                border: black;
+            }
+        </style>
+        <style>
+            
+            .tabs{
+                display:flex;
+                flex-direction: row;
+                list-style-type: none;
+                justify-content: space-evenly;
+                /* padding:0.5rem; */
+            }
+            .tabs li{
+                /* padding:0.5rem; */
+                cursor: pointer;
+            }
+            .tabs .current{
+                border-bottom:0.2rem solid #42425C;
+            }
+            .hr{
+                margin: 0;
+                color: #42425C;
+            }
+        </style>
+        <style>
+
+            input::placeholder{
+                color: #ddd !important;
+            }
+        </style>
+{% endblock additionalCSS%}
+{% block content %}
+<!--
+<div id="batch-toggle" class="row">
+    <ul class="tabs col-md-3">
+        <li id="switchpage1" class="tab-link current">Resume</li>
+        <li id="switchpage2" class="">Video Intro</li>
+    </ul>
+</div>    
+<hr class="hr">
+<div id="page2">
+    <h1>raj</h1>
+</div>
+-->
+<div id="batch-toggle" class="row">
+    <ul class="tabs col-md-3">
+        <li id="switchpage1" class="tab-link current"><a href="{% url 'profile' %}"><span style="font-size: 2rem">&#8592; </span>Back to Resume</a></li>
+    </ul>
+</div>    
+<div id="page1">
+    <div class="container" style="padding:10px;">
+        <div class="row">
+            <div class="col-12">
+                <div class="editnavbar" style="height: 100%">
+                  <a id="b1" href="#editbasicshow" class="editactive" style="width: 14.2%;height: 100%;vertical-align: middle" onclick="basicdate();">Basic Info</a>
+                  <a id="b2" href="#editeducationshow" style="width: 14.2%;height: 100%;" onClick="edudate();">Education</a>
+                  <a id="b3" href="#editexperienceshow" style="width: 14.2%;height: 100%;" onclick="expdate();">Experience</a>
+                  <a id="b4" href="#editprojectshow" style="width: 14.2%;height: 100%;" onclick="prodate();">Projects</a>
+                  <a id="b6" href="#editresponsibilityshow" style="width: 14.2%;height: 100%;" onclick="leaddate();">Extra-Curricular</a>
+                  <a id="b5" href="#editawardshow" style="width: 14.2%;height: 100%;" onclick="awddateshow();">Awards</a>
+                  <a id="b7" href="#editskillshow" style="width: 14.8%;height: 100%;">Skills</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+ 
+    <div class="container" id="editbasicshow">
+        <div class="card mb-3 shadow-cus">
+            <div class="card-header border-success">
+                <h4>Basic Info</h4>
+            </div>
+            <div class="card-body">
+                <form class="container" id="basicInfoEdit">  
+                    <center>
+                        <div id="logo-container" style="overflow: hidden">
+                            <img id="logo" width="150px" height="150px" class='rounded-circle' src="{{candidate.profile_picture}}">
+                        </div>
+                    </center>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="input-group mb-3">
+                          <div class="col-12 col-lg-12" style="margin-bottom: 10px;">
+                                        <div class="custom-file">
+                                            <label class="custom-file-label" for="resume-doc">Profile</label>
+                                            <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(0,$(this).parent())"
+                                                class="custom-file-input profilepic " id="profilepicture">
+                                        </div>
+                                        <p id="msgdoc" style="color: red"></p>
+                                        <input class="profilePic" type="text" id="certidoc" value="{{candidate.profile_picture}}" style="visibility: hidden">
+                        </div>
+                        </div>
+                    </div><hr>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="fname"><h5>First Name:</h5></label>
+                            <input id="fname" class="form-control" type="text" name="fname" value="{{candidate.First_name}}" required >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="mname"><h5>Middle Name:</h5></label>
+                            <input id="mname" class="form-control" type="text" name="mname" value="{{candidate.Middle_name}}" required>
+                        </div><div class="form-group col-md-4">
+                            <label for="lname"><h5>Last Name:</h5></label>
+                            <input id="lname" class="form-control" type="text" name="lname" value="{{candidate.Last_name}}" required >
+                        </div>
+                    </div><hr>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="email"><h5>Email:</h5></label>
+                            <input id="email" class="form-control" type="text" name="email"
+                                   value="{{request.session.email}}" required readonly>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="ph_no"><h5>Phone number:</h5></label>
+                            <input id="ph_no" class="form-control" type="number" min="0" name="ph_no" value="{{candidate.ph_no}}"  >
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="dob"><h5>Date of birth:</h5></label>
+                            <input id="dob" class="form-control basicdob" type="date" name="{{candidate.dob}}" value="">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="gender" ><h5>Gender:</h5></label>
+                            <select id="gender" class="form-control" name="gender" >
+                                  <option {%if candidate.gender == "Male" %} selected {% endif %}>Male</option>
+                                  <option {%if candidate.gender == "Female" %} selected {% endif %}>Female</option>
+                                  <option {%if candidate.gender == "Others" %} selected {% endif %}>Others</option>
+                                </select>
+                        </div>
+                        {% for key,val in candidate.languages.items %}
+                        <div id="languages" class="remove-lan" style="margin:10px;width: 100%;">
+                            <div class="row" >
+                                <div class="form-group col-lg-3">
+                                    <label for="lang"><h5>Language:</h5></label>
+                                    <input id="lang" type="text" class="form-control lang" name="lang" value="{{key}}" >
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <label for="langp"><h5>Proficiency:</h5></label>
+                                    <select class="form-control langp" name="langp" id="langp">
+                                        <option value="Starter" {%if val == "Starter" %} selected {% endif %}>Starter</option>
+                                        <option value="Basic" {%if val == "Basic" %} selected {% endif %}>Basic</option>
+                                        <option value="Intermediate" {%if val == "Intermediate" %} selected {% endif %}>Intermediate</option>
+                                        <option value="Expert" {%if val == "Expert" %} selected {% endif %}>Expert</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                            <button type="button" name="button" class="btn btn-danger btn-sm remove-lan-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="after-add-more-lan col-12" style="margin:10px;">
+                            <center>
+                                <div class="col-lg-4 text-center">
+                                    <button type="button" name="button" class="btn btn-success btn-sm add-more-lan" style="margin:10px">Add language</button>
+                                </div> 
+                            </center>
+                        </div>
+                    </div><hr>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="address"><h5>Address:</h5></label>
+                            <input id="address" class="form-control" type="text" name="address" value="{{candidate.address}}" required >
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="city"><h5>City:</h5></label>
+                            <input id="city" class="form-control" type="text" name="city" value="{{candidate.city}}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="pcode">
+                                <h5>Postal Code:<span style="color: red">*</span></h5>
+                            </label>
+                            <input id="pcode" value="{{candidate.postal_code}}" class="form-control pcode" type="number" name="pcode">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="state"><h5>State:</h5></label>
+                            <input id="state" class="form-control" type="text" name="state" value="{{candidate.state}}" required >
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="country"><h5>Country:</h5></label>
+                            <input id="country" class="form-control" type="text" value="{{candidate.country}}" name="country" required >
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-right">
+                        <button name="button" class="btn btn-primary" >Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+        <div class="container" id="editeducationshow" style="display:none;">
+            <div class="card mb-3 shadow-cus">
+                <div class="card-header border-info">
+                    <h4>Academic qualifications</h4>
+                </div>
+                <div class="card-body">
+                    {% for edu in candidate.education %}
+                    {% if edu.is_current %}
+                    <!-- -->
+                    <div class="container" style="margin-bottom:20px;padding:10px;border:1px solid black;border-radius:5px;">
+                        <label for="current-edu"><h5>Current Academics</h5></label>
+                        <div class="" id="current-edu">
+                            <p><b>Course:</b> {{current_education.education}}</p>
+                            <p><b>Branch:</b> {{current_education.branch}}</p>
+                            <p><b>Duration:</b> {{current_education.duration}}</p>
+                            <table class="table">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th scope="col">Semester</th>
+                                  <th scope="col">Score</th>
+                                  <th scope="col">Closed backlogs</th>
+                                  <th scope="col">Live backlogs</th>
+                                  <th scope="col">Certificate</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {% for sem in edu.sem_records %}
+                                <tr>
+                                    <th scope="row">{{counter.value}}</th>
+                                    <td><input type="text" name="" class="form-control score" value="{{sem.semester_score}}" step="0.01"></td>
+                                    <td><input type="text" name="" class="form-control closedbl" value="{{sem.closed_backlog}}"></td>
+                                    <td><input type="text" name="" class="form-control livebl" value="{{sem.live_backlog}}"></td>
+                                    <td><div class="col-12 col-sm-12" style="margin-bottom: 10px;">
+                                        <div class="custom-file">
+                                            <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                            <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                                class="custom-file-input doc " id="resume-doc">
+                                        </div>
+                                        <p id="msgdoc" style="color: red">{% if sem.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                                        <input class="semcerti" type="text" id="certidoc" value="{{sem.certificate}}" style="visibility: hidden">
+                                    </div>
+                                    </td>
+                                </tr>
+                                    {{counter.increment}}
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label for="taverage"><h5>Avg score:</h5></label>
+                                    <input id="taverage" class="form-control" type="number" name="taverage" value="{{edu.score}}" step="0.01" required>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="tclosedbl"><h5>Total Closed backlogs:</h5></label>
+                                    <input id="tclosedbl" class="form-control" type="number" name="tclosedbl" value="{{edu.total_closed_backlogs}}" required>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="tlivebl"><h5>Total Live backlogs:</h5></label>
+                                    <input id="tlivebl" class="form-control" type="number" name="tlivebl" value="{{edu.total_live_backlogs}}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- -->
+                    {% endif %}
+                    {% endfor %}
+                    {% for edu in candidate.education %}
+                        {% if edu.education == 'XII' %}
+                            <div class="container XIIfill" 
+                                style="margin-bottom:20px;padding:10px;border:1px solid black;border-radius:5px;">
+                                <label for="XII">
+                                    <h5>12th Standard</h5>
+                                </label>
+                                <div class="form-row">
+                                    <div class="form-group col-12 col-lg-6">
+                                        <label for="XIIschool">Institute Name:<span style="color: red">*</span></label>
+                                        <input id="XIIschool" class="form-control XIIschool" type="text" name="XIIschool" value="{{edu.institute}}">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-6">
+                                        <label for="XIIboard">Stream:<span style="color: red">*</span></label>
+                                        <input id="XIIboard" class="form-control XIIboard" type="text" name="otherboard[]" value="{{edu.specialization}}">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-8">
+                                        <label for="XIIinstitute">Board:<span style="color: red">*</span></label>
+                                        <input id="XIIinstitute" type="text" class="form-control XIIinstitute" name="XIIinstitute[]" value="{{edu.board}}">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-2" style="padding-right: 0px;">
+                                        <label for="XIIscore">Score/CGPA:<span style="color: red">*</span></label>
+                                        <input id="XIIscore" type="number" min="0" class="form-control XIIscore" name="XIIscore[]" step="0.01"
+                                            value="{{edu.score}}">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-1 " style="padding-left: 0px;">
+                                        <label>Unit:<span style="color: red">*</span></label>
+                                        <select class="form-control XIIscoreUnit" id="XIIscoreUnit" name="XIIscoreUnit[]" value="">
+                                            <option value="%" {% if edu.score_unit == '%' %} selected {% endif %}>%</option>
+                                            <option value="/10" {% if edu.score_unit == '/10' %} selected {% endif %}>/10 (CGPA) </option>
+                                            <option value="/4" {% if edu.score_unit == '/4' %} selected {% endif %}>/4 (CGPA) </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-12 col-lg-6">
+                                        <label for="XIIDateFrom">From:<span style="color: red">*</span></label>
+                                        <input id="XIIDateFrom" type="month" class="form-control XIIDateFrom edufrom" name="{{edu.start}}" value="">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-6">
+                                        <label for="XIIDateTo">To:<span style="color: red">*</span></label>
+                                        <input id="XIIDateTo" type="month" class="form-control XIIDateTo eduto" name="{{edu.end}}" value="">
+                                    </div>
+                                    <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                                        <div class="custom-file" style="margin-top: 32px;">
+                                            <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                            <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                                class="custom-file-input doc" id="resume-doc">
+                                        </div>
+                                    <p id="msgdoc" style="color: red">{% if edu.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                                        <input class="XIIcerti" type="text" id="certidoc" value="{{edu.certificate}}" style="visibility: hidden">
+                                </div>
+                                </div>
+                            </div><hr>
+                        {% endif %}
+                    {% endfor %}
+                    {% for edu in candidate.education %}
+                        {% if edu.education == 'Diploma' %}
+                            <div class="container dipfill" 
+                                style="margin-bottom:20px;padding:10px;border:1px solid black;border-radius:5px;">
+                                <label for="Diplo">
+                                    <h5>Diploma Degree</h5>(Equivalent to 12th Standard)
+                                </label>
+                                <div class="form-row">
+                                <div class="form-group col-12 col-lg-6">
+                                    <label for="DiploInst">Institute Name:<span style="color: red">*</span></label>
+                                    <input type="text" name="DiploInst" id="DiploInst" class="form-control DiploInst" value="{{edu.institute}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-6">
+                                    <label for="DiploStream">Stream:<span style="color: red">*</span></label>
+                                    <input id="DiploStream" type="text" class="form-control DiploStream" name="DiploStream" value="{{edu.specialization}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-8">
+                                    <label for="DiploBoard">Board/University:<span style="color: red">*</span></label>
+                                    <input id="DiploBoard" type="text" class="form-control DiploBoard" name="DiploBoard[]" value="{{edu.board}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-2" style="padding-right: 0px;">
+                                    <label for="Diploscore">Score/CGPA:<span style="color: red">*</span></label>
+                                    <input id="Diploscore" type="number" min="0" class="form-control Diploscore" name="Diploscore[]"
+                                        step="0.01" value="{{edu.score}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-1 " style="padding-left: 0px;">
+                                    <label>Unit:<span style="color: red">*</span></label>
+                                    <select class="form-control DiploscoreUnit" id="DiploscoreUnit" name="DiploscoreUnit[]" value="">
+                                        <option value="%" {% if edu.score_unit == '%' %} selected {% endif %}>%</option>
+                                        <option value="/10" {% if edu.score_unit == '/10' %} selected {% endif %}>/10 (CGPA) </option>
+                                        <option value="/4" {% if edu.score_unit == '/4' %} selected {% endif %}>/4 (CGPA) </option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-12 col-lg-6">
+                                    <label for="diploDateFrom">From:<span style="color: red">*</span></label>
+                                    <input id="diploDateFrom" type="month" class="form-control diploDateFrom edufrom" name="{{edu.start}}" value="">
+                                </div>
+                                <div class="form-group col-12 col-lg-6">
+                                    <label for="diploDateTo">To:<span style="color: red">*</span></label>
+                                    <input id="diploDateTo" type="month" class="form-control diploDateTo eduto" name="{{edu.end}}" value="">
+                                </div>
+                                <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                                <div class="custom-file" style="margin-top: 32px;">
+                                    <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                    <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                        class="custom-file-input doc" id="resume-doc">
+                                </div>
+                                    <p id="msgdoc" style="color: red">{% if edu.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                                     <input class="diplocerti" type="text" id="certidoc" value="{{edu.certificate}}" style="visibility: hidden">
+                                    </div>
+                            </div>
+                            </div><hr>
+                        {% endif %}
+                    {% endfor %}
+                    {% for edu in candidate.education %}
+                        {% if edu.education == 'X' %}
+                        <div class="container Xfill" 
+                            style="margin-bottom:20px;padding:10px;border:1px solid black;border-radius:5px;">
+                            <label for="X">
+                                <h5>10th Standard</h5>
+                            </label>
+                            <div class="form-row">
+                                <div class="form-group col-12 col-lg-8">
+                                    <label for="Xinstitute">Institute:<span style="color: red">*</span></label>
+                                    <input id="Xinstitute" type="text" class="form-control Xinstitute" name="Xinstitute[]" value="{{edu.institute}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-8">
+                                    <label for="XBoard">Board:<span style="color: red">*</span></label>
+                                    <input id="XBoard" type="text" class="form-control XBoard" name="XBoard[]" value="{{edu.board}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-2" style="padding-right: 0px;">
+                                    <label for="Xscore">Score/CGPA:<span style="color: red">*</span></label>
+                                    <input id="Xscore" type="number" min="0" step="0.01" class="form-control Xscore" name="Xscore[]"
+                                        value="{{edu.score}}">
+                                </div>
+                                <div class="form-group col-12 col-lg-1 " style="padding-left: 0px;">
+                                    <label>Unit:<span style="color: red">*</span></label>
+                                    <select class="form-control Xscoreunit" id="Xscoreunit" name="Xscoreunit[]" value="">
+                                        <option value="%" {% if edu.score_unit == '%' %} selected {% endif %}>%</option>
+                                        <option value="/10" {% if edu.score_unit == '/10' %} selected {% endif %}>/10 (CGPA) </option>
+                                        <option value="/4" {% if edu.score_unit == '/4' %} selected {% endif %}>/4 (CGPA) </option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-12 col-lg-6">
+                                    <label for="XDateFrom">From:<span style="color: red">*</span></label>
+                                    <input id="XDateFrom" type="month" class="form-control XDateFrom edufrom" name="{{edu.start}}" value="">
+                                </div>
+                                <div class="form-group col-12 col-lg-6">
+                                    <label for="XDateTo">To:<span style="color: red">*</span></label>
+                                    <input id="XDateTo" type="month" class="form-control XDateTo eduto" name="{{edu.end}}" value="">
+                                </div>
+                                <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                                    <div class="custom-file" style="margin-top: 32px;">
+                                        <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                        <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                            class="custom-file-input doc" id="resume-doc">
+                                    </div>
+                                    <p id="msgdoc" style="color: red">{% if edu.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                                     <input class="Xcerti" type="text" id="certidoc" value="{{edu.certificate}}" style="visibility: hidden">
+                                    </div>
+                            </div>
+                            </div><hr>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="container otherfill"
+                    style="margin-bottom:20px;padding:10px;border:1px solid black;border-radius:5px;">
+                    <label for="other-degree">
+                        <h5>Other Degrees</h5>
+                    </label>
+                    {% for edu in candidate.education %}
+                    {% if not edu.is_current and edu.education != 'XII' and edu.education != 'Diploma' and edu.education != 'X'%}
+                    <form class="container" id="educationUpdate">
+                    <div id="education" style="margin:10px">
+                        <!-- -->
+                        <div class="form-row">
+                    <div class="form-group col-12 col-lg-6">
+                            <label for="institute">Institute:</label>
+                            <input id="institute" type="text" class="form-control eduinsti" name="institute[]" value="{{edu.institute}}" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="board">Board/University:</label>
+                            <input id="board" class="form-control eduboard" type="text" name="board[]" value="{{edu.board}}" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="from">From:</label>
+                            <input id="from" type="month" class="form-control otherfrom edufrom" name="{{edu.start}}" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="to">To:</label>
+                            <input id="to" type="month" class="form-control otherto eduto" name="{{edu.end}}" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="grade">Grade obtained:</label>
+                            <input id="grade" type="text" class="form-control edugrade" name="grade[]" value="{{edu.score}}" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="grade-of">Unit :</label>
+                            <select class="form-control edugradeof" name="grade-of[]" id="grade-of" required>
+                                <option value="%" {% if edu.score_unit == '%' %} selected {% endif %}>%</option>
+                                <option value="/10" {% if edu.score_unit == '/10' %} selected {% endif %}>/10 (CGPA)</option>
+                                <option value="/4" {% if edu.score_unit == '/4' %} selected {% endif %}>/4 (CGPA)</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="qualification">Qualification:</label>
+                            <input id="qualification" type="text" class="form-control eduquali" name="qualification[]" value="{{edu.education}}" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="branch">Branch:</label>
+                            <input id="branch" class="form-control edubranch" type="text" name="branch[]" value="{{edu.specialization}}" required>
+                        </div>
+                        <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                            <div class="custom-file" style="margin-top: 32px;">
+                                <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                    class="custom-file-input doc" id="resume-doc">
+                            </div>
+                        <p id="msgdoc" style="color: red">{% if edu.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                                     <input class="othercerti" type="text" id="certidoc" value="{{edu.certificate}}" style="visibility: hidden">
+            </div>
+                    
+                </div>
+                        <!-- -->
+                        <div class="row">
+                            <div class="col-6 col-lg-3">
+                                <button type="button" name="button" onclick="deleteEdu('{{edu.education}}')" class="btn btn-danger btn-sm add-more"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    </form><hr> 
+                    {% endif %}
+                    {% endfor %}
+                    <form class="container" id="educationAdd">
+                    <div id="education" class="after-add-more col-12 text-right" style="margin:10px;" >
+                        <button type="button" name="button" class="btn btn-success btn-sm add-more"><i class="fas fa-plus-circle"></i>Add</button>
+                    </div>
+                </form>
+                </div>
+                </div>
+                
+                <div id="eduadd" class="col-12  text-right" style="margin:10px;">
+                        <button type="submit" name="button" class="btn btn-sm btn-primary">Save</button>
+                    </div>
+            </div>
+            </div>
+        <div class="container" id="editexperienceshow" style="display:none;">
+            <div class="card mb-3 shadow-cus">
+                <div class="card-header border-dark">
+                    <h4>Professional Experience</h4>
+                </div>
+                <div class="card-body">
+                    {% for exp in candidate.experience %}
+                    <form class="container" id="experienceDelete">
+                    <div id="experience" style="margin:10px">
+                        <!-- -->
+                        <div class="form-row">
+                       <div class="form-group col-12 col-lg-3">
+                            <label for="exptype">Experience Type:</label>
+                            <select class="form-control exptype" id="expType" name="expType[]" value="{{exp.Type}}" required>
+                                <option value="Internship" {% if exp.Type == 'Internship' %} selected {% endif %}>Internship</option>
+                                <option value="Job" {% if exp.Type == 'Job' %} selected {% endif %}>Job</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="company">Company:</label>
+                            <input id="company" type="text" class="form-control expcomp" name="company[]" value="{{exp.company}}" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="expfrom">From:</label>
+                            <input id="expfrom" type="month" class="form-control expfrom" name="{{exp.from}}" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="expto">To:</label>
+                            <input id="expto" type="month" class="form-control expto" name="{{exp.to}}" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="desig">Designation:</label>
+                            <input id="desig" type="text" class="form-control expdesig" name="desig[]" value="{{exp.designation}}" required>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <label for="indtype">Industry Type:</label>
+                            <select class="form-control expitype" id="indtype" name="indtype[]" value="{{exp.industry}}" required>
+                                <option value="Accommodations" {% if exp.industry == 'Accommodations' %} selected {% endif %}>Accommodations</option>
+                                <option value="Accounting"  {% if exp.industry == 'Accounting' %} selected {% endif %}>Accounting</option>
+                                <option value="Advertising" {% if exp.industry == 'Advertising' %} selected {% endif %}>Advertising</option>
+                                <option value="Aerospace" {% if exp.industry == 'Aerospace' %} selected {% endif %}>Aerospace</option>
+                                <option value="Agriculture and Agribusiness" {% if exp.industry == 'Agriculture and Agribusiness' %} selected {% endif %}>Agriculture and Agribusiness</option>
+                                <option value="Air Transportation" {% if exp.industry == 'Air Transportation' %} selected {% endif %}>Air Transportation</option>
+                                <option value="Apparel and Accessories" {% if exp.industry == 'Apparel and Accessories' %} selected {% endif %}>Apparel and Accessories</option>
+                                <option value="Automobile" {% if exp.industry == 'Automobile' %} selected {% endif %}>Automobile</option>
+                                <option value="Banking" {% if exp.industry == 'Banking' %} selected {% endif %}>Banking</option>
+                                <option value="Beauty and Cosmetics" {% if exp.industry == 'Beauty and Cosmetics' %} selected {% endif %}>Beauty and Cosmetics</option>
+                                <option value="Biotechnology" {% if exp.industry == 'Biotechnology' %} selected {% endif %}>Biotechnology</option>
+                                <option value="Chemical" {% if exp.industry == 'Chemical' %} selected {% endif %}>Chemical</option>
+                                <option value="Communications" {% if exp.industry == 'Communications' %} selected {% endif %}>Communications</option>
+                                <option value="Computer" {% if exp.industry == 'Computer' %} selected {% endif %}>Computer</option>
+                                <option value="Construction" {% if exp.industry == 'Construction' %} selected {% endif %}>Construction</option>
+                                <option value="Consulting" {% if exp.industry == 'Consulting' %} selected {% endif %}>Consulting</option>
+                                <option value="Consumer Products" {% if exp.industry == 'Consumer Products' %} selected {% endif %}>Consumer Products</option>
+                                <option value="Education" {% if exp.industry == 'Education' %} selected {% endif %}>Education</option>
+                                <option value="Electronics" {% if exp.industry == 'Electronics' %} selected {% endif %}>Electronics</option>
+                                <option value="Employment" {% if exp.industry == 'Employment' %} selected {% endif %}>Employment</option>
+                                <option value="Energy" {% if exp.industry == 'Energy' %} selected {% endif %}>Energy</option>
+                                <option value="Entertainment and Recreation" {% if exp.industry == 'Entertainment and Recreation' %} selected {% endif %}>Entertainment and Recreation</option>
+                                <option value="Fashion" {% if exp.industry == 'Fashion' %} selected {% endif %}>Fashion</option>
+                                <option value="Financial Services" {% if exp.industry == 'Financial Services' %} selected {% endif %}>Financial Services</option>
+                                <option value="Fine Arts" {% if exp.industry == 'Fine Arts' %} selected {% endif %}>Fine Arts</option>
+                                <option value="Food and Beverage" {% if exp.industry == 'Food and Beverage' %} selected {% endif %}>Food and Beverage</option>
+                                <option value="Health" {% if exp.industry == 'Health' %} selected {% endif %}>Health</option>
+                                <option value="Information Technology" {% if exp.industry == 'Information Technology' %} selected {% endif %}>Information Technology</option>
+                                <option value="Insurance" {% if exp.industry == 'Insurance' %} selected {% endif %}>Insurance</option>
+                                <option value="Journalism and News" {% if exp.industry == 'Journalism and News' %} selected {% endif %}>Journalism and News</option>
+                                <option value="Legal Services" {% if exp.industry == 'Legal Services' %} selected {% endif %}>Legal Services</option>
+                                <option value="Manufacturing" {% if exp.industry == 'Manufacturing' %} selected {% endif %}>Manufacturing</option>
+                                <option value="Media and Broadcasting" {% if exp.industry == 'Media and Broadcasting' %} selected {% endif %}>Media and Broadcasting</option>
+                                <option value="Medical Devices and Supply" {% if exp.industry == 'Medical Devices and Supply' %} selected {% endif %}>Medical Devices and Supply</option>
+                                <option value="Motion Pictures and Video" {% if exp.industry == 'Motion Pictures and Video' %} selected {% endif %}>Motion Pictures and Video</option>
+                                <option value="Music" {% if exp.industry == 'Music' %} selected {% endif %}>Music</option>
+                                <option value="Pharmaceutical" {% if exp.industry == 'Pharmaceutical' %} selected {% endif %}>Pharmaceutical</option>
+                                <option value="Public Adminstration" {% if exp.industry == 'Public Adminstration' %} selected {% endif %}>Public Adminstration</option>
+                                <option value="Public Relations" {% if exp.industry == 'Public Relations' %} selected {% endif %}>Public Relations</option>
+                                <option value="Publishing" {% if exp.industry == 'Publishing' %} selected {% endif %}>Publishing</option>
+                                <option value="Real Estate" {% if exp.industry == 'Real Estate' %} selected {% endif %}>Real Estate</option>
+                                <option value="Retail" {% if exp.industry == 'Retail' %} selected {% endif %}>Retail</option>
+                                <option value="Service" {% if exp.industry == 'Service' %} selected {% endif %}>Service</option>
+                                <option value="Sports" {% if exp.industry == 'Sports' %} selected {% endif %}>Sports</option>
+                                <option value="Technology" {% if exp.industry == 'Technology' %} selected {% endif %}>Technology</option>
+                                <option value="Telecommunications" {% if exp.industry == 'Telecommunications' %} selected {% endif %}>Telecommunications</option>
+                                <option value="Tourism" {% if exp.industry == 'Tourism' %} selected {% endif %}>Tourism</option>
+                                <option value="Transportation" {% if exp.industry == 'Transportation' %} selected {% endif %}>Transportation</option>
+                                <option value="Travel" {% if exp.industry == 'Travel' %} selected {% endif %}>Travel</option>
+                                <option value="Utilities" {% if exp.industry == 'Utilities' %} selected {% endif %}>Utilities</option>
+                                <option value="Video Game" {% if exp.industry == 'Video Game' %} selected {% endif %}>Video Game</option>
+                                <option value="Web Services" {% if exp.industry == 'Web Services' %} selected {% endif %}>Web Services</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <label for="domain">Domain:</label>
+                            <select class="form-control expdom" id="domain" name="domain[]" value="{{exp.domain}}" required>
+                                <option value="Software Development" {% if exp.domain == 'Software Development' %} selected {% endif %}>Software Development</option>
+                                <option value="Management" {% if exp.domain == 'Management' %} selected {% endif %}>Management</option>
+                                <option value="Sales" {% if exp.domain == 'Sales' %} selected {% endif %}>Sales</option>
+                                <option value="Marketing" {% if exp.domain == 'Marketing' %} selected {% endif %}>Marketing</option>
+                            </select>
+                        </div>
+                        <div class="col-12" style="margin-bottom: 10px;">
+                            <div class="col-12 col-lg-6" style="margin-bottom: 10px; padding-left: 0px;">
+                                        <div class="custom-file">
+                                            <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                            <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                                class="custom-file-input doc " id="resume-doc">
+                                        </div>
+                                        <p id="msgdoc" style="color: red">{% if exp.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                                        <input class="expcerti" type="text" id="certidoc" value="{{exp.certificate}}" style="visibility: hidden">
+                                    </div>
+                        </div>
+                        <hr>
+                        <div class="form-group col-12">
+                            <h6><b>Responsibilties:</b></h6>
+                            <small class="text-muted">Only 80 to 110 characters are Allowed for each bullet point.</small><br>
+                            <label for="expinfo1">Bullet Point 1:<span style="color: red">*</span></label>
+                            <input id="expinfo1" type="text" class="form-control expinfo1" name="expinfo1[]" value="{{exp.information.0}}" maxlength="110"
+                                minlength="80">
+                            <label for="expinfo2">Bullet Point 2:<span style="color: red">*</span></label>
+                            <input id="expinfo2" type="text" class="form-control expinfo2" name="expinfo2[]" value="{{exp.information.1}}" maxlength="110"
+                                minlength="80">
+                            <label for="expinfo3">Bullet Point 3:<span style="color: red">*</span></label>
+                            <input id="expinfo3" type="text" class="form-control expinfo3" name="expinfo3[]" value="{{exp.information.2}}" maxlength="110"
+                                minlength="80">
+                        </div>
+                    </div>
+                        <!-- -->
+                        <div class="row">
+                            <div class="col-6 col-lg-3">
+                                <button type="button" name="button" onclick="deleteExp('{{exp.designation}}','{{exp.company}}')" class="btn btn-danger btn-sm add-more"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    </form><hr>
+                    {% endfor %}
+                <form class="container" id="experienceAdd">
+                    <div id="experience" class="after-add-more-exp col-12  text-right" style="margin:10px">
+                        <button type="button" name="button" class="btn btn-success btn-sm add-more-exp">Add Experience</button>
+                    </div>
+                    <div class="col-12  text-right" style="margin:10px;">
+                        <button type="submit" name="button" class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+    </div>
+    <div class="container" id="editprojectshow" style="display:none;">
+            <div class="card mb-3 shadow-cus">
+                <div class="card-header border-warning">
+                    <h4>Academic/Industrial Projects</h4>
+                </div>
+                <div class="card-body">
+                    {% for pro in candidate.projects %}
+                    <div id="projects" style="margin:10px">
+                        <div class="form-row">
+                        <div class="form-group col-12 col-lg-12">
+                            <label for="proName">Topic:</label>
+                            <input id="proName" type="text" class="form-control proname" name="proName[]" value="{{pro.Name}}" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="proUni">Company/University:</label>
+                            <input id="proUni" class="form-control prouni" type="text" name="proUni[]" value="{{pro.University_Company}}" required>
+                        </div>
+
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="proFrom">From:</label>
+                            <input id="proFrom" type="month" class="form-control profrom" name="{{pro.from}}" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="proTo">To:</label>
+                            <input id="proTo" type="month" class="form-control proto" name="{{pro.to}}" value="" required>
+                        </div>
+                        <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                            <div class="custom-file" style="margin-top: 32px;">
+                                <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                    class="custom-file-input doc" id="resume-doc">
+                            </div>
+                        <p id="msgdoc" style="color: red">{% if pro.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                        <input type="text" class="procerti" id="certidoc" value="{{pro.certificate}}" style="visibility: hidden">
+                    </div>
+                    <div class="form-group col-12">
+                        <h6><b>Responsibilties:</b></h6>
+                        <small class="text-muted">Only 80 to 110 characters are Allowed for each bullet point.</small><br>
+                        <label for="proinfo1">Bullet Point 1:<span style="color: red">*</span></label>
+                        <input id="proinfo1" type="text" class="form-control proinfo1" name="proinfo1[]" value="{{pro.information.0}}" maxlength="110"
+                            minlength="80">
+                        <label for="proinfo2">Bullet Point 2:<span style="color: red">*</span></label>
+                        <input id="proinfo2" type="text" class="form-control proinfo2" name="proinfo2[]" value="{{pro.information.0}}" maxlength="110"
+                            minlength="80">
+                    </div>
+                    </div>
+                        <div class="row">
+                            <div class="col-6 col-lg-3">
+                                <button type="button" name="button" onclick="deletePro('{{pro.Name}}')" class="btn btn-danger btn-sm add-more"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div><hr>
+                    {% endfor %}
+                    <form class="container" id="projectAdd">
+                    <div id="projects" class="after-add-more-pro col-12  text-right" style="margin:10px">
+                        <button type="button" name="button" class="btn btn-success btn-sm add-more-pro">Add Project</button>
+                    </div>
+                    <div class="col-12  text-right" style="margin:10px">
+                        <button type="submit" name="button" class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            <div class="container" id="editawardshow" style="display:none;">
+                <div class="card mb-3 shadow-cus">
+                    <div class="card-header border-secondary">
+                        <h4>Accolades &amp; Certifications</h4>
+                    </div>
+                    {% for award in candidate.award %}
+                    <div class="awards" style="margin:10px">
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-9">
+                                <label for="awardDis">Description:<span style="color: red">*</span></label>
+                                <input id="awardDis" type="text" class="form-control awardDis" maxlength="60" minlength="10" name="awardDis[]"
+                                    value="{{award.description}}">
+                                <small>Max 60 characters</small>
+                            </div>
+                            <div class="form-group col-12 col-lg-3">
+                                <label for="awardDate">Date:<span style="color: red">*</span></label>
+                                <input id="awardDate" type="month" class="form-control awardDate" name="{{award.date}}"
+                                    value="">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 col-lg-3">
+                                <button type="button" name="button" onclick="deleteAward('{{award.description}}')" class="btn btn-danger btn-sm add-more"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div><hr>
+                    {% endfor %}
+                    <form class="container" id="awardsAdd">
+                    <div id="achievements" class="after-add-more-award text-right" style="margin:10px">
+                        <button type="button" name="button" class="btn btn-success btn-sm add-more-award">Add an achievement</button>
+                    </div>
+                    <div class="col-12 text-right" style="margin:10px">
+                        <button type="submit" name="button" class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <div class="container" style="display:none" id="editresponsibilityshow">
+                <div class="card mb-3 shadow-cus">
+                    <div class="card-header border-danger">
+                        <h4>Extra-curricular Activities</h4>
+                    </div>
+                    {% for res in candidate.extra_curricular %}
+                    <div class="" style="margin:10px">
+                        <div class="form-row">
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="leadTitle">Role:</label>
+                            <input id="leadTitle" type="text" class="form-control leadTitle" name="leadTitle" value="{{res.role}}" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="commitee">Organization/commitee:</label>
+                            <input id="commitee" class="form-control commitee" type="text" name="commitee" value="{{res.organisation}}" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="leadFrom">from:</label>
+                            <input type="month" class="form-control leadFrom" id="leadFrom" name="{{res.start}}" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="leadTo">To:</label>
+                            <input type="month" class="form-control leadTo" id="leadTo" name="{{res.end}}" value="" required>
+                        </div>
+                        <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                    <div class="custom-file" style="margin-top: 32px;">
+                                <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                    class="custom-file-input doc" id="resume-doc">
+                            </div>
+                        <p id="msgdoc" style="color: red">{% if res.certificate != 'Certificate not uploaded' %}Uploaded{% endif %}</p>
+                        <input type="text" class="leadcerti" id="certidoc" value="{{res.certificate}}" style="visibility: hidden">
+                    </div>
+                    <div class="form-group col-12">
+                        <h6><b>Responsibilties:</b></h6>
+                        <small class="text-muted">Only 80 to 110 characters are Allowed for each bullet point.</small><br>
+                        <label for="leadinfo1">Bullet Point 1:<span style="color: red">*</span></label>
+                        <input id="leadinfo1" type="text" class="form-control leadinfo1" name="leadinfo1[]" value="{{res.info.0}}" maxlength="110"
+                            minlength="80">
+                        <label for="leadinfo2">Bullet Point 2:<span style="color: red">*</span></label>
+                        <input id="leadinfo2" type="text" class="form-control leadinfo2" name="leadinfo2[]" value="{{res.info.1}}" maxlength="110"
+                            minlength="80">
+                    </div>
+                    </div>
+                        <div class="row">
+                            <div class="col-6 col-lg-3">
+                                <button type="button" name="button" onclick="deleteLead('{{res.role}}','{{res.organisation}}')" class="btn btn-danger btn-sm add-more"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <form class="container" id="addLeadership">
+                        <div id="leadership" class="after-add-more-lead text-right" style="margin:10px">
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more-lead">Add</button>
+                        </div>
+                        <div class="col-12 text-right" style="margin:10px">
+                            <button type="submit" name="button" class="btn btn-sm btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+          <!--  <div class="container" style="display:none;" id="editskillshow">
+                <div class="card mb-3 shadow-cus">
+                    <div class="card-header border-danger">
+                        <h4>Skills</h4>
+                    </div>
+                    <div class="card-body">
+                        <form class="container" id="skillsAdd">
+                            <div id="skills" class="after-add-more-skills text-right" style="margin:10px">
+                                <button type="button" name="button" class="btn btn-success btn-sm add-more-award">Add a skill</button>
+                            </div>
+                            <div class="col-12 text-right" style="margin:10px">
+                                <button type="submit" name="button" class="btn btn-sm btn-primary">Save</button>
+                            </div>
+                        </form>
+                        <form class="container" id="skillsEdit">
+                            <div class="form-row">
+                            <div class="form-group col-12 col-lg-8">
+                            <label for="skillDis">Skill:</label>
+                            <input id="skillDis" type="text" class="form-control" maxlength="60" name="skillDis[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-4">
+                            <label for="skillPro">Proficiency:</label>
+                            <select class="form-control" name="skillPro[]" id="skillPro" required>
+                                <option value="basic">Basic</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div><hr>
+                            </div>
+                            <div class="text-center">
+                                <button onclick="updateSkills()" name="button" class="btn btn-sm btn-primary"><i class="fas fa-save"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> -->
+            <div class="container" id="editskillshow" style="display:none;">
+                <div class="card mb-3 shadow-cus">
+                    <div class="card-header border-secondary">
+                        <h4>Skills</h4>
+                    </div>
+                    
+                     {% for skill in candidate.skills %}
+                        {% for key,value in skill.items %}
+                        <div class="show-skill remove-skill-master">
+                        <div class="form-row">
+                        <div class="col-lg-1"></div>
+                        <div class="form-group col-12 col-lg-10">
+                            <label for="skillDisMas">Skill Group:</label>
+                            <input id="skillDisMas" type="text" class="form-control skillgroup" maxlength="60" name="skillDisMas[]" value="{{key}}" required>
+                        </div>
+                        <div class="col-6 col-lg-1">
+                                <button type="button" name="button" class="btn btn-danger btn-sm" style="margin-top: 35px;" onclick="delgroup('{{key}}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                        {% for v in value %}
+                            {% for vkey,vvalue in v.items %}
+                            <div class="form-row">
+                        <div class="col-12 col-lg-3"></div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillDis">Skill:</label>
+                            <input id="skillDis" type="text" class="form-control skilldis" maxlength="60" name="skillDis[]" value="{{vkey}}" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillPro">Proficiency:</label>
+                            <select class="form-control skillpro" name="skillPro[]" id="skillPro" required>
+                                <option value="basic" {% if vvalue == 'basic' %} selected {% endif %}>Basic</option>
+                                <option value="intermediate" {% if vvalue == 'intermediate' %} selected {% endif %}>Intermediate</option>
+                                <option value="expert" {% if vvalue == 'expert' %} selected {% endif %}>Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                                <button type="button" name="button" class="btn btn-danger" style="margin-top: 35px;" onclick="delskill('{{key}}','{{vkey}}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                            {% endfor %}
+                        {% endfor %}
+                    <div class="after-add-more-skills text-center" style="margin:10px">
+                            <button type="button" name="button" class="add-more-skill btn btn-success btn-sm" onclick="addskill($(this).parent());">Add Skill</button>
+                    </div>
+                    <hr>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <form class="container" id="skillAdd">                    
+                        <div class="after-add-more-skills-master text-right" style="margin:10px">
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more-skill-master">Add Group</button>
+                            <button type="submit" name="button" class="btn btn-sm btn-primary" style="width : 7%;">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div> 
+    </div>
+    <!-- Copy Fields for education -->
+        <div class="copy-edu" style="display:none;">
+            <div id="education" class="remove-edu" style="margin-top:10px">
+                <div class="form-row">
+                    <div class="form-group col-12 col-lg-6">
+                            <label for="institute">Institute:</label>
+                            <input id="institute" type="text" class="form-control eduinsti" name="institute[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="board">Board/University:</label>
+                            <input id="board" class="form-control eduboard" type="text" name="board[]" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="from">From:</label>
+                            <input id="from" type="month" class="form-control otherfrom edufrom" name="from[]" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="to">To:</label>
+                            <input id="to" type="month" class="form-control otherto eduto" name="to[]" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="grade">Grade obtained:</label>
+                            <input id="grade" type="number" class="form-control edugrade" name="grade[]" value="" step="0.01" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="grade-of">Unit :</label>
+                            <select class="form-control edugradeof" name="grade-of[]" id="grade-of" required>
+                                <option value="%">%</option>
+                                <option value="/10">/10 (CGPA)</option>
+                                <option value="/4">/4 (CGPA)</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="qualification">Qualification:</label>
+                            <input id="qualification" type="text" class="form-control eduquali" name="qualification[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="branch">Branch:</label>
+                            <input id="branch" class="form-control edubranch" type="text" name="branch[]" value="" required>
+                        </div>
+                        <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                    <div class="custom-file" style="margin-top: 32px;">
+                        <label class="custom-file-label" for="resume-doc">Certificate</label>
+                        <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                            class="custom-file-input doc" id="resume-doc">
+                    </div>
+                <p id="msgdoc" style="color: red"></p>
+                <input type="text" class="othercerti" id="certidoc" value="Certificate not uploaded" style="visibility: hidden">
+            </div>
+                    
+                </div>
+                <div class="col-6 col-lg-2 text-left">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+        </div><hr>
+        <!-- Copy Fields for experience -->
+            <div class="copy-exp" style="display:none;">
+                <div id="experience" class="remove-exp" style="margin-top:10px">
+                    <div class="form-row">
+                       <div class="form-group col-12 col-lg-3">
+                            <label for="exptype">Experience Type:</label>
+                            <select class="form-control exptype" id="expType" name="expType[]" value="" required>
+                                <option value="Internship">Internship</option>
+                                <option value="Job">Job</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="company">Company:</label>
+                            <input id="company" type="text" class="form-control expcomp" name="company[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="expfrom">From:</label>
+                            <input id="expfrom" type="month" class="form-control expfrom" name="expfrom[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="expto">To:</label>
+                            <input id="expto" type="month" class="form-control expto" name="expto[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="desig">Designation:</label>
+                            <input id="desig" type="text" class="form-control expdesig" name="desig[]" value="" required>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <label for="indtype">Industry Type:</label>
+                            <select class="form-control expitype" id="indtype" name="indtype[]" value="" required>
+                                <option value="Accommodations">Accommodations</option>
+                                <option value="Accounting">Accounting</option>
+                                <option value="Advertising">Advertising</option>
+                                <option value="Aerospace">Aerospace</option>
+                                <option value="Agriculture and Agribusiness">Agriculture and Agribusiness</option>
+                                <option value="Air Transportation">Air Transportation</option>
+                                <option value="Apparel and Accessories">Apparel and Accessories</option>
+                                <option value="Automobile">Automobile</option>
+                                <option value="Banking">Banking</option>
+                                <option value="Beauty and Cosmetics">Beauty and Cosmetics</option>
+                                <option value="Biotechnology">Biotechnology</option>
+                                <option value="Chemical">Chemical</option>
+                                <option value="Communications">Communications</option>
+                                <option value="Computer">Computer</option>
+                                <option value="Construction">Construction</option>
+                                <option value="Consulting">Consulting</option>
+                                <option value="Consumer Products">Consumer Products</option>
+                                <option value="Education">Education</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Employment">Employment</option>
+                                <option value="Energy">Energy</option>
+                                <option value="Entertainment and Recreation">Entertainment and Recreation</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Financial Services">Financial Services</option>
+                                <option value="Fine Arts">Fine Arts</option>
+                                <option value="Food and Beverage">Food and Beverage</option>
+                                <option value="Health">Health</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Insurance">Insurance</option>
+                                <option value="Journalism and News">Journalism and News</option>
+                                <option value="Legal Services">Legal Services</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Media and Broadcasting">Media and Broadcasting</option>
+                                <option value="Medical Devices and Supply">Medical Devices and Supply</option>
+                                <option value="Motion Pictures and Video">Motion Pictures and Video</option>
+                                <option value="Music">Music</option>
+                                <option value="Pharmaceutical">Pharmaceutical</option>
+                                <option value="Public Adminstration">Public Adminstration</option>
+                                <option value="Public Relations">Public Relations</option>
+                                <option value="Publishing">Publishing</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Service">Service</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Telecommunications">Telecommunications</option>
+                                <option value="Tourism">Tourism</option>
+                                <option value="Transportation">Transportation</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Video Game">Video Game</option>
+                                <option value="Web Services">Web Services</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-lg-3">
+                            <label for="domain">Domain:</label>
+                            <select class="form-control expdom" id="domain" name="domain[]" value="" required>
+                                <option value="Software Development">Software Development</option>
+                                <option value="Management">Management</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div class="col-12" style="margin-bottom: 10px;">
+                            <div class="col-12 col-lg-6" style="margin-bottom: 10px; padding-left: 0px;">
+                                        <div class="custom-file">
+                                            <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                            <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                                class="custom-file-input doc " id="resume-doc">
+                                        </div>
+                                        <p id="msgdoc" style="color: red"></p>
+                                        <input class="expcerti" type="text" id="certidoc" value="Certificate not uploaded" style="visibility: hidden">
+                                    </div>
+                        </div>
+                        <hr>
+                        <div class="form-group col-12">
+                <h6><b>Responsibilties:</b></h6>
+                <small class="text-muted">Only 80 to 110 characters are Allowed for each bullet point.</small><br>
+                <label for="expinfo1">Bullet Point 1:<span style="color: red">*</span></label>
+                <input id="expinfo1" type="text" class="form-control expinfo1" name="expinfo1[]" value="" maxlength="110"
+                    minlength="80">
+                <label for="expinfo2">Bullet Point 2:<span style="color: red">*</span></label>
+                <input id="expinfo2" type="text" class="form-control expinfo2" name="expinfo2[]" value="" maxlength="110"
+                    minlength="80">
+                <label for="expinfo3">Bullet Point 3:<span style="color: red">*</span></label>
+                <input id="expinfo3" type="text" class="form-control expinfo3" name="expinfo3[]" value="" maxlength="110"
+                    minlength="80">
+            </div>
+                    </div>
+                    <div class="col-6 col-lg-2 text-left">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-exp-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                </div>
+            </div>
+            <!-- Copy Fields for projects -->
+            <div class="copy-pro" style="display:none;">
+                <div id="projects" class="remove-pro" style="margin:10px">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-lg-12">
+                            <label for="proName">Topic:</label>
+                            <input id="proName" type="text" class="form-control proname" name="proName[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="proUni">Company/University:</label>
+                            <input id="proUni" class="form-control prouni" type="text" name="proUni[]" value="" required>
+                        </div>
+
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="proFrom">From:</label>
+                            <input id="proFrom" type="month" class="form-control profrom" name="proFrom[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="proTo">To:</label>
+                            <input id="proTo" type="month" class="form-control proto" name="proTo[]" value="" required>
+                        </div>
+                        <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                            <div class="custom-file" style="margin-top: 32px;">
+                                <label class="custom-file-label" for="resume-doc">Certificate</label>
+                                <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                    class="custom-file-input doc" id="resume-doc">
+                            </div>
+                        <p id="msgdoc" style="color: red"></p>
+                        <input type="text" class="procerti" id="certidoc" value="Certificate not uploaded" style="visibility: hidden">
+                    </div>
+                    <div class="form-group col-12">
+                        <h6><b>Responsibilties:</b></h6>
+                        <small class="text-muted">Only 80 to 110 characters are Allowed for each bullet point.</small><br>
+                        <label for="proinfo1">Bullet Point 1:<span style="color: red">*</span></label>
+                        <input id="proinfo1" type="text" class="form-control proinfo1" name="proinfo1[]" value="" maxlength="110"
+                            minlength="80">
+                        <label for="proinfo2">Bullet Point 2:<span style="color: red">*</span></label>
+                        <input id="proinfo2" type="text" class="form-control proinfo2" name="proinfo2[]" value="" maxlength="110"
+                            minlength="80">
+                    </div>
+                    </div>
+                    <div class="col-6 col-lg-2 text-left">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-pro-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                </div>
+            </div>
+
+            <!-- Copy Fields for LeaderShip -->
+            <div class="copy-lead" style="display:none;">
+                <div id="leaderships" class="remove-lead" style="margin:10px">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="leadTitle">Role:</label>
+                            <input id="leadTitle" type="text" class="form-control leadTitle" name="leadTitle" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="commitee">Organization/commitee:</label>
+                            <input id="commitee" class="form-control commitee" type="text" name="commitee" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="leadFrom">from:</label>
+                            <input type="month" class="form-control leadFrom" id="leadFrom" name="leadFrom" value="" required>
+                        </div>
+                        <div class="form-group col-6 col-lg-3">
+                            <label for="leadTo">To:</label>
+                            <input type="month" class="form-control leadTo" id="leadTo" name="leadTo" value="" required>
+                        </div>
+                        <div class="col-12 col-lg-6" style="margin-bottom: 10px;">
+                    <div class="custom-file" style="margin-top: 32px;">
+                            <label class="custom-file-label" for="resume-doc">Certificate</label>
+                            <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1,$(this).parent())"
+                                class="custom-file-input doc" id="resume-doc">
+                        </div>
+                    <p id="msgdoc" style="color: red"></p>
+                    <input type="text" class="leadcerti" id="certidoc" value="Certificate not uploaded" style="visibility: hidden">
+                </div>
+                <div class="form-group col-12">
+                    <h6><b>Responsibilties:</b></h6>
+                    <small class="text-muted">Only 80 to 110 characters are Allowed for each bullet point.</small><br>
+                    <label for="leadinfo1">Bullet Point 1:<span style="color: red">*</span></label>
+                    <input id="leadinfo1" type="text" class="form-control leadinfo1" name="leadinfo1[]" value="" maxlength="110"
+                        minlength="80">
+                    <label for="leadinfo2">Bullet Point 2:<span style="color: red">*</span></label>
+                    <input id="leadinfo2" type="text" class="form-control leadinfo2" name="leadinfo2[]" value="" maxlength="110"
+                        minlength="80">
+                </div>
+                    </div>
+                    <div class="col-6 col-lg-2 text-left">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-lead-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                </div>
+            </div>
+
+            <!-- Copy Fields for awards -->
+            <div class="copy-award" style="display:none;">
+                <div id="projects" class="remove-award" style="margin:10px">
+                    <div class="form-row">
+            <div class="form-group col-12 col-lg-9">
+                <label for="awardDis">Description:<span style="color: red">*</span></label>
+                <input id="awardDis" type="text" class="form-control awardDis" maxlength="60" minlength="10" name="awardDis[]"
+                    value="">
+                <small>Max 60 characters</small>
+            </div>
+            <div class="form-group col-12 col-lg-3">
+                <label for="awardDate">Date:<span style="color: red">*</span></label>
+                <input id="awardDate" type="month" class="form-control awardDate" name="awardDate[]"
+                    value="">
+            </div>
+        </div>
+                    <div class="col-6 col-lg-2 text-left">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-award-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                </div>
+            </div>
+            <!-- Copy Fields for Skills -->
+             <div class="copy-skill" style="display:none;">
+                <div id="skill" class="remove-skill" style="margin:10px">
+                    <div class="form-row">
+                        <div class="col-12 col-lg-3"></div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillDis">Skill:</label>
+                            <input id="skillDis" type="text" class="form-control skilldis" maxlength="60" name="skillDis[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillPro">Proficiency:</label>
+                            <select class="form-control skillpro" name="skillPro[]" id="skillPro" required>
+                                <option value="basic">Basic</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-skill-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <!--<button type="button" name="button" class="btn btn-danger btn-sm remove-skill-b">Remove Skill</button>-->
+                </div>
+            </div>
+            <!-- Copy Fields for Skills master -->
+            <div class="copy-skill-master" style="display:none;">
+                <div id="skill" class="remove-skill-master" style="margin:10px">
+                    <div class="form-row">
+                        <div class="col-lg-1"></div>
+                        <div class="form-group col-12 col-lg-10">
+                            <label for="skillDisMas">Skill Group:</label>
+                            <input id="skillDisMas" type="text" class="form-control skillgroup" maxlength="60" name="skillDisMas[]" value="" placeholder="eg. Management Skill, Programming" required>
+                        </div>
+                        <div class="col-6 col-lg-1">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-skill-b-master" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-12 col-lg-3"></div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillDis">Skill:</label>
+                            <input id="skillDis" type="text" class="form-control skilldis" maxlength="60" name="skillDis[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillPro">Proficiency:</label>
+                            <select class="form-control skillpro" name="skillPro[]" id="skillPro" required>
+                                <option value="basic">Basic</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-skill-b-inside" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-12 col-lg-3"></div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillDis">Skill:</label>
+                            <input id="skillDis" type="text" class="form-control skilldis" maxlength="60" name="skillDis[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="skillPro">Proficiency:</label>
+                            <select class="form-control skillpro" name="skillPro[]" id="skillPro" required>
+                                <option value="basic">Basic</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-skill-b-inside" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="after-add-more-skills text-center" style="margin:10px">
+                            <button type="button" name="button" class="add-more-skill btn btn-success btn-sm" onclick="addskill($(this).parent());">Add Skill</button>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <!-- Copy Fileds for Language -->
+            <div class="copy-lan" style="display:none;">
+                <div id="languages" class="remove-lan" style="margin:10px;width: 100%;">
+                    <div class="row" >
+                        <div class="form-group col-lg-3">
+                            <label for="lang"><h5>Language:</h5></label>
+                            <input id="lang" type="text" class="form-control lang" name="lang" value="" >
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label for="langp"><h5>Proficiency:</h5></label>
+                            <select class="form-control langp" name="langp" id="langp">
+                                <option value="Starter">Starter</option>
+                                <option value="Basic">Basic</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-lg-2">
+                                <button type="button" name="button" class="btn btn-danger btn-sm remove-lan-b" style="margin-top: 35px;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+{%endblock content%}
+{%block additionalJS%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.js"></script>
+<script>
+    function delskill(group,skill)
+    {
+         event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_old_skill',
+            'group' : group,
+            'skill' : skill
+            }
+        
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    function delgroup(group)
+    {
+         event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_old_skill_group',
+            'group' : group
+            }
+        
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    function basicdate()
+    {
+        $("input.basicdob").each(function(input){
+            var hehe= $(this).attr('name');
+            hehe=formatDate(hehe);
+            $(this).val(hehe);
+            
+        })
+    }
+    function edudate()
+    {
+        
+        $("input.edufrom").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'from[]')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+        
+        $("input.eduto").each(function(input){
+            console.log(input);
+            var hehe= $(this).attr('name');
+           if(hehe != 'to[]')
+                {
+                    hehe=formatMonth(hehe);
+                    console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+    }
+    
+    function expdate()
+    {
+        
+        $("input.expfrom").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'expfrom[]')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+        $("input.expto").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'expto[]')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+    }
+    
+    function prodate()
+    {
+        
+        $("input.profrom").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'proFrom[]')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+        $("input.proto").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'proTo[]')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+    }
+    
+    function leaddate()
+    {
+        
+        $("input.leadFrom").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'leadFrom')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+        $("input.leadTo").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'leadTo')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }
+            
+        });
+    }
+    
+    function awddateshow()
+    {
+        $("input.awardDate").each(function(input){
+            var hehe= $(this).attr('name');
+            if(hehe != 'awardDate[]')
+                {
+                    hehe=formatMonth(hehe);
+                    //console.log(hehe);
+                    $(this).val(hehe);
+                }  
+        });
+    }
+    //refresh logic for avoiding resubmissions
+  function formatDate(date) {
+    var mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var str = date;
+    
+    if(str.slice(4,5)=='.'){
+        if(str.slice(8,9)==','){
+             var ye = str.slice(9, 14);
+            var da = str.slice(6,8);
+          //  console.log(1);
+        }
+        else{
+             var ye = str.slice(9, 13);
+      var da = str.slice(5,7);
+              //    console.log(2);
+
+        }     
+    }
+    else{
+        if(str.slice(7, 8) == ',') {
+          var ye = str.slice(8, 13);
+          var da = str.slice(5, 7);
+               // console.log(3);
+
+        } 
+        else if (str.slice(6, 7) == ','){
+          var ye = str.slice(7, 12);
+          var da = str.slice(4,6);
+         // console.log(4);
+        }
+    }
+    var mon = str.slice(0, 3);
+    var a = mS.indexOf(mon)+1;
+    da=da.trim();
+    ye=ye.trim();
+    if(a<10){
+      if(da.length <2){
+        var fordate = ye +"-"+"0"+ a +"-"+ "0"+ da;
+      }
+      else{
+        var fordate = ye +"-"+"0"+ a +"-" + da;
+      }
+    }
+    else{
+      if(da.length <2){
+        var fordate =  ye+"-"+ a + "-"+ "0"+ da ;
+      }
+      else{
+        var fordate = ye +"-"+ a +"-"+ da;
+      }  
+    }
+     
+      return fordate;
+    //console.log(fordate)  
+    //$(that).val(fordate);    //yyyy-mm-dd 
+  }
+    
+    function formatMonth(date) {
+    var mS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var str = date;
+    
+    if(str.slice(4,5)=='.'){
+        if(str.slice(8,9)==','){
+             var ye = str.slice(9, 14);
+            var da = str.slice(6,8);
+          //  console.log(1);
+        }
+        else{
+             var ye = str.slice(9, 13);
+      var da = str.slice(5,7);
+              //    console.log(2);
+
+        }     
+    }
+    else{
+        if(str.slice(7, 8) == ',') {
+          var ye = str.slice(8, 13);
+          var da = str.slice(5, 7);
+               // console.log(3);
+
+        } 
+        else if (str.slice(6, 7) == ','){
+          var ye = str.slice(7, 12);
+          var da = str.slice(4,6);
+         // console.log(4);
+        }
+    }
+    var mon = str.slice(0, 3);
+    var a = mS.indexOf(mon)+1;
+    //da=da.trim();
+    ye=ye.trim();
+    if(a<10){
+      if(da.length <2){
+        var fordate = ye +"-"+"0"+ a;
+      }
+      else{
+        var fordate = ye +"-"+"0"+ a;
+      }
+    }
+    else{
+      if(da.length <2){
+        var fordate =  ye+"-"+ a;
+      }
+      else{
+        var fordate = ye +"-"+ a;
+      }  
+    }
+     
+      return fordate;
+    //console.log(fordate)  
+    //$(that).val(fordate);    //yyyy-mm-dd 
+  }
+
+    
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    //Main ajax calls
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+            }
+        }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    
+    function deleteEdu(education) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_edu',
+            'education' : education,
+            }
+        
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    
+    function deleteExp(desig,company) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_exp',
+            'designation' :  desig,
+            'company' : company,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    
+    function deletePro(proname) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_pro',
+            'proName' : proname,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    
+    function deleteLead(role,comp) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_lead',
+            'role' : role,
+            'comp' : comp
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    
+    function deleteAward(award) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_award',
+            'award' :award,
+            'dateaward' : document.getElementById('awardDate'+award).value
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    } 
+    
+    function deleteSkill(skill) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_skill',
+            'skill' :skill,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    } 
+    var skills = []
+    $('#skills').selectize({
+        plugins: ['remove_button'],
+        theme: 'links',
+        maxItems: null,
+        valueField: 'title',
+        searchField: 'title',
+        options: [
+            {% for skill in candidate.skills %}
+                {title : '{{skill}}'},
+            {% endfor %}
+        ],
+        render: {
+            option: function (data, escape) {
+                return '<div class="option">' +
+                '<span class="title">' + escape(data.title) + '</span>'
+                '</div>';
+            },
+            item: function (data, escape) {
+            return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+            }
+        },
+        create: function (input) {
+            return {
+            title: input,
+            };
+        },
+        onChange: function(value) {
+                skills = value;
+          }
+    });
+
+    $('#skills').on('change', function () {
+        var $wrapper = $('#skillsSelectize');
+        $('select.selectized,input.selectized', $wrapper).each(function () {
+            var $container = $('<div hidden >').addClass('value').html('Current Value: ');
+            var $value = $('<span>').appendTo($container);
+            var $input = $(this);
+            var update = function (e) { $value.text(JSON.stringify($input.val()));}
+            $(this).on('change', update);
+            update();
+            $container.insertAfter($input);
+        });
+    });
+function addskill(param){
+          var html = $(".copy-skill").html();
+          $(param).before(html);
+      }  
+$(document).ready(function() {
+
+      var b1 = $("#b1"), b2 = $("#b2"), b3 = $("#b3"), b4=$("#b4"), b5=$("#b5"), b6=$("#b6"), b7=$("#b7");
+      b1.add(b2).add(b3).add(b4).add(b5).add(b6).add(b7).click(function(){
+        $("#editbasicshow,#editeducationshow,#editexperienceshow,#editprojectshow,#editawardshow,#editresponsibilityshow,#editskillshow").slideUp("fast");
+        $(this.getAttribute("href")).slideDown("slow");
+        b1.add(b2).add(b3).add(b4).add(b5).add(b6).add(b7).removeClass("editactive");
+        $(this).addClass("editactive");
+    });
+        
+     basicdate();
+
+      
+    $(".add-more-lan").click(function() {
+         var html = $(".copy-lan").html();
+         $(".after-add-more-lan").before(html);
+      });
+    
+    $("body").on("click",".remove-lan-b",function(){
+          $(this).parents(".remove-lan").remove();
+      });
+    
+    $(".add-more").click(function(){
+          var html = $(".copy-edu").html();
+          $(".after-add-more").before(html);
+      });
+
+
+      $("body").on("click",".remove",function(){
+          $(this).parent(".col-6").parents(".remove-edu").remove();
+      });
+        
+     
+      $(".add-more-exp").click(function(){
+          var html = $(".copy-exp").html();
+          $(".after-add-more-exp").before(html);
+      });
+
+
+      $("body").on("click",".remove-exp-b",function(){
+          $(this).parent('.col-6').parents(".remove-exp").remove();
+      });
+
+      $(".add-more-pro").click(function(){
+          var html = $(".copy-pro").html();
+          $(".after-add-more-pro").before(html);
+      });
+
+      $("body").on("click",".remove-pro-b",function(){
+          $(this).parent('.col-6').parents(".remove-pro").remove();
+      });
+
+      $(".add-more-award").click(function(){
+          var html = $(".copy-award").html();
+          $(".after-add-more-award").before(html);
+      });
+      
+      $("body").on("click",".remove-award-b",function(){
+          $(this).parent('.col-6').parents(".remove-award").remove();
+      });
+    
+   /* $(".add-more-skill").click(function(){
+          alert("dfdsdfs");
+          var html = $(".copy-skill").html();
+          $(".after-add-more-skills").after(html);
+          alert("ddsfs");
+      });*/
+      
+    $(".add-more-skill-master").click(function(){
+          var html = $(".copy-skill-master").html();
+          $(".after-add-more-skills-master").before(html);
+      });
+    
+    $("body").on("click",".remove-skill-b-master",function(){
+          $(this).parent(".col-6").parent(".form-row").parents(".remove-skill-master").remove();
+      });
+    
+      $("body").on("click",".remove-skill-b",function(){
+          $(this).parent(".col-6").parent(".form-row").parents(".remove-skill").remove();
+      });
+    $("body").on("click",".remove-skill-b-inside",function(){
+          $(this).parent(".col-6").parent(".form-row").remove();
+      });  
+
+      $(".add-more-lead").click(function(){
+          var html = $(".copy-lead").html();
+          $(".after-add-more-lead").before(html);
+      });
+
+      $("body").on("click",".remove-lead-b",function(){
+          $(this).parent('.col-6').parents(".remove-lead").remove();
+      });
+
+
+    $('#basicInfoEdit').submit(function (e) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        var isValid = true;
+        $('#editbasicshow').find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editbasicshow').find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editbasicshow').find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+        {
+                    fname_arr = [] 
+            $('input[id="fname"]').each(function(input){
+                fname_arr.push($(this).val());
+            });
+            mname_arr = []
+            $('input[id="mname"]').each(function(input){
+                mname_arr.push($(this).val());
+            });
+            lname_arr = []
+            $('input[id="lname"]').each(function(input){
+                lname_arr.push($(this).val());
+            });
+            email_arr = []
+            $('input[id="email"]').each(function(input){
+                email_arr.push($(this).val());
+            });
+            ph_no_arr = []
+            $('input[id="ph_no"]').each(function(input){
+                ph_no_arr.push($(this).val());
+            });
+            dob_arr = []
+            $('input[id="dob"]').each(function(input){
+                dob_arr.push($(this).val());
+            });
+            address_arr = []
+            $('input[id="address"]').each(function(input){
+                address_arr.push($(this).val());
+            });
+            city_arr = []
+            $('input[id="city"]').each(function(input){
+                city_arr.push($(this).val());
+            });
+            postal_code_arr = []
+            $('input[id="pcode"]').each(function(input){
+                postal_code_arr.push($(this).val());
+            });
+            state_arr = []
+            $('input[id="state"]').each(function(input){
+                state_arr.push($(this).val());
+            });
+            country_arr = []
+            $('input[id="country"]').each(function(input){
+                country_arr.push($(this).val());
+            });
+            gender_arr = []
+            $('select[id="gender"]').each(function(input){
+                gender_arr.push($(this).val());
+            });
+            lang_arr = []
+            $('input.lang').each(function(input){
+                lang_arr.push($(this).val());
+            });
+            lang_arr.pop();
+            langp_arr = []
+            $('select.langp').each(function(input){
+                langp_arr.push($(this).val());
+            });
+            langp_arr.pop();
+            profilePic_arr = []
+            $('input.profilePic').each(function(input){
+                profilePic_arr.push($(this).val());
+            })
+
+            basicdata = {
+                'edit_type': 'basic_info',
+                'First_name' : fname_arr,
+                'Middle_name' : mname_arr,
+                'Last_name' : lname_arr,
+                'email' : email_arr,
+                'ph_no' : ph_no_arr,
+                'dob' : dob_arr,
+                'address' : address_arr,
+                'city' : city_arr,
+                'postal_code' : postal_code_arr,
+                'state' : state_arr,
+                'country' : country_arr,
+                'gender' : gender_arr,
+                'languages' : lang_arr,
+                'lang_pro' : langp_arr,
+                'profile_picture' : profilePic_arr
+            }
+            console.log(basicdata);
+            $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: basicdata,
+            success: function (basicdata) {
+                //console.log(data);
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+            });
+        }
+        else
+        {
+            alert("Please fill all the details");
+        }
+    });
+    
+    $('#eduadd').click(function (e) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        var isValid = true;
+        $('#editeducationshow').find($(".otherfill")).find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editeducationshow').find($(".otherfill")).find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editeducationshow').find($(".otherfill")).find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+            {
+                //current
+                score_arr = []
+                $('input.score').each(function(input){
+                    score_arr.push($(this).val());
+                });
+                closedbl_arr = []
+                $('input.closedbl').each(function(input){
+                    closedbl_arr.push($(this).val());
+                });
+                livebl_arr = []
+                $('input.livebl').each(function(input){
+                    livebl_arr.push($(this).val());
+                });
+                taverage_arr = []
+                $('input[id="taverage"]').each(function(input){
+                    taverage_arr.push($(this).val());
+                });
+                tclosedbl_arr = []
+                $('input[id="tclosedbl"]').each(function(input){
+                    tclosedbl_arr.push($(this).val());
+                });
+                tlivebl_arr = []
+                $('input[id="tlivebl"]').each(function(input){
+                    tlivebl_arr.push($(this).val());
+                });
+                semcerti_arr = []
+                $('input.semcerti').each(function(input){
+                    semcerti_arr.push($(this).val());
+                });
+                //XII
+                XIIschool_arr = []
+                $('input.XIIschool').each(function(input){
+                    XIIschool_arr.push($(this).val());
+                }); 
+                XIIboard_arr = []
+                $('input.XIIboard').each(function(input){
+                    XIIboard_arr.push($(this).val());
+                }); 
+                XIIinstitute_arr = []
+                $('input.XIIinstitute').each(function(input){
+                    XIIinstitute_arr.push($(this).val());
+                }); 
+                XIIscore_arr = []
+                $('input.XIIscore').each(function(input){
+                    XIIscore_arr.push($(this).val());
+                }); 
+                XIIscoreUnit_arr = []
+                $('select.XIIscoreUnit').each(function(input){
+                    XIIscoreUnit_arr.push($(this).val());
+                }); 
+                XIIDateFrom_arr = []
+                $('input.XIIDateFrom').each(function(input){
+                    XIIDateFrom_arr.push($(this).val());
+                }); 
+                XIIDateTo_arr = []
+                $('input.XIIDateTo').each(function(input){
+                    XIIDateTo_arr.push($(this).val());
+                }); 
+                XIIcerti_arr = []
+                $('input.XIIcerti').each(function(input){
+                    XIIcerti_arr.push($(this).val());
+                });
+                //diploma
+                DiploInst_arr = []
+                $('input.DiploInst').each(function(input){
+                    DiploInst_arr.push($(this).val());
+                });
+                DiploStream_arr = []
+                $('input.DiploStream').each(function(input){
+                    DiploStream_arr.push($(this).val());
+                });
+                DiploBoard_arr = []
+                $('input.DiploBoard').each(function(input){
+                    DiploBoard_arr.push($(this).val());
+                });
+                Diploscore_arr = []
+                $('input.Diploscore').each(function(input){
+                    Diploscore_arr.push($(this).val());
+                });
+                DiploscoreUnit_arr = []
+                $('select.DiploscoreUnit').each(function(input){
+                    DiploscoreUnit_arr.push($(this).val());
+                });
+                diploDateFrom_arr = []
+                $('input.diploDateFrom').each(function(input){
+                    diploDateFrom_arr.push($(this).val());
+                });
+                diploDateTo_arr = []
+                $('input.diploDateTo').each(function(input){
+                    diploDateTo_arr.push($(this).val());
+                });
+                diplocerti_arr = []
+                $('input.diplocerti').each(function(input){
+                    diplocerti_arr.push($(this).val());
+                });
+                //X
+                Xinstitute_arr = [] 
+                $('input.Xinstitute').each(function(input){
+                    Xinstitute_arr.push($(this).val());
+                });
+                XBoard_arr = []
+                $('input.XBoard').each(function(input){
+                    XBoard_arr.push($(this).val());
+                });
+                Xscore_arr = []
+                $('input.Xscore').each(function(input){
+                    Xscore_arr.push($(this).val());
+                });
+                Xscoreunit_arr = []
+                $('select.Xscoreunit').each(function(input){
+                    Xscoreunit_arr.push($(this).val());
+                });
+                XDateFrom_arr = []
+                $('input.XDateFrom').each(function(input){
+                    XDateFrom_arr.push($(this).val());
+                });
+                XDateTo_arr = []
+                $('input.XDateTo').each(function(input){
+                    XDateTo_arr.push($(this).val());
+                });
+                Xcerti_arr = []
+                $('input.Xcerti').each(function(input){
+                    Xcerti_arr.push($(this).val());
+                });
+                //other
+                inst_arr = []
+                  $('input.eduinsti').each(function(input){
+                    inst_arr.push($(this).val());
+             });
+                board_arr = []
+                $('input.eduboard').each(function(input){
+                    board_arr.push($(this).val());
+                });
+                from_arr = []
+                $('input.otherfrom').each(function(input){
+                    from_arr.push($(this).val());
+                });
+                to_arr = []
+                $('input.otherto').each(function(input){
+                    to_arr.push($(this).val());
+                });
+                grade_arr = []
+                $('input.edugrade').each(function(input){
+                    grade_arr.push($(this).val());
+                });
+                grade_of_arr = []
+                $('select.edugradeof').each(function(input){
+                    grade_of_arr.push($(this).val());
+                });
+                grade_of_arr.pop();
+                quali_arr = []
+                $('input.eduquali').each(function(input){
+                    quali_arr.push($(this).val());
+                });
+                branch_arr = []
+                $('input.edubranch').each(function(input){
+                    branch_arr.push($(this).val());
+                });
+                othercerti_arr = []
+                $('input.othercerti').each(function(input){
+                    othercerti_arr.push($(this).val());
+                });
+
+                edudata = {
+                    'edit_type': 'add_edu',
+                    'institute' : inst_arr,
+                    'board' : board_arr,
+                    'from' : from_arr,
+                    'to' : to_arr,
+                    'grade' : grade_arr,
+                    'grade-of' : grade_of_arr,
+                    'qualification' : quali_arr,
+                    'branch' : branch_arr,
+                    'othercerti' : othercerti_arr,
+
+                    'sem_score' : score_arr,
+                    'sem_closed_backlog' : closedbl_arr,
+                    'sem_live_backlogs' : livebl_arr,
+                    'average_sem_score' : taverage_arr,
+                    'total_live_backlogs' : tlivebl_arr,
+                    'total_closed_backlogs' : tclosedbl_arr,
+                    'semcerti' : semcerti_arr,
+
+                    'XII_School': XIIschool_arr,
+                    'XII_Stream' : XIIboard_arr,
+                    'XII_Board': XIIinstitute_arr,
+                    'XII_Score': XIIscore_arr,
+                    'XII_Score_Unit': XIIscoreUnit_arr,
+                    'XII_From': XIIDateFrom_arr,
+                    'XII_To': XIIDateTo_arr,
+                    'XII_Certi': XIIcerti_arr,
+
+                    'Diploma_School': DiploInst_arr,
+                    'Diploma_Stream': DiploStream_arr,
+                    'Diploma_Board': DiploBoard_arr,
+                    'Diploma_Score': Diploscore_arr,
+                    'Diploma_Score_unit': DiploscoreUnit_arr,
+                    'Diploma_From': diploDateFrom_arr,
+                    'Diploma_To': diploDateTo_arr,
+                    'Diploma_Certi':diplocerti_arr,
+
+                    'X_School': Xinstitute_arr,
+                    'X_Board': XBoard_arr,
+                    'X_Score': Xscore_arr,
+                    'X_Score_Unit': Xscoreunit_arr,
+                    'X_From': XDateFrom_arr,
+                    'X_To': XDateTo_arr,
+                    'X_Certi':Xcerti_arr,
+
+                    'total_certicount':certicount
+                }
+                //console.log(edudata);
+                $.ajax({
+                url: `{% url 'resume' %}`,
+                type: 'POST',
+                dataType: "json",
+                data: edudata,
+                success: function (edudata) {
+                    //console.log(data);
+                    window.location.reload();
+                },
+                complete: function() {
+                    $('#wait').hide();
+                 },
+                });
+            }
+        else{
+            alert("Please fill all the details");
+        }  
+    });
+
+    $('#experienceAdd').submit(function (e) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        
+        var isValid = true;
+        $('#editexperienceshow').find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editexperienceshow').find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editexperienceshow').find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+        {
+            exptype_arr = []
+            $('select.exptype').each(function(input){
+              exptype_arr.push($(this).val());
+            });        
+            exptype_arr.pop();
+            indtype_arr = []
+            $('select.expitype').each(function(input){
+              indtype_arr.push($(this).val());
+            });
+            indtype_arr.pop();
+            domain_arr = []
+            $('select.expdom').each(function(input){
+              domain_arr.push($(this).val());
+            });
+            domain_arr.pop();
+            comp_arr = []
+            $('input.expcomp').each(function(input){
+              comp_arr.push($(this).val());
+            });
+            from_arr = []
+            $('input.expfrom').each(function(input){
+              from_arr.push($(this).val());
+            });
+            to_arr = []
+            $('input.expto').each(function(input){
+              to_arr.push($(this).val());
+            });
+            desig_arr = []
+            $('input.expdesig').each(function(input){
+              desig_arr.push($(this).val());
+            });
+            info1_arr = []
+            $('input.expinfo1').each(function(input){
+                info1_arr.push($(this).val());
+            });
+            info2_arr = []
+            $('input.expinfo2').each(function(input){
+                info2_arr.push($(this).val());
+            });
+            info3_arr = []
+            $('input.expinfo3').each(function(input){
+                info3_arr.push($(this).val());
+            });
+            certificate_arr = []
+            $('input.expcerti').each(function(input){
+                certificate_arr.push($(this).val());
+            });
+
+            expdata = {
+                'edit_type': 'add_exp',
+                'expType' : exptype_arr,
+                'company' : comp_arr,
+                'from' : from_arr,
+                'to': to_arr,
+                'designation' : desig_arr,
+                'industry_type' : indtype_arr,
+                'domain' : domain_arr,
+                'info1' : info1_arr,
+                'info2' : info2_arr,
+                'info3' : info3_arr,
+                'certificate' : certificate_arr,
+                'total_certicount':certicount
+            }
+            console.log(expdata);
+            $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: expdata,
+            success: function (expdata) {
+                //console.log(data);
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+            });
+        }
+        else
+        {
+            alert("Please fill all the details");
+        }
+        
+        
+    });
+
+    $('#awardsAdd').submit(function (e) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        
+        var isValid = true;
+        $('#editawardshow').find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editawardshow').find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editawardshow').find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+        {
+            awd_date = []
+            $('input.awardDate').each(function(input){
+                awd_date.push($(this).val());
+            });
+            awd_dis = []
+            $('input.awardDis').each(function(input){
+                awd_dis.push($(this).val());
+            });
+
+            awddata = {
+                'edit_type': 'add_award',
+                'awardDis' : awd_dis,
+                'awardDate' : awd_date
+            }
+            //console.log(awddata);
+           $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: awddata,
+            success: function (awddata) {
+                //console.log(data);
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+            });
+        }
+        else
+        {
+            alert("Please fill all the details");
+        }
+        awd_dis = []
+        $('input.awardDis').each(function(input){
+            awd_dis.push($(this).val());
+        });
+        
+    });
+
+    $('#projectAdd').submit(function (event) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        var isValid = true;
+        $('#editprojectshow').find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editprojectshow').find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editprojectshow').find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+        {
+            pro_name = []
+            $('input.proname').each(function(input){
+              pro_name.push($(this).val());
+            });
+            pro_uni = []
+            $('input.prouni').each(function(input){
+              pro_uni.push($(this).val());
+            });
+            pro_from = []
+            $('input.profrom').each(function(input){
+              pro_from.push($(this).val());
+            });
+            pro_to = []
+            $('input.proto').each(function(input){
+              pro_to.push($(this).val());
+            });
+            pro_info1 = []
+            $('input.proinfo1').each(function(input){
+              pro_info1.push($(this).val());
+            });
+            pro_info2 = []
+            $('input.proinfo2').each(function(input){
+              pro_info2.push($(this).val());
+            });
+            pro_certi_arr = []
+            $('input.procerti').each(function(input){
+              pro_certi_arr.push($(this).val());
+            });
+
+            prodata = {
+                'edit_type': 'add_proj',
+                'proName' : pro_name,
+                'proUniversity' : pro_uni,
+                'proForm' : pro_from,
+                'proTo' : pro_to,
+                'proInfo1' : pro_info1,
+                'proInfo2' : pro_info2,
+                'procerti' : pro_certi_arr,
+                'total_certicount':certicount
+            }
+            //console.log(prodata);
+            $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: prodata,
+            success: function (prodata) {
+                //console.log(data);
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+            }); 
+        }
+        else
+        {
+            alert("Please fill all the details");
+        }
+        
+    });
+    
+    $('#addLeadership').submit(function (event) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        var isValid = true;
+        $('#editresponsibilityshow').find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editresponsibilityshow').find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editresponsibilityshow').find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+        {
+            role = []
+            $('input.leadTitle').each(function(input){
+              role.push($(this).val());
+            });
+            organization = []
+            $('input.commitee').each(function(input){
+              organization.push($(this).val());
+            });
+            lead_from = []
+            $('input.leadFrom').each(function(input){
+              lead_from.push($(this).val());
+            });
+            lead_to = []
+            $('input.leadTo').each(function(input){
+              lead_to.push($(this).val());
+            });
+            lead_info1 = []
+            $('input.leadinfo1').each(function(input){
+              lead_info1.push($(this).val());
+            });
+            lead_info2 = []
+            $('input.leadinfo2').each(function(input){
+              lead_info2.push($(this).val());
+            });
+            lead_certi_arr = []
+            $('input.leadcerti').each(function(input){
+              lead_certi_arr.push($(this).val());
+            });
+
+            leaddata = {
+                'edit_type': 'add_lead',
+                'Role' : role,
+                'organization' : organization,
+                'from' : lead_from,
+                'to' : lead_to,
+                'Info1' : lead_info1,
+                'Info2' : lead_info2,
+                'Certificate' : lead_certi_arr,
+                'total_certicount':certicount
+            }
+            //console.log(leaddata);
+            $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: leaddata,
+            success: function (leaddata) {
+                //console.log(data);
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+            });
+        }
+        else
+        {
+            alert("Please fill all the details");
+        }
+    });
+    
+    $('#skillAdd').submit(function (e) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        var isValid = true;
+        $('#editskillshow').find($("input[type='text']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editskillshow').find($("input[type='number']")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        $('#editskillshow').find($("select")).each(function(){
+            var element = $(this);
+            if (element.val() == "") {
+               isValid = false;
+            }
+        });
+        if(isValid)
+        {
+            skill_ajax = []
+            skcount = 0;
+            $('div.remove-skill-master').each(function(input){
+                subcount = 0;
+                disc = [];
+                prof = [];
+                $(this).find('input.skilldis').each(function(input){
+                    disc.push($(this).val());
+                });
+                $(this).find('select.skillpro').each(function(input){
+                    prof.push($(this).val());
+                });
+                data = disc.map(function(e,i) {
+                    return [e,prof[i]]
+                });
+                skgroup = $(this).find('input.skillgroup').val();
+                data.push(skgroup);
+                data.push(disc.length)
+                skill_ajax.push(data);
+                skcount += 1;
+            });
+
+            skill_ajax.pop();
+
+            skilldata = {
+                'edit_type': 'add_skill',
+                'data' : skill_ajax,
+                'count' : skcount
+            }
+            $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: skilldata,
+            success: function (skilldata) {
+                //console.log(data);
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+            });
+        }
+        else
+        {
+            alert("Please fill all the details");
+        }
+    });
+    
+    /*function updateBasicInfo(url) {
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'basic_info',
+            'name': document.getElementById('cname').value,
+            'ph_no': document.getElementById('ph_no').value,
+            'gender': document.getElementById('cgender').value,
+            'dob' : document.getElementById('cdob').value,
+            'address' : document.getElementById('caddress').value,
+            'profile_picture' : url
+        }
+        console.log(data,"here data");
+        event.preventDefault();
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    } */
+
+    function updateEdu(education) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'update_edu',
+            'init_edu': education,
+            'education' :  document.getElementById('deg'+education).value,
+            'institute' : document.getElementById('inst'+education).value,
+            'specialisation' : document.getElementById('brn'+education).value,
+            'score' : document.getElementById('cg'+education).value,
+            'passYear' : document.getElementById('py'+education).value,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+  /*  function deleteEdu(education) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_edu',
+            'education' : education,
+            }
+        
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }*/
+    function updateExp(desig,company) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'initialDesig' : desig,
+            'initialCom' : company,
+            'edit_type' : 'update_exp',
+            'from' :  document.getElementById('from'+desig+company).value,
+            'to' :  document.getElementById('to'+desig+company).value,
+            'company' : document.getElementById('com'+desig+company).value,
+            'info1' : document.getElementById('info1'+desig+company).value,
+            'info2' : document.getElementById('info2'+desig+company).value,
+            'info3' : document.getElementById('info3'+desig+company).value,
+            'designation' : document.getElementById('desig'+desig+company).value,
+            'expType' : document.getElementById('expType'+desig+company).value,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+  /*  function deleteExp(desig,company) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_exp',
+            'designation' :  desig,
+            'company' : company,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    } */
+    function updatePro(proname) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'update_proj',
+            'proNameInit': proname,
+            'name' : document.getElementById('proName'+proname).value,
+            'info': document.getElementById('proDis'+proname).value,
+            'date' : document.getElementById('proDate'+proname).value
+        }
+        $.ajax({
+            url: `{%  url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    /*function deletePro(proname) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_pro',
+            'proName' : proname,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    } */
+    function updateAward(award) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'update_award',
+            'desInit': award,
+            'des' : document.getElementById('awardDis'+award).value,
+            'info': document.getElementById('awardDate'+award).value,
+        }
+        $.ajax({
+            url: `{%  url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    /*function deleteAward(award) {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'del_award',
+            'award' :award,
+            'dateaward' : document.getElementById('awardDate'+award).value
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    } */
+    function updateSkills() {
+        event.preventDefault();
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'edit_type': 'skills',
+            'skills' : skills,
+        }
+        $.ajax({
+            url: `{% url 'resume' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                window.location.reload();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    
+});
+</script>
+<script defer src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/6.3.0/firebase-storage.js"></script>
+<script defer src="{% static 'candidate/js/init-firebase.js' %}"></script>
+<script>
+    function fasterPreview(uploader) {
+        if(uploader.files && uploader.files[0]) {
+            $('#logo').attr('src',window.URL.createObjectURL(uploader.files[0]));
+        }
+    }
+    $('#profilepicture').change(function(){
+        fasterPreview(this);
+    });
+    certicount = {{candidate.total_certicount}} + 1;
+    function uploadGetURL(o,that) {
+        
+        var i;
+        if (o == 0) {
+            storageLink = 'resumePictures/{{request.session.email}}';
+        } else {
+            storageLink = 'documents/{{request.session.email}}/'+ certicount ;
+            certicount = certicount +  1; 
+        }
+        if ($(that).find("input[type='file']").prop('files').length != 0)
+            file = $(that).find("input[type='file']").prop('files')[0];
+            $('#submitForm').attr("disabled", true);
+            ext = file.type;
+            ext = ext.split('/')[1];
+            var storageRef = firebase.storage().ref();
+            var profilePictureRef = storageRef.child(storageLink);
+            var uploadTask = profilePictureRef.put(file);
+            uploadTask.on('state_changed', function (snapshot) {
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                // console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED: // or 'paused'
+                        console.log('Upload is paused');
+                        
+                        break;
+                    case firebase.storage.TaskState.RUNNING: // or 'running'
+                        console.log('Upload is running');
+                        $(that).parent('.col-12').find("p[id='msgdoc']").text('uploading');
+                        //$(that).append('<p id=""><small>Uploading</small></p>');
+                        break;
+                }
+            }, function (error) {
+                // Handle unsuccessful uploads
+                $(that).parent('.col-12').find("p[id='msgdoc']").text('Try again');
+            }, function () {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                    // console.log('File available at', downloadURL);
+                    //$(that).append('<p><small>Uploaded</small></p>')
+                    $(that).parent('.col-12').find("p[id='msgdoc']").text('uploaded');
+                    //$(that).append('<input type="text" id="rec_logo" value="'+downloadURL+'" name="logo" />'); //style="visibility: hidden;"
+                    $(that).parent('.col-12').find("input[id='certidoc']").val(downloadURL)
+                    if (o == 0) {
+                        profilePicURL = downloadURL;
+                    } else {
+                       // documentsLinks.push(downloadURL);
+                        console.log(storageLink);
+                       // console.log(documentsLinks);
+                    }
+                    $('#submitForm').attr("disabled", false);
+                });
+            });
+        }
+</script>
+<script>
+     $(document).ready(function(){
+        $('#page2').hide();
+     });
+    $(document).ready(function(){
+  $('#batch-toggle').on('click', '#switchpage1', function(event) {
+      $('#studentsView').show();
+      // $("#tgv-s").removeClass("btn btn-outline-dark");
+      // $('#tgv-s').addClass("btn btn-light active");
+      // $("#tgv-b").removeClass("btn btn-light active");
+      // $('#tgv-b').addClass("btn btn-outline-dark");
+      // $('#switchBatch').addClass("tab-link");
+      // $('#switchCompany').removeClass("tab-link");
+      $('#switchpage1').addClass("current");
+      $('#switchpage2').removeClass("current");
+      $('#page2').hide();
+      $('#page1').show();
+    //   $('#delb').show();
+    //   $('#notifyb').show();
+    //   $('#frezeb').show();
+    //   $('#studentCount').show();
+  });
+  });
+
+$(document).ready(function(){
+  $('#batch-toggle').on('click', '#switchpage2', function(event) {
+      $('#batchOverview').show();
+      // $("#tgv-b").removeClass("btn btn-outline-dark");
+      // $('#tgv-b').addClass("btn btn-light active");
+      // $("#tgv-s").removeClass("btn btn-light active");
+      // $('#tgv-s').addClass("btn btn-outline-dark");
+      // $('#switchBatch').removeClass("tab-link");
+      // $('#switchCompany').addClass("tab-link");
+      $('#switchpage1').removeClass("current");
+      $('#switchpage2').addClass("current");
+      $('#page1').hide();
+      $('#page2').show();
+    //   $('#delb').hide();
+    //   $('#notifyb').hide();
+    //   $('#frezeb').hide();
+    //   $('#studentCount').hide();
+  });
+  });
+
+$('.tabs-nav a:first').trigger('click'); // Default
+
+  // initialisation for tooltips
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+    });
+    </script>
+
+{%endblock%}

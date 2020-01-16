@@ -1,0 +1,276 @@
+{% extends "candidate/base.html" %}
+{% block title %}AMP Tech | Jobs{% endblock title %}
+{% load static %}
+{% block additionalCSS %}
+
+{% endblock additionalCSS%}
+
+{% block content %}
+<Style>
+    .btns{
+        background:transparent;
+        border: 0;
+        letter-spacing: 0.1rem;
+        text-transform: uppercase;
+        font-weight: 10;
+    }
+    .btns:enabled{
+        color:#071a99;
+
+    }
+    .btns:enabled:hover{
+       border-bottom: 1px solid #64b4f5;
+       background: #eee;
+       border-radius:3px;
+    }
+</Style>
+<div class="container">
+    <div class="card shadow-cus">
+        <div class="card-header border-info">
+            <div class="row">
+                <div class="col-8">
+                    <h4>Video Resume</h4>
+                </div>
+                <div class="col-4" style="padding : 0 10px 0 10px;">
+                    <button type="button" name="button" id="btn-start-recording" class="btns" >Start</button>
+                    <button type="button" name="button" id="btn-stop-recording" class="btns" disabled>Stop</button>
+                    <button type="button" name="button" id="btn-reset-recording" class="btns" disabled>Reset</button>
+                    <button onclick="uploadToFirebase()" type="button" name="button" id="upload" class="btns" disabled>Upload</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" >
+            <h6 class="card-title">Tell us about Yourself</h6>
+            <small>The recoding will automatically stop after 60 Secs</small>
+            <div class="row">
+                <p class="muted col-12 text-center" id="msg" ></p>
+            </div>
+            <div class="row" >
+                <div class="col-12" style="height:500px;">
+                    <center><video id="player" autoplay controls playsinline></video></center>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="col-12 text-center">
+
+            </div>
+        </div>
+    </div>
+</div>
+{% if applicat_req.personality_ques %}
+{% url 'external_interview_part' part=3 as destination %}
+        <form action="{% url 'external_interview_part' part=3 %}" method="get">{% csrf_token %}
+          <div style="display: none">
+               <input type="text" name="job" value="{{job}}" hidden>
+                <button type="submit" name="button" id="jobInterviewButton"></button>
+            </div>
+        </form>
+{% elif applicat_req.vid_interview %}
+{% url 'external_interview_part' part=4 as destination %}
+        <form action="{% url 'external_interview_part' part=4 %}" method="get">{% csrf_token %}
+          <div style="display: none">
+               <input type="text" name="job" value="{{job}}" hidden>
+                <button type="submit" name="button" id="jobInterviewButton"></button>
+            </div>
+        </form>
+{% else %}
+{% url 'external_interview_part' part=5 as destination %}
+        <form action="{% url 'external_interview_part' part=5 %}" method="get">{% csrf_token %}
+          <div style="display: none">
+               <input type="text" name="job" value="{{job}}" hidden>
+                <button type="submit" name="button" id="jobInterviewButton"></button>
+            </div>
+        </form>
+{% endif %}
+
+<!--<button onclick="window.location.href={{destination}}" id="jobInterviewButton" formmethod="get"></button>-->
+{% endblock content %}
+
+{% block additionalJS %}
+
+
+<script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+<script>
+var video = document.querySelector('video');
+function captureCamera(callback) {
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(camera) {
+        callback(camera);
+    }).catch(function(error) {
+        alert('Unable to capture your camera. Please check console logs.');
+        console.error(error);
+    });
+}
+function stopRecordingCallback() {
+    video.src = video.srcObject = null;
+    video.muted = false;
+    video.volume = 1;
+    video.src = URL.createObjectURL(recorder.getBlob());
+    document.getElementById('upload').disabled = false;
+    recorder.camera.stop();
+}
+var recorder; // globally accessible
+document.getElementById('btn-start-recording').onclick = function() {
+    this.disabled = true;
+    captureCamera(function(camera) {
+        video.muted = true;
+        video.volume = 0;
+        video.srcObject = camera;
+        recorder = RecordRTC(camera, {
+            type: 'video'
+        });
+
+        // Timer
+        var recordingDuration = 60000;
+        recorder.setRecordingDuration(recordingDuration).onRecordingStopped(stopRecordingCallback);
+
+        recorder.startRecording();
+        // release camera on stopRecording
+        recorder.camera = camera;
+        document.getElementById('btn-stop-recording').disabled = false;
+        document.getElementById('msg').innerHTML = "Recording...";
+    });
+};
+document.getElementById('btn-stop-recording').onclick = function() {
+    this.disabled = true;
+    document.getElementById('btn-reset-recording').disabled = false;
+    recorder.stopRecording(stopRecordingCallback);
+    document.getElementById('msg').innerHTML = "Stopped";
+};
+
+document.getElementById('btn-reset-recording').onclick = function() {
+    this.disabled = true;
+    document.getElementById('btn-start-recording').disabled = false;
+    recorder.clearRecordedData();
+    document.getElementById('msg').innerHTML = "Video cleared : Click start to record a new video";
+};
+</script>
+<script>
+    //refresh logic for avoiding resubmissions
+
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    //Main ajax calls
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+            }
+        }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    function updateVideoUrl(url) {
+        $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            $('#wait').show();
+        }
+        });
+        data = {
+            'video_link' : url,
+            'job' : '{{jobId}}',
+            'type' : 'final'
+        }
+        event.preventDefault();
+        $.ajax({
+            url: `{% url 'external_interview_part' part=2 %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                //window.location.href = "{% url 'profile' %}";
+                $('#jobInterviewButton').click();
+            },
+            complete: function() {
+                $('#wait').hide();
+             },
+        });
+    }
+    //from here
+    
+</script>
+
+<!-- Firebase -->
+<script defer src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/6.3.0/firebase-storage.js"></script>
+<script defer src="{% static 'candidate/js/init-firebase.js' %}"></script>
+<!-- firebase logic -->
+<script>
+    function uploadToFirebase(){
+        file = recorder.getBlob()
+        if (file) {
+            document.getElementById('upload').disabled = true;
+            document.getElementById('btn-reset-recording').disabled = true;
+            var storageRef = firebase.storage().ref();
+            var videoResume = storageRef.child('resumeVideos/{{request.session.email}}');
+            var uploadTask = videoResume.put(file);
+            uploadTask.on('state_changed', function(snapshot){
+              // Observe state change events such as progress, pause, and resume
+              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+              var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              // console.log('Upload is ' + progress + '% done');
+              $('#msg').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><h5>Uploading ' + progress + '% </h5>');
+              switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                  console.log('Upload is paused');
+                  $('#msg').html('<h5>Upload is paused</h5>');
+                  break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                  console.log('Upload is running');
+                  break;
+              }
+            }, function(error) {
+              // Handle unsuccessful uploads
+            }, function() {
+              // Handle successful uploads on complete
+              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+              uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                // console.log('File available at', downloadURL);
+                updateVideoUrl(downloadURL);
+                $('#msg').html('<h5>Uploaded</h5>');
+              });
+            });
+        } else {
+            console.log("Uploading Error");
+            alert("Uploading Error");
+        }
+    }
+
+</script>
+<!--
+
+-->
+{% endblock additionalJS%}

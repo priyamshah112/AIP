@@ -1,0 +1,707 @@
+{% extends "candidate/base.html" %}
+{% block title %}Apli.ai | Applications{% endblock title %}
+{% block additionalCSS %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css"
+    href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/sl-1.3.0/datatables.min.css" />
+<!-- Page level plugin JavaScript-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/dataTables.bootstrap4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript"
+    src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-flash-1.5.6/b-html5-1.5.6/sl-1.3.0/datatables.min.js">
+</script>
+{% endblock additionalCSS%}
+{% block content %}
+<style>
+    .active-col {
+        border-bottom: 6px solid gray;
+    }
+
+    #application-toggle2 {
+        background: #c2ebe7;
+        border-bottom: 1px solid #999 !important;
+    }
+
+    .tabs {
+        display: flex;
+        flex-direction: row;
+        list-style-type: none;
+        justify-content: space-evenly;
+        padding-top: 0.5rem;
+        font-size: larger;
+        margin-bottom: 0;
+        background: #d0f1ef;
+        border-bottom: 1px solid #858181;
+
+    }
+
+    #application-toggle2 .tabs {
+        background: #c2ebe7;
+        border-bottom: none;
+
+
+    }
+
+    .tabs li {
+        /* padding:0.5rem; */
+        cursor: pointer;
+    }
+
+    .tabs .current {
+        border-bottom: 0.2rem solid #42425C;
+    }
+
+    .hr {
+        margin: 0;
+        color: #42425C;
+    }
+
+    #divID3 svg {
+        color: grey;
+    }
+
+    #divID2 svg {
+        color: grey;
+    }
+
+    #divID1 svg {
+        color: grey;
+    }
+
+    .goldstar {
+        color: goldenrod !important;
+    }
+</style>
+
+<style>
+    .star {
+        position: relative;
+        display: inline-block;
+        font-size: 2em;
+    }
+
+    .star-under {
+        color: #ddd;
+    }
+
+    .star-over {
+        color: #f80;
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+    }
+
+    .star-visible {
+        display: inline-block;
+    }
+
+    #content {
+        padding: 0;
+    }
+</style>
+<!-- <div class="row">
+    <div class="col-4 text-center" onclick="showJobs()" id="showJobsB">
+        <h4>JOBS</h4>
+    </div>
+    <div class="col-4 text-center" onclick="showinterview()" id="showJobsB">
+        <h4>my interview</h4>
+    </div>
+    <div class="col-4 text-center" onclick="showSaved()" id="showSavedB">
+        <h4>SAVED</h4>
+    </div>
+</div> -->
+                    {% if messages %}
+                    <ul id="alert" class="list-group list-group-flush">
+                    {% for message in messages %}
+                        <li {% if message.tags %}
+                        {% if message.tags == 'success' %}
+                            class = "list-group-item list-group-item-success"
+                        {% else %}
+                            class = "list-group-item list-group-item-danger"
+                        {% endif %}
+                        {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                    {% endif %}
+
+<div id="application-toggle" class="row text-center">
+    <ul class="tabs col-md-12 text-center">
+        <li id="switchApps" class="tab-link current">Applications</li>
+        <li id="switchJobs" class="">Jobs</li>
+        <li id="switchSave" class="">Saved</li>
+
+    </ul>
+
+</div>
+<!-- <hr style="height:1px; width: 100%; margin:0;"> -->
+
+<!-- <div id="application-toggle2" class="row">
+    <ul class="tabs col-md-3">
+    <li id="switchApp1" class="tab-link current">Applied</li>
+    <li id="switchApp2" class="">Pending</li>
+    </ul>
+</div> -->
+<div id="App">
+    <div id="application-toggle2" class="row">
+        <ul class="tabs col-md-3">
+            <li id="switchApp1" class="tab-link current">
+                <p class="text-center" style="font-size: 30px; font-weight: 600; margin:auto;">{{lapp}}</p>Applied
+            </li>
+            <li id="switchApp2" class="">
+                <p class="text-center" style="font-size: 30px; font-weight: 600; margin:auto;">{{lpen}}</p>Incomplete
+            </li>
+        </ul>
+
+    </div>
+
+    <div id="App1">
+        <div class="row" id="appliedTable" style="margin-top: 10px">
+            {% for key,value in comp_apps %}
+
+
+            <div class="modal fade" id="{{key}}" tabindex="-1" role="dialog" aria-labelledby="{{key}}"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="{{key}}Title">{{value.post}}, {{value.cmpnm}}</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="padding:10px;">
+                            <h6><b>Location</b>: {{value.place}}</h6>
+                            <h6><b>CTC</b> : {{value.salary}}</h6>
+                            <h6><b>Notice Period</b>: {{value.notice_period}}</h6>
+                            <h6><b>Role description</b>: {{value.job_description}}</h6>
+                            <h6><b>Key Responsibilities</b>: {{value.key_responsibility}}</h6>
+                            <h6><b>Other Responsibilities</b>: {%for res in value.other%} {{res}}, {% endfor %}</h6>
+                            <h6><b>Soft Skills</b>: {%for skill in value.sskill%} {{skill}}, {% endfor %}</h6>
+                            <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}}, {% endfor %}</h6>
+                            <h6><b>Deadline</b>: {{value.deadline}}</h6>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
+                                <input type="text" name="job" value="{{key}}" hidden>
+                                <button class="btn btn-success" type="submit" disabled>Apply Now</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-12" style="padding-bottom:20px;">
+                    <div class="card shadow-cus">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-lg-6">
+                                    <h3>{{value.post}}, {{value.cmpnm}}</h3>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <!--<h5 class="float-right">CTC:{{value.salary}}</h5>-->
+                                </div>
+                                <div class="col-12">
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-12 col-lg-8">
+                                            <h6><b>Location</b>: {{value.place}}</h6>
+                                            <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}},
+                                                {% endfor %}</h6>
+                                            <h6 style="color:red"><b>DeadLine</b>: {{value.deadline}}</h6>
+                                        </div>
+                                        <!--
+                                    <div class="col-12 col-lg-2">
+                                        <button type="button" name="button"  onclick="f1('{{key}}')" class="btn btn-success float-right">Star</button>
+                                    </div>
+                                    -->
+                                        <!--Thisss onee-->
+                                        <div class="col-12 col-lg-2">
+                                            <button type="button" name="button" class="btn btn-success float-right"
+                                                data-toggle="modal" data-target="#{{key}}">View</button>
+                                        </div>
+                                        <div class="col-12 col-lg-2">
+                                            {% if value.status == "REJECTED" %}
+                                            <button type="button" name="button" class="btn btn-danger float-right"
+                                                data-toggle="modal">REJECTED</button>
+                                            {% elif value.status == "UNREVIEWED" %}
+                                            <button type="button" name="button" class="btn btn-warning float-right"
+                                                data-toggle="modal" data-target="#{{key}}">UNREVIEWED</button>
+                                            {% elif value.status == "INTERVIEW" %}
+                                            <button type="button" name="button" class="btn btn-info float-right"
+                                                data-toggle="modal" data-target="#{{key}}">INTERVIEW</button>
+                                            {% elif value.status == "WAITLISTED" %}
+                                            <button type="button" name="button" class="btn btn-dark float-right"
+                                                data-toggle="modal" data-target="#{{key}}">WAITLISTED</button>
+                                            {% else %}
+                                            <button type="button" name="button" class="btn btn-success float-right"
+                                                data-toggle="modal" data-target="#{{key}}">OFFERED</button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="App2" style="display:none">
+        <div class="row" id="pendingTable" style="margin-top: 10px">
+            {% for key,value in pend_apps %}
+
+            <!-- Modal -->
+            <div class="modal fade" id="{{key}}2" tabindex="-1" role="dialog" aria-labelledby="{{key}}2"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="{{key}}2Title">{{value.post}}, {{value.cmpnm}}</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="padding:10px;">
+                            <h6><b>Location</b>: {{value.place}}</h6>
+                            <h6><b>CTC</b> : {{value.salary}}</h6>
+                            <h6><b>Notice Period</b>: {{value.notice_period}}</h6>
+                            <h6><b>Role description</b>: {{value.job_description}}</h6>
+                            <h6><b>Key Responsibilities</b>: {{value.key_responsibility}}</h6>
+                            <h6><b>Other Responsibilities</b>: {%for res in value.other%} {{res}}, {% endfor %}</h6>
+                            <h6><b>Soft Skills</b>: {%for skill in value.sskill%} {{skill}}, {% endfor %}</h6>
+                            <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}}, {% endfor %}</h6>
+                            <h6><b>Deadline</b>: {{value.deadline}}</h6>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
+                                <input type="text" name="job" value="{{key}}" hidden>
+                                <button class="btn btn-success" type="submit">Continue</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-12" style="padding-bottom:20px;">
+                    <div class="card shadow-cus">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-lg-6">
+                                    <h3>{{value.post}}, {{value.cmpnm}}</h3>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <!--<h5 class="float-right">CTC:{{value.salary}}</h5>-->
+                                </div>
+                                <div class="col-12">
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-12 col-lg-8">
+                                            <h6><b>Location</b>: {{value.place}}</h6>
+                                            <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}},
+                                                {% endfor %}</h6>
+                                            <h6 style="color:red"><b>DeadLine</b>: {{value.deadline}}</h6>
+                                        </div>
+                                        <!-- <div class="col-12 col-lg-2" id="divID1">
+                                            <i class="star star-under fa fa-star" onclick="engoldd(this);">
+                                                <i class="star star-over fa fa-star"></i>
+                                            </i>
+                                            <button type="button" name="button" class="btn btn-success float-right" data-toggle="modal" data-target="#{{saved}}">Star</button>
+                                        </div>
+                                        <script>
+                                            //console.log({{job_app.video_interview_score}});
+                                            // javascript
+
+                                            function engoldd(that) {
+                                                console.log("1 starred");
+                                                $(that).toggleClass('goldstar');
+
+                                            }
+                                        </script> -->
+                                        <div class="col-12 col-lg-2">
+                                            <button type="button" name="button" class="btn btn-success float-right"
+                                                data-toggle="modal" data-target="#{{key}}2">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+<div id="Job" style="display:none;">
+
+    <div class="row" id="JobsTable" style="margin-top: 10px">
+        {% for key,value in jobsss %}
+        <!-- Modal -->
+        <div class="modal fade" id="job{{key}}" tabindex="-1" role="dialog" aria-labelledby="job{{key}}"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="job{{key}}Title">{{value.post}}, {{value.cmpnm}}</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="padding:10px;">
+                        <h6><b>Location</b>: {{value.place}}</h6>
+                        <h6><b>CTC</b> : {{value.salary}}</h6>
+                        <h6><b>Notice Period</b>: {{value.notice_period}}</h6>
+                        <h6><b>Role description</b>: {{value.job_description}}</h6>
+                        <h6><b>Key Responsibilities</b>: {{value.key_responsibility}}</h6>
+                        <h6><b>Other Responsibilities</b>: {%for res in value.other%} {{res}}, {% endfor %}</h6>
+                        <h6><b>Soft Skills</b>: {%for skill in value.sskill%} {{skill}}, {% endfor %}</h6>
+                        <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}}, {% endfor %}</h6>
+                        <h6><b>Deadline</b>: {{value.deadline}}</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <form action="{% url 'new_application'%}" method="post">{% csrf_token %}
+                            <input type="text" name="job" value="{{key}}" hidden>
+                            <button class="btn btn-success" type="submit">Apply Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="col-12" style="padding-bottom:20px;">
+                <div class="card shadow-cus">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <h3>{{value.post}}, {{value.cmpnm}}</h3>
+                            </div>
+                            <!--<div class="col-12 col-lg-6">
+                            <h5 class="float-right">Salary:{{value.salary}}</h5>
+                        </div>-->
+                            <div class="col-12">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-12 col-lg-8">
+                                        <h6><b>Location</b>: {{value.place}}</h6>
+                                        <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}},
+                                            {% endfor %}</h6>
+                                        <h6 style="color:red"><b>DeadLine</b>: {{value.deadline}}</h6>
+                                    </div>
+                                    <!--
+                                <div class="col-12 col-lg-2">
+                                    <button type="button" name="button" class="btn btn-success float-right">Star</button>
+                                </div>-->
+                                    <div class="col-12 col-lg-2" id="divID2">
+                                        <i class="star star-under fa fa-star" id='star{{key}}'
+                                            onclick="engold2(this , '{{key}}');">
+                                        </i>
+                                        <!-- <button type="button" name="button" class="btn btn-success float-right" data-toggle="modal" data-target="#{{saved}}">Star</button> -->
+                                    </div>
+                                    <script>
+                                        //console.log({{job_app.video_interview_score}});
+                                        // javascript
+
+                                        function engold2(that, id) {
+                                            console.log("2 starred");
+                                            $(that).toggleClass('goldstar');
+                                            console.log(id);
+                                            f1(id);
+
+                                        }
+                                    </script>
+                                    <div class="col-12 col-lg-2">
+                                        <button type="button" name="button" class="btn btn-success float-right"
+                                            data-toggle="modal" data-target="#job{{key}}">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+<div id="Sav" style="display:none;">
+
+
+    <div class="row" id="savedTable" style="margin-top: 10px">
+        {% for key,value in saved %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="saved{{key}}" tabindex="-1" role="dialog" aria-labelledby="saved{{key}}"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="{{saved}}Title">{{value.post}}, {{value.cmpnm}}</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="padding:10px;">
+                        <h6><b>Location</b>: {{value.place}}</h6>
+                        <h6><b>CTC</b> : {{value.salary}}</h6>
+                        <h6><b>Notice Period</b>: {{value.notice_period}}</h6>
+                        <h6><b>Role description</b>: {{value.job_description}}</h6>
+                        <h6><b>Key Responsibilities</b>: {{value.key_responsibility}}</h6>
+                        <h6><b>Other Responsibilities</b>: {%for res in value.other%} {{res}}, {% endfor %}</h6>
+                        <h6><b>Soft Skills</b>: {%for skill in value.sskill%} {{skill}}, {% endfor %}</h6>
+                        <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}}, {% endfor %}</h6>
+                        <h6><b>Deadline</b>: {{value.deadline}}</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
+                            <input type="text" name="job" value="{{saved}}" hidden>
+                            <button class="btn btn-success" type="submit" disabled>Apply Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="col-12" style="padding-bottom:20px;">
+                <div class="card shadow-cus">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <h3>{{value.post}}, {{value.cmpnm}}</h3>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <!--<h5 class="float-right">CTC:{{value.salary}}</h5>-->
+                            </div>
+                            <div class="col-12">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-12 col-lg-8">
+                                        <h6><b>Location</b>: {{value.place}}</h6>
+                                        <h6><b>Technical Skills</b>: {%for skill in value.tskill%} {{skill}},
+                                            {% endfor %}</h6>
+                                        <h6 style="color:red"><b>DeadLine</b>: {{value.deadline}}</h6>
+                                    </div>
+                                    <div class="col-12 col-lg-2" id="divID3">
+                                        <i class="star star-under fa fa-star goldstar"
+                                            onclick="engold(this, '{{key}}');">
+
+                                        </i>
+                                        <!-- <button type="button" name="button" class="btn btn-success float-right" data-toggle="modal" data-target="#{{saved}}">Star</button> -->
+                                    </div>
+                                    <script>
+                                        //console.log({{job_app.video_interview_score}});
+                                        // javascript
+
+                                        function engold(that, id) {
+
+                                            $(that).toggleClass('goldstar');
+                                            //console.log("3 starred");
+                                            // console.log(id);
+                                            f1(id);
+                                        }
+
+                                        function abovefunc() {
+                                            var idname = "#star" + '{{key}}';
+                                            //console.log($(idname));
+                                            $(idname).siblings("svg").toggleClass('goldstar');
+                                            $(idname).toggleClass('goldstar');
+
+                                            //console.log($(idname));
+                                            //console.log($(idname).siblings("svg"));
+
+                                        }
+                                        window.onload = abovefunc();
+                                    </script>
+                                    <div class="col-12 col-lg-2">
+                                        <button type="button" name="button" class="btn btn-success float-right"
+                                            data-toggle="modal" data-target="#saved{{key}}">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% for key in saved_list %}
+
+<script>
+    //     $( document ).ready(function() {
+    //     console.log( "{{key}}" );
+    //     $('#star{{key}}').toggleClass('goldstar');
+    //     console.log($('#star{{key}}').parent());
+    // });
+</script>
+{% endfor %}
+
+<div class="d-none">
+    <div class="col-4 text-center active-col">
+        <div class="col-4 text-center active-col" onclick="showApplied()" id="showAppliedB">
+            <h4>APPLIED</h4>
+        </div>
+        <div class="col-4 text-center" onclick="showPending()" id="showPendingB">
+            <h4>Incomplete</h4>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block additionalJS %}
+
+<script>
+    $(document).ready(function () {
+        $('#application-toggle').on('click', '#switchApps', function (event) {
+            $('#App').show();
+            $('#switchApps').addClass("current");
+            $('#switchJobs').removeClass("current");
+            $('#switchSave').removeClass("current");
+            $('#Job').hide();
+            $('#Sav').hide();
+            //Applie
+
+        });
+    });
+    $('#application-toggle2').on('click', '#switchApp1', function (event) {
+        $('#App1').show();
+        $('#App2').hide();
+        $('#switchApp1').addClass("current");
+        $('#switchApp2').removeClass("current");
+
+    });
+    $('#application-toggle2').on('click', '#switchApp2', function (event) {
+        $('#App1').hide();
+        $('#App2').show();
+        $('#switchApp2').addClass("current");
+        $('#switchApp1').removeClass("current");
+
+    });
+
+    $(document).ready(function () {
+        $('#application-toggle').on('click', '#switchJobs', function (event) {
+            $('#Job').show();
+            // $("#tgv-s").removeClass("btn btn-outline-dark");
+            // $('#tgv-s').addClass("btn btn-light active");
+            // $("#tgv-b").removeClass("btn btn-light active");
+            // $('#tgv-b').addClass("btn btn-outline-dark");
+            // $('#switchBatch').addClass("tab-link");
+            // $('#switchCompany').removeClass("tab-link");
+            $('#switchJobs').addClass("current");
+            $('#switchApps').removeClass("current");
+            $('#switchSave').removeClass("current");
+            $('#App').hide();
+            $('#Sav').hide();
+        });
+    });
+
+    $(document).ready(function () {
+        $('#application-toggle').on('click', '#switchSave', function (event) {
+            $('#Sav').show();
+            // $("#tgv-s").removeClass("btn btn-outline-dark");
+            // $('#tgv-s').addClass("btn btn-light active");
+            // $("#tgv-b").removeClass("btn btn-light active");
+            // $('#tgv-b').addClass("btn btn-outline-dark");
+            // $('#switchBatch').addClass("tab-link");
+            // $('#switchCompany').removeClass("tab-link");
+            $('#switchSave').addClass("current");
+            $('#switchJobs').removeClass("current");
+            $('#switchApps').removeClass("current");
+            $('#App').hide();
+            $('#Job').hide();
+
+        });
+    });
+
+    $('.tabs-nav a:first').trigger('click'); // Default
+
+    // initialisation for tooltips
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    function f1(id) {
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                    // Send the token to same-origin, relative URLs only.
+                    // Send the token only if the method warrants CSRF protection
+                    // Using the CSRFToken value acquired earlier
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+                $('#wait').show();
+            }
+        });
+        data = {
+            'id': id,
+        }
+        //alert(id);
+        //event.preventDefault();
+        $.ajax({
+            url: `{% url 'saved_applications' %}`,
+            type: 'POST',
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                //$('#theNextButton').click();
+                //alert("pass");
+                window.location.reload();
+            },
+            complete: function () {
+                $('#wait').hide();
+            },
+        });
+    };
+</script>
+
+
+
+
+{% endblock %}

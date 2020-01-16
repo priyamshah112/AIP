@@ -72,7 +72,7 @@ def login(request):
                         request.session['name'] = req['name']
                         request.session['email'] = email
                         request.session['college'] = req['college']
-                        return HttpResponseRedirect('/candidate/view_jobs')
+                        return HttpResponseRedirect('/candidate/profile')
                 else:
                     messages.error(request, 'Invalid password')
                     return redirect('accounts:login')
