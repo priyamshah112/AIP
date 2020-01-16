@@ -1,6 +1,6 @@
 {% extends "candidate/base.html" %}
 {% load static %}
-{% block title %}Apli.ai | Resume{% endblock title %}
+{% block title %}AMP Tech | Resume{% endblock title %}
 {% block additionalCSS%}
         <link rel="stylesheet" href="{% static 'candidate/css/selectize.css' %}" type="text/css">
 {% endblock additionalCSS%}
@@ -105,16 +105,16 @@
                         <div class="row">
                             <div class="form-group col-4 col-lg-12">
                                 <label for="lastCTC">Current/Last CTC</label>
-                                <input class="form-control" type="number" min="0" step="any" id="lastCTC" name="lastCTC" value="" required>
+                                <input class="form-control" type="number" min="0" step="any" id="lastCTC" name="lastCTC" value="0" required>
                                 <small class="text-muted">in Lakhs per annum.</small>
                             </div>
                             <div class="form-group col-4 col-lg-12">
                                 <label for="lastDesig">Current/Last Designation</label>
-                                <input class="form-control" type="text" id="lastDesig" name="lastDesig" value="" required>
+                                <input class="form-control" type="text" id="lastDesig" name="lastDesig" value="Unknown" required>
                             </div>
                             <div class="form-group col-4 col-lg-12">
                                 <label for="lastCom">Current/Last Company</label>
-                                <input class="form-control" type="text" name="lastCom" id="lastCom" value="" required>
+                                <input class="form-control" type="text" name="lastCom" id="lastCom" value="Unknown" required>
                             </div>
                         </div>
                         <div class="row">

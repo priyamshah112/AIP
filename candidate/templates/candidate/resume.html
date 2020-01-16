@@ -1189,7 +1189,7 @@ $(document).ready(function() {
         data = {
             'edit_type': 'del_award',
             'award' :award,
-            'dateaward' : document.getElementById('awardDate'+award).value;
+            'dateaward' : document.getElementById('awardDate'+award).value
         }
         $.ajax({
             url: `{% url 'resume' %}`,

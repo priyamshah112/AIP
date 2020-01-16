@@ -17,7 +17,7 @@
         <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/js/regular.min.js"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-        <title>{% block title %}Apli.ai{% endblock title %}</title>
+        <title>{% block title %}AMP Tech{% endblock title %}</title>
         {% block additionalCSS %} {% endblock additionalCSS%}
     </head>
     <body id="body">
@@ -26,25 +26,12 @@
                 <ul class="list-unstyled components">
                     <li class="{% if request.resolver_match.url_name == 'jobs' %}active{% endif %}"><a href="{% url 'jobsboard'  %}"><i class="fas fa-briefcase"></i> Jobs</a></li>
                     <li class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><a href="{% url 'profile'  %}"><i class="fas fa-id-card"></i> Profile</a></li>
-                    <li class="{% if request.resolver_match.url_name == 'resume' or request.resolver_match.url_name == 'videoResume' or request.resolver_match.url_name == 'psychology' %}active{% endif %}"><a href="#resumeSubmenu" data-toggle="collapse"><i class="fas fa-file-alt"></i> Edit Profile</a></li>
-                        <ul class="collapse list-unstyled" id="resumeSubmenu">
-                            <li class="{% if request.resolver_match.url_name == 'resume' %}active{% endif %}">
-                                <a href="{% url 'resume'  %}">Resume</a>
-                            </li class="{% if request.resolver_match.url_name == 'videoResume' %}active{% endif %}">
-                            <li >
-                                <a href="{% url 'videoResume' %}">Video Resume</a>
-                            </li>
-                            <!-- <li class="{% if request.resolver_match.url_name == 'psychology' %}active{% endif %}">
-                                <a href="{% url 'psychology' %}">Psychology Questions</a>
-                            </li> -->
-                        </ul>
-                    <li class="{% if request.resolver_match.url_name == 'applications' %}active{% endif %}"><a href="{% url 'applications'  %}"><i class="fas fa-print"></i>My Interviews</a></li>
-                                        <li class="{% if request.resolver_match.url_name == 'mockInterview' %}active{% endif %}"><a href="{% url 'mockInterview'  %}"><i class="fas fa-users"></i> Mock Interview</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'resume' %}active{% endif %}"><a href="{% url 'resume'  %}">Edit Resume</a></li>
                     <li><a href="{% url 'accounts:logout'  %}"><i class="fas fa-sign-out-alt"></i> logout</a></li>
                 </ul>
             </nav>
             <div class="navbar fixed-top navbar-expand-lg">
-                <a class="navbar-brand" href="#">Apli.ai</a>
+                <a class="navbar-brand" href="#">AMP Tech</a>
                 <a id="sidebarToggle" href="#">
                     <i class="fas fa-align-left"></i>
                 </a>

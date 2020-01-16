@@ -463,17 +463,6 @@ def resume(request):
 
 
 
-def videoResume(request):
-    if request.method == 'GET':
-        return render(request,'candidate/video_resume.html')
-    elif request.method == 'POST':
-        video_resume = request.POST.get('video_resume')
-        db.collection(u'candidates').document(request.session['email']).update({'video_resume':video_resume})
-        messages.success(request, 'your profile has been updated')
-        return JsonResponse({'success': 'True'})
-
-
-
 def applications(request):
     email = request.session.get('email')
 
@@ -501,85 +490,6 @@ def applications(request):
     return render(request, 'candidate/applications.html', {'comp_apps': comp_apps,
                                                            'pend_apps': pend_apps}
                   )
-
-
-
-def mockInterview(request):
-    if request.method == 'GET':
-        interviewpack_ref = db.collection('mockInterviewPackages').get()
-        interviewPackages = []
-        mock_taken = []
-        mock_submitted = []
-        for pack in interviewpack_ref:
-            interviewPackages.append(pack.id)
-        db_doc = db.collection(u'mockInterviews').where(u'candidate', u'==', request.session.get('email')).where(u'status', u'==', "PENDING").get()
-        for mock in db_doc:
-            mock_taken.append(mock.to_dict()['mock_interview_package'])
-        db_doc = db.collection(u'mockInterviews').where(u'candidate', u'==', request.session.get('email')).where(u'status', u'==', "SUBMITTED").get()
-        for mock in db_doc:
-            mock_submitted.append(mock.to_dict()['mock_interview_package'])
-        return render(request, 'candidate/mock_interview.html', {'interviewPackages': interviewPackages, 'mockTaken': mock_taken, 'mockSubmitted': mock_submitted})
-    elif request.method == 'POST':
-        type = request.POST.get('type')
-        # print(type)
-        if type == 'startInterview':
-            packName = request.POST.get('packName')
-            exist = db.collection(u'mockInterviews').where(u'candidate', u'==', request.session.get('email')).where(u'mock_interview_package',u'==', packName).stream()
-            exists = list(exist)
-            pk = db.collection(u'mockInterviewPackages').document(packName).get()
-            pack = pk.to_dict()
-            length_pack = len(pack)
-            comment = {}
-            grade = {}
-            for i in range(1,length_pack+1):
-                comment.update({str(i):""})
-                grade.update({str(i):"0"})
-            if not exists:
-                doc_ref = db.collection(u'mockInterviews').document()
-                doc_ref.set({
-                    u'candidate': request.session.get('email'),
-                    u'interview_links': {},
-                    u'mock_interview_package': pk.id,
-                    u'comment': comment,
-                    u'grade': grade,
-                    u'remark': " ",
-                    u'status': "PENDING"
-                })
-                return render(request, 'candidate/mock_interview.html', {'packName': packName, 'pack': pack, 'docId': doc_ref.id,'startFrom':0})
-            else :
-                exist = exists[0].to_dict()
-                if exist['status'] == "PENDING":
-                    d = {k:v for k,v in exist['interview_links'].items() if v != ""}
-                    startFrom = len(d)
-                    messages.success(request, 'Continue the mock interview')
-                    return render(request, 'candidate/mock_interview.html', {'packName': packName, 'pack': pack, 'docId': exists[0].id, 'startFrom':startFrom})
-                if exist['status'] == "SUBMITTED":
-                    messages.success(request, 'Mock Interview already taken, Please wait for the review')
-                    return HttpResponseRedirect('applications')
-        elif type == 'submitInterview':
-            candidate_id = request.session.get('email')
-            interview_link = request.POST.get('video_link')
-            pack = request.POST.get('pack')
-            mIid = request.POST.get('docId')
-            que = request.POST.get('que')
-            status = "PENDING"
-            doc_ref = db.collection(u'mockInterviews').document(mIid)
-            dict_links = doc_ref.get().to_dict()['interview_links']
-            dict_links.update({que: interview_link})
-            doc_ref.update({
-                u'interview_links': dict_links,
-            })
-            messages.success(request, 'interview added successfully.')
-            return JsonResponse({"success": "True"})
-        elif type == 'finalSubmit':
-            mIid = request.POST.get('docId')
-            status = "SUBMITTED"
-            doc_ref = db.collection(u'mockInterviews').document(mIid)
-            doc_ref.update({u'status': status})
-            messages.success(request, 'interview added successfully.')
-            return JsonResponse({"success": "True"})
-        else:
-            return render(request, 'candidate/mock_interview.html')
 
 
 
@@ -638,8 +548,7 @@ def addApplication(request):
         })
         messages.success(request, 'Application added successfully.')
         job_doc = db.collection('jobs').document(request.POST.get('job')).get().to_dict()
-        log_notification(type_='cand_applied', post=job_doc['post'],
-                         rec_email=job_doc['email'], job_id=request.POST.get('job'))
+
         return JsonResponse({"success": "True"})
     if type == 'addVideo':
         candidate = request.session.get('email')
@@ -656,80 +565,3 @@ def addApplication(request):
         messages.success(request, 'Application added successfully.')
         return JsonResponse({"success": "True"})
 
-
-
-def psychology(request):
-    if request.method == 'GET':
-        candidate_id = request.session.get('email')
-        candidate_ref = db.collection('candidates').document(candidate_id).get()
-
-        if candidate_ref.get('profile_status') == 'empty':
-            messages.error(request, 'please complete your basic details')
-            return render(request, 'candidate/resume_profile_buildup.html')
-
-        questions = db.collection('candPsychoQues').document('all_ques').get().to_dict()
-        question = namedtuple('question', ['ques_id', 'ques', 'response'])
-        ques_with_ans = []
-
-        answers = candidate_ref.to_dict().get('psycho_ques', None)
-        if answers is None:
-            answers = dict()
-
-        for key, ques in questions.items():
-            response = int(answers.get(key, -1))
-            question_ = question(key, ques, response)
-            ques_with_ans.append(question_)
-
-        ques_with_ans.sort(key=lambda x: x.ques_id)
-        # print(ques_with_ans)
-
-        return render(request, 'candidate/psychology_questions.html',
-                      {'questions': ques_with_ans})
-
-    elif request.method == 'POST':
-        candidate_id = request.session['email']
-        candidate_doc = db.collection('candidates').document(candidate_id).get()
-
-        """
-        The form of psychological question was provided to candidates who have their profile
-        partially filled or complete, thus now there is no need to verify the profile status
-        of the candidates
-        """
-        psycho_answers = dict()
-
-        # creates a list of all request keys which begin with Q,
-        # i.e. Q1, Q2 and so on
-        questions = filter(lambda x: True if x[0] == 'Q' else False, request.POST.keys())
-
-        for question in questions:
-            psycho_answers[question] = request.POST[question]
-
-        candidate_doc.reference.update({
-            'psycho_ques': psycho_answers,
-        })
-
-        messages.success(request, 'your answers have been recorded')
-
-        if candidate_doc.get('profile_status') == 'partial':
-            if candidate_doc.get('video_resume') is not None:
-                """
-                If profile status was 'partial' due to unfilled psycho-questions
-                set profile status as 'complete'
-                """
-                candidate_doc.reference.update({
-                    'profile_status': 'complete'
-                })
-                messages.success(request, 'your profile is complete')
-
-        return JsonResponse({'success': 'True'})
-
-
-def externalInterview(request):
-    if request.method == "GET":
-        return render(request, 'candidate/external_interview.html', {'job': request.session.get("job_id")})
-    if request.method == "POST":
-        link = request.POST.get('link')
-        db.collection('candidates').document(request.session.get('email')).update({
-            'pdfResume' : link
-        })
-        return JsonResponse({'success': 'True'})

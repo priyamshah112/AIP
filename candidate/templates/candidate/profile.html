@@ -1,5 +1,5 @@
 {% extends "candidate/base.html" %}
-{% block title %}Apli.ai | Profile{% endblock title %}
+{% block title %}AMP Tech | Profile{% endblock title %}
 {% load static %}
 {% block content %}
     <div class="container">
@@ -212,52 +212,7 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="card mb-3 shadow-cus">
-            <div class="card-header border-warning">
-                <h4 style="float:left">Video Resume</h4>
-                <h6 style="float:right"><a href="{% url 'videoResume' %}">Edit</a></h6>
-            </div>
-            <div class="card-body">
-                <div class="container">
-                    {% if candidate.video_resume %}
-                    <video width="100%" height="480px"
-                    src="{{candidate.video_resume}}" id="videoresume" alt="Please submit a video resume" controls>
-                    </video>
-                    {% else %}
-                    <h4>Please complete your Video Resume.</h4>
-                    <h5><b><a href="{% url 'videoResume' %}">Click here</a></b> to complete it right now.</h5>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="card mb-3 shadow-cus">
-            <div class="card-header border-danger">
-                <h4>Psychology Section</h4>
-            </div>
-            <div class="card-body">
-                {% if candidate.psycho_ques %}
-                <table class="table table-bordered table-striped">
-                    <tr>
-                        <th>Question</th>
-                        <th>You answered</th>
-                    </tr>
-                    {% for key, ques, value in candidate.psycho_ques %}
-                    <tr>
-                        <td>{{key}}. {{ques}}</td>
-                        <td>{% if value == "0"%}Yes{% elif value == "1"%}No{%else%}Sometimes{%endif%}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-                {%else%}
-                <h4>Please complete your psychology test section.</h4>
-                <h5><b><a href="{% url 'psychology' %}">Click here</a></b> to complete it right now.</h5>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+
 {% endblock content%}
 {% block additionalJS%}
 <script>
