@@ -6,6 +6,13 @@
 
 {% endblock %}
 {% block content %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
 <link rel="stylesheet" type="text/css" href="{% static 'recruiter/css/viewinterview.css' %}">
 <div class="row">
 

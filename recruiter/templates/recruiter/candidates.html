@@ -53,6 +53,13 @@
 
 
 </style>
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
 <!-- Icon Cards-->
 <div class="row d-none">
     <div class="col-xl-4 col-sm-6 mb-4">

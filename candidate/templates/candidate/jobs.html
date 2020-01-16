@@ -120,6 +120,13 @@
         background-color: #C3E0E5 !important;
     }
 </style>
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
 <div class="">
     <div class="table-responsive">
         <table id="jobsOpeneddataTable" width="100%" cellspacing="0">
@@ -207,35 +214,8 @@
 
     var table = $('#jobsOpeneddataTable').DataTable({
         dom: 'Bfrtip',
-        select: true,
-        buttons: {
-            dom: {
-                button: {
-                    tag: 'button',
-                    className: ''
-                }
-            },
-            buttons: [
-                { extend: 'selectAll', className: 'btn btn-info options shadow-cus' },
-                { extend: 'selectNone', className: 'btn btn-info options shadow-cus' },
-                // { extend: 'excel', className: 'btn btn-secondary options shadow-cus', text: 'Export as XLXS' },
-                // { extend: 'csv', className: 'btn btn-primary options shadow-cus', text: 'Export as CSV' }
-            ],
-        },
-        'columnDefs': [{
-            'targets': 0,
-            'orderable': false,
-            'className': 'select-checkbox',
-            'checkboxes': {
-                'selectRow': true
-            }
-        }],
-        'select': {
-            'style': 'multi',
-        }
     });
 
-    $("#jobsOpeneddataTable_filter").addClass("searchbox");
     $("#jobsOpeneddataTable_filter input").addClass("form-control");
     // $(".new-card").each(function (i, c) {
     //     if (!(c.offsetHeight < c.scrollHeight ||

@@ -120,6 +120,13 @@
         border-bottom: 6px solid gray;
     }
 </style>
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
 <div class="row" >
     <div class="col-6 text-center active-col" onclick="showApplied()" id="showAppliedB" style="padding:20px;">
         <h4>APPLIED</h4>

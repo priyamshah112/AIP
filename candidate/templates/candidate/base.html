@@ -27,6 +27,7 @@
                     <li class="{% if request.resolver_match.url_name == 'jobs' %}active{% endif %}"><a href="{% url 'jobsboard'  %}"><i class="fas fa-briefcase"></i> Jobs</a></li>
                     <li class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><a href="{% url 'profile'  %}"><i class="fas fa-id-card"></i> Profile</a></li>
                     <li class="{% if request.resolver_match.url_name == 'resume' %}active{% endif %}"><a href="{% url 'resume'  %}">Edit Resume</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'applications' %}active{% endif %}"><a href="{% url 'applications'  %}"><i class="fas fa-print"></i>My Interviews</a></li>
                     <li><a href="{% url 'accounts:logout'  %}"><i class="fas fa-sign-out-alt"></i> logout</a></li>
                 </ul>
             </nav>
@@ -53,7 +54,9 @@
                 </ul>
             </div>
             <div id="content">
-                {% block content%} {% endblock %}
+                {% block content%} 
+
+                {% endblock %}
             </div>
         </div>
 

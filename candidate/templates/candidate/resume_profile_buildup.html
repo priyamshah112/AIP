@@ -5,6 +5,13 @@
         <link rel="stylesheet" href="{% static 'candidate/css/selectize.css' %}" type="text/css">
 {% endblock additionalCSS%}
 {% block content %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
     <form id="resume_form">
         <div class="row mb-3" id="submitDiv" style="display:none">
             <div class="col-12 text-center">
