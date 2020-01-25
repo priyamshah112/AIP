@@ -1,3 +1,769 @@
-<html>
-Jobs working
-</html>
+{% extends "recruiter/base.html" %}
+{% block title %}AMP Tech | Jobs{% endblock title %}
+{% block content %}
+{% load staticfiles%}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.js"></script>
+
+{% if messages %}
+  {% for message in messages %}
+  <div {% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>{{ message }}</div>
+  {% endfor %}
+{% endif %}
+<!-- Icon Cards-->
+<div class="row">
+  <div class="col-xl-4 col-sm-6 mb-4">
+    <div class="ch card text-white pjob shadow-sm o-hidden h-100" data-target="#PostJobModal" data-toggle="modal">
+      <div class="card-body">
+        <div class="card-body-icon">
+          <i class="fas fa-file-signature"></i>
+        </div>
+        <h3>Post Job</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-sm-6 mb-4">
+    <div class="card text-white pjob shadow-sm o-hidden h-100">
+      <div class="card-body">
+        <div class="card-body-icon">
+          <i class="fas fa-chart-area"></i>
+        </div>
+        <h3>Jobs Posted</h3>
+        <div class="mr-5">{{ jc }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-sm-6 mb-4">
+    <div class="card text-white pjob shadow-sm o-hidden h-100">
+      <div class="card-body">
+        <div class="card-body-icon">
+          <i class="fas fa-fw fa-tasks"></i>
+        </div>
+        <h3>Jobs Opened | Jobs Closed </h3>
+        <div class="mr-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{oc}}&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{cc}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- DataTables Example -->
+<div class="card mb-3">
+  <div class="card-header">
+    <i class="fas fa-table"></i>
+    Jobs Posted
+  </div>
+  {% if new_user == 'False' %}
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table" id="dataTable" width="100%" cellspacing="0">
+        <thead class="text-white rounded" style="background-color: #A3A1FB">
+          <tr>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 0px">Post</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px">Description</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px">Place of Posting</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px">Salary (₹)</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 1px 0px 1px">Status</th>
+            <th style="border: 1px solid #8280c8; border-width: 0px 0px 0px 1px">Access</th>
+          </tr>
+        </thead>
+        <tbody class="align-middle">
+          {% for job in jobs %}
+          {% if job.status == 'Opened' %}
+          <tr class="success">
+            <td>{{job.post}}</td>
+            <td>{{job.job_description}}</td>
+            <td>{{job.place}}</td>
+            <td>{{job.salary}}</td>
+            <td>{{job.status}}</td>
+            {% comment %} <td><a onClick="view('{{job.id}}')" href="#">View</a></td> {% endcomment %}
+            <td><div class="btn-group-vertical"><button type="button" class="btn btn-customblue" data-target="#ViewJobModal" data-toggle="modal"
+                onClick="view('{{job.id}}')">View</button>
+                <button type="button" class="btn btn-customblue" onClick="delete1('{{job.id}}')">Delete</button></div></td>
+          </tr>
+          {% else %}
+          <tr class="error">
+            <td>{{job.post}}</td>
+            <td>{{job.job_description}}</td>
+            <td>{{job.place}}</td>
+            <td>{{job.salary}}</td>
+            <td>{{job.status}}</td>
+            {% comment %} <td><a onClick="view('{{job.id}}')" href="#">View</a></td> {% endcomment %}
+            <td class="btn-group-vertical"><button type="button" class="btn btn-customblue" data-target="#ViewJobModal" data-toggle="modal"
+                onClick="view('{{job.id}}')">View</button>
+                <button type="button" class="btn btn-customblue" onClick="delete1('{{job.id}}')">Delete</button></td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+    {% else %}
+    <div class="card-body">
+        <h3> No Jobs Posted &#128542;</h3>
+        <h5> Try out one by clicking Post Job Button!</h5>
+        <button type="button" class="btn btn-primary btn-circle btn-xl" data-target="#PostJobModal" data-toggle="modal">
+            <i
+                    class="fas fa-file-signature"></i></button>
+    </div>
+
+    {% endif %}
+
+    {% comment %} Post job Modal {% endcomment %}
+<div class="modal fade" id="PostJobModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><b>Post a Job</b></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="jobs">
+                        {% csrf_token %}
+                        <div id="wrapper4">
+
+                            <div class="control-group">
+                                <label for="select-links4"><b>Post:</b>
+                                </label>
+                                <select name="post" id="select-links4" placeholder="Accountant..." required></select>
+                            </div>
+                            <script>
+
+                $('#select-links4').selectize({
+                  plugins: ['remove_button'],
+                  theme: 'links',
+                  maxItems: 1,
+                  valueField: 'title',
+                  searchField: 'title',
+                  options: [
+                    { title: 'Accountant' },
+                    { title: 'Software Developer' },
+                    { title: 'Manager' },
+                  ],
+                  render: {
+                    option: function (data, escape) {
+                      return '<div class="option">' +
+                        '<span class="title">' + escape(data.title) + '</span>'
+                      '</div>';
+                    },
+                    item: function (data, escape) {
+
+                      return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+                    }
+                  },
+                  create: function (input) {
+                    return {
+                      title: input,
+                    };
+                  }
+                });
+
+                $('#select-links4').on('change', function () {
+                  var $wrapper = $('#wrapper4');
+
+                  // show current input values
+                  $('select.selectized,input.selectized', $wrapper).each(function () {
+
+                    var $container = $('<div hidden>').addClass('value').html('Current Value: ');
+                    var $value = $('<span>').appendTo($container);
+                    var $input = $(this);
+                    var update = function (e) { $value.text(JSON.stringify($input.val()));
+                    // console.log($input.val());
+                    }
+
+                    $(this).on('change', update);
+                    update();
+
+                    $container.insertAfter($input);
+                  });
+                });
+
+
+
+
+
+                            </script>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Job Description:</b>
+                            </label>
+                            <textarea name="jobdesc" class="form-control" id="description" maxlength="500"
+                                      placeholder="max 500 characters allowed" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Key Responsibilities:</b>
+                            </label>
+                            <textarea name="keyresp" class="form-control" id="keyresp" maxlength="500"
+                                      placeholder="max 500 characters allowed" required></textarea>
+                        </div>
+
+                        <div id="wrapper3">
+                            <div class="control-group">
+                                <label for="select-links"><b>Tech Skills:</b>
+                                </label>
+                                <select name="tskill" id="select-links" multiple="multiple" placeholder="C.."></select>
+                            </div>
+                            <script>
+
+                $('#select-links').selectize({
+                  plugins: ['remove_button'],
+                  theme: 'links',
+                  maxItems: null,
+                  valueField: 'title',
+                  searchField: 'title',
+                  options: [
+                    { title: 'HTML' },
+                    { title: 'CSS' },
+                    { title: 'Java' },
+                  ],
+                  render: {
+                    option: function (data, escape) {
+                      return '<div class="option">' +
+                        '<span class="title">' + escape(data.title) + '</span>'
+                      '</div>';
+                    },
+                    item: function (data, escape) {
+
+                      return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+                    }
+                  },
+                  create: function (input) {
+                    // console.log(input);
+                    return {
+                      title: input,
+                    };
+                  }
+                });
+
+                $('#select-links').on('change', function () {
+                  var $wrapper = $('#wrapper3');
+
+                  // show current input values
+                  $('select.selectized,input.selectized', $wrapper).each(function () {
+
+                    var $container = $('<div hidden >').addClass('value').html('Current Value: ');
+                    var $value = $('<span>').appendTo($container);
+                    var $input = $(this);
+                    // console.log('op');
+                    // console.log($input);
+                    var update = function (e) { $value.text(JSON.stringify($input.val()));
+                    // console.log($input.val());
+                    }
+
+                    $(this).on('change', update);
+                    update();
+
+                    $container.insertAfter($input);
+                  });
+                });
+
+
+
+
+
+                            </script>
+
+                        </div>
+
+                        <div id="wrapper1">
+                            <div class="control-group">
+                                <label for="select-links1"><b>Soft Skills:</b>
+                                </label>
+                                <select name="sskill" id="select-links1" placeholder="CS..."></select>
+                            </div>
+                            <script>
+                // console.log("in");
+                $('#select-links1').selectize({
+                  plugins: ['remove_button'],
+                  theme: 'links',
+                  maxItems: null,
+                  valueField: 'title',
+                  searchField: 'title',
+                  options: [
+                    { title: 'Communication' },
+                    { title: 'Teamwork' },
+                    { title: 'Adaptability' },
+                  ],
+                  render: {
+                    option: function (data, escape) {
+                      return '<div class="option">' +
+                        '<span class="title">' + escape(data.title) + '</span>'
+                      '</div>';
+                    },
+                    item: function (data, escape) {
+
+                      return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+                    }
+                  },
+                  create: function (input) {
+                    return {
+                      title: input,
+                    };
+                  }
+                });
+
+                $('#select-links1').on('change', function () {
+                  var $wrapper = $('#wrapper1');
+
+                  // show current input values
+                  $('select.selectized,input.selectized', $wrapper).each(function () {
+                    // console.log("in1");
+                    var $container = $('<div hidden>').addClass('value').html('Current Value: ');
+                    var $value = $('<span>').appendTo($container);
+                    var $input = $(this);
+                    var update = function (e) { $value.text(JSON.stringify($input.val()));
+                    // console.log($input.val());
+                    }
+
+                    $(this).on('change', update);
+                    update();
+
+                    $container.insertAfter($input);
+                  });
+                });
+
+
+
+
+
+                            </script>
+
+                        </div>
+
+                        <div id="wrapper2">
+                            <div class="control-group">
+                                <label for="select-links2"><b>Other:</b>
+                                </label>
+                                <select name="other" id="select-links2" placeholder="Sports..."></select>
+                            </div>
+                            <script>
+                // console.log("in");
+                $('#select-links2').selectize({
+                  plugins: ['remove_button'],
+                  theme: 'links',
+                  maxItems: null,
+                  valueField: 'title',
+                  searchField: 'title',
+                  options: [
+                    { title: 'Sports' },
+                    { title: 'Music' },
+                    { title: 'Social' },
+                  ],
+                  render: {
+                    option: function (data, escape) {
+                      return '<div class="option">' +
+                        '<span class="title">' + escape(data.title) + '</span>'
+                      '</div>';
+                    },
+                    item: function (data, escape) {
+
+                      return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+                    }
+                  },
+                  create: function (input) {
+                    return {
+                      title: input,
+                    };
+                  }
+                });
+
+                $('#select-links2').on('change', function () {
+                  var $wrapper = $('#wrapper2');
+
+                  // show current input values
+                  $('select.selectized,input.selectized', $wrapper).each(function () {
+                    // console.log("in1");
+                    var $container = $('<div hidden>').addClass('value').html('Current Value: ');
+                    var $value = $('<span>').appendTo($container);
+                    var $input = $(this);
+                    var update = function (e) { $value.text(JSON.stringify($input.val()));
+                    // console.log($input.val());
+                    }
+
+                    $(this).on('change', update);
+                    update();
+
+                    $container.insertAfter($input);
+                  });
+                });
+
+
+
+
+
+                            </script>
+
+                        </div>
+
+                        <div id="wrapper5">
+                            <div class="control-group">
+                                <label for="select-links5"><b>Place of Posting:</b>
+                                </label>
+                                <select name="place" id="select-links5" placeholder="Mumbai..." required></select>
+                            </div>
+                            <script>
+                $('#select-links5').selectize({
+                  plugins: ['remove_button'],
+                  theme: 'links',
+                  maxItems: 1,
+                  valueField: 'title',
+                  searchField: 'title',
+                  options: [
+                    { title: 'Mumbai' },
+                    { title: 'Pune' },
+                    { title: 'Banglore' },
+                  ],
+                  render: {
+                    option: function (data, escape) {
+                      return '<div class="option">' +
+                        '<span class="title">' + escape(data.title) + '</span>'
+                      '</div>';
+                    },
+                    item: function (data, escape) {
+
+                      return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+                    }
+                  },
+                  create: function (input) {
+                    return {
+                      title: input,
+                    };
+                  }
+                });
+
+                $('#select-links5').on('change', function () {
+                  var $wrapper = $('#wrapper5');
+
+                  // show current input values
+                  $('select.selectized,input.selectized', $wrapper).each(function () {
+
+                    var $container = $('<div hidden>').addClass('value').html('Current Value: ');
+                    var $value = $('<span>').appendTo($container);
+                    var $input = $(this);
+                    var update = function (e) { $value.text(JSON.stringify($input.val()));
+                    // console.log($input.val()); 
+                    }
+
+                    $(this).on('change', update);
+                    update();
+
+                    $container.insertAfter($input);
+                  });
+                });
+
+
+
+
+
+                            </script>
+
+                        </div>
+
+                        <div class="form-inline">
+                            <label class="col-form-label"><b>Joining Date :</b>
+                            </label>
+                            <input class="form-control" name="startdate" id="datefield1" type='date' min='1899-01-01'
+                                   required>
+                            <label class="col-form-label"><b>Apply By :</b>
+                            </label>
+                            <input class="form-control" name="deadline" id="datefield" type='date' min='1899-01-01'
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Bond:</b>
+                            </label>
+                            <select name="bond" class="form-control" id="bond">
+                                <option value="0">No Bond</option>
+                                <option value="1">Bond</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Salary:</b>
+                            </label>
+                            <input name="salary" type="number" class="form-control" id="salary"
+                                   placeholder="(in Rupees)" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Pre Screening Test:</b>
+                                <div class="mytooltip">
+                                    <button type="button" class="btn"><i class="fa fa-question-circle"></i></button>
+                                    <span class="tooltiptext">Select a Question set.You can create question set in Library
+                    section.</span>
+                                </div>
+                            </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="userPackages">Choose Question Package </label>
+                                </div>
+                                <select id="userPackages" name="userPackages" class="custom-select">
+                                    {% include "recruiter/job_options.html" %}
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Additional Details:</b>
+                            </label>
+                            <textarea name="adddetail" class="form-control" id="adddetail"
+                                      placeholder="max 500 characters"
+                                      maxlength=500></textarea>
+                        </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger btn-lg" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-customblue btn-lg" id="submit">Post Job</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>
+    //refresh logic
+
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+    // For latest date
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+    if (dd < 10) {
+      dd = '0' + dd
+    }
+    if (mm < 10) {
+      mm = '0' + mm
+    }
+
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("datefield").setAttribute("min", today);
+    document.getElementById("datefield1").setAttribute("min", today);
+
+
+
+
+    </script>
+
+    <div class="modal fade" id="ViewJobModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"><b>
+                        <p id='tt'>Post</p>
+                    </b></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+
+                    <form role="form">
+
+            <div class="form-group">
+              <label class="col-form-label"><b>Post:</b></label>
+              <input name="post1" type="text" class="form-control-lg" id="post1" readonly>
+            </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Job Description:</b></label>
+                            <textarea name="desc1" class="form-control" id="desc1" maxlength=500 readonly></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Key Responsibilities:</b></label>
+                            <textarea name="keyresp1" class="form-control" id="keyresp1" maxlength=500
+                                      readonly></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Tech Skills:</b></label>
+                            <input name="tech1" type="text" class="form-control" id="tech1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Soft Skills:</b></label>
+                            <input name="ss1" type="text" class="form-control" id="ss1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Other:</b></label>
+                            <input name="oth1" type="text" class="form-control" id="oth1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Place of Posting:</b></label>
+                            <input name="place1" type="text" class="form-control" id="place1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Joining Date:</b></label>
+                            <input name="jd1" type="text" class="form-control" id="jd1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Apply By:</b></label>
+                            <input name="dd1" type="text" class="form-control" id="dd1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Bond:</b></label>
+                            <input name="bond1" type="text" class="form-control" id="bond1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Salary:</b></label>
+                            <input name="sal1" type="text" class="form-control" id="sal1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Pre Screening Test:</b></label>
+                            <input name="pst1" type="text" class="form-control" id="pst1" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-form-label"><b>Additional Details:</b></label>
+                            <textarea name="add1" class="form-control" id="add1" maxlength=500 readonly></textarea>
+                        </div>
+                    </form>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    // console.log($("#userPackages").val());
+
+
+    $('#userPackages').on('change', function () {
+
+    //   console.log($("#userPackages").val()
+    //   );
+    });
+
+
+    function view(j_id) {
+      {% for job in jobs %}
+      if (j_id == '{{job.id}}') {
+        document.getElementById('tt').innerHTML = '{{job.post}}';
+        document.getElementById("post1").value = '{{job.post}}';
+        document.getElementById("desc1").value = '{{job.job_description}}';
+        document.getElementById("keyresp1").value = '{{job.key_responsibility}}';
+        document.getElementById("tech1").value = '{{job.tskill}}'.replace(/&#39;/g, "'");
+        document.getElementById("ss1").value = '{{job.sskill}}'.replace(/&#39;/g, "'");;
+        document.getElementById("oth1").value = '{{job.other}}'.replace(/&#39;/g, "'");;
+        document.getElementById("place1").value = '{{job.place}}'.replace(/&#39;/g, "'");;
+        document.getElementById("jd1").value = '{{job.start_date}}'.replace(/&#39;/g, "'");;
+        document.getElementById("dd1").value = '{{job.deadline}}';
+        document.getElementById("bond1").value = ('{{job.bond}}' == '1' ? 'Bond' : 'No Bond');
+        document.getElementById("sal1").value = '{{job.salary}}';
+        document.getElementById("pst1").value = '{{job.packageId}}';
+        document.getElementById("add1").value = '{{job.add_detail}}';
+        /*       document.getElementById("select-links4").value = '{{job.post}}';
+                document.getElementById("description").value = '{{job.job_description}}';
+                document.getElementById("keyresp").value = '{{job.key_responsibility}}';        
+                document.getElementById("select-links").value = '{{job.tskill}}';
+                document.getElementById("select-links1").value = '{{job.sskill}}';
+                document.getElementById("select-links2").value = '{{job.other}}';
+                document.getElementById("select-links5").value = '{{job.place}}';
+                document.getElementById("datefield1").value = '{{job.start_date}}';
+                document.getElementById("datefield").value = '{{job.deadline}}';
+                document.getElementById("bond").value = '{{job.bond}}';
+                document.getElementById("salary").value = '{{job.salary}}';
+                document.getElementById("adddetail").value = '{{job.add_detail}}';             */
+      }
+      {% endfor %}
+    }
+
+
+
+
+
+    </script>
+    <script>
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+      // test that a given url is a same-origin URL
+      // url could be relative or scheme relative or absolute
+      var host = document.location.host; // host + port
+      var protocol = document.location.protocol;
+      var sr_origin = '//' + host;
+      var origin = protocol + sr_origin;
+      // Allow absolute or scheme relative URLs to same origin
+      return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function delete1(j_id) {
+
+      $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+      data = {
+        'id': j_id,
+      }
+      $.ajax({
+        url: 'deletepost',
+        type: 'POST',
+        dataType: "json",
+        data: data,
+        success: function (data) {
+        //   console.log(data);
+          window.location.reload();
+        }
+
+      });
+    }
+
+
+
+
+    </script>
+    {% endblock content %}

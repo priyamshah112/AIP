@@ -1,0 +1,892 @@
+{% extends "candidate/base.html" %}
+{% load static %}
+{% block title %}AMP Tech | Resume{% endblock title %}
+{% block additionalCSS%}
+        <link rel="stylesheet" href="{% static 'candidate/css/selectize.css' %}" type="text/css">
+{% endblock additionalCSS%}
+{% block content %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+    <form id="resume_form">
+        <div class="row mb-3" id="submitDiv" style="display:none">
+            <div class="col-12 text-center">
+                {% if profile_status %}
+                <button type="submit" name="button" class="btn btn-success" id="submitForm">Submit</button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container">
+            <div id="splash1" style="height:400px;display:none">
+                <div class="row text-center">
+                    <div class="col-12 text-center" style="padding:100px;">
+                        <h1>Are You A Fresher or An Experienced ?</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-lg-6 text-center" style="padding:50px;">
+                        <h2><a href="#" id="fresher">Fresher</a></h2>
+                    </div>
+                    <div class="col-12 col-lg-6 text-center" style="padding:50px;">
+                        <h2><a href="#" id="experienced">Experienced</a></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="highestEduAndPicture" style="display:none">
+                <h5 class="card-header border-info">Let's get you started.</h5>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row" style="margin-top:10px;">
+                                <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                  </div>
+                                  <div class="custom-file">
+                                    <input type="file" accept="image/*" onchange="uploadGetURL(0)" class="custom-file-input" id="profilepicture">
+                                    <label class="custom-file-label" for="profilepicture">Profile picture</label>
+                                  </div>
+                                  <div class="text-center" id="msg" style="width:100%">
+                                  </div>
+                                </div>
+                            </div><hr>
+                            <div class="form-group">
+                                <label for="highestEducation"><h5>Highest Education</h5></label>
+                                <select class="form-control" name="highestEducation" id="highestEducation" required>
+                                    <option value="Post Graduate">Post Graduate</option>
+                                    <option value="Graduate">Graduate</option>
+                                    <option value="Under Graduate">Under Graduate</option>
+                                    <option value="High School">High School</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <button class="btn btn-primary" type="button" name="button" id="highestEducationComplete">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="highestExperience" style="display:none">
+                <h5 class="card-header border-info">Let's get you started.</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row" style="margin-top:10px;">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Upload</span>
+                              </div>
+                              <div class="custom-file">
+                                <input type="file" accept="image/*" onchange="uploadGetURL(0)" class="custom-file-input" id="profilepicture">
+                                <label class="custom-file-label" for="profilepicture">Profile picture</label>
+                              </div>
+                              <div class="text-center" id="msg" style="width:100%">
+                              </div>
+                            </div>
+                        </div><hr>
+                        <div class="form-group">
+                            <label for="highestEducation"><h5>Highest Education</h5></label>
+                            <select class="form-control" name="highestEducation" id="highestEducation" required>
+                                <option value="Post Graduate">Post Graduate</option>
+                                <option value="Graduate">Graduate</option>
+                                <option value="Under Graduate">Under Graduate</option>
+                                <option value="High School">High School</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div><hr>
+                        <div class="form-group">
+                            <label for="totalExperience">Total Experience</label>
+                            <select class="form-control" name="totalExperience" id="totalExperience" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="5+">5+</option>
+                            </select>
+                        </div><hr>
+                        <div class="row">
+                            <div class="form-group col-4 col-lg-12">
+                                <label for="lastCTC">Current/Last CTC</label>
+                                <input class="form-control" type="number" min="0" step="any" id="lastCTC" name="lastCTC" value="" required>
+                                <small class="text-muted">in Lakhs per annum.</small>
+                            </div>
+                            <div class="form-group col-4 col-lg-12">
+                                <label for="lastDesig">Current/Last Designation</label>
+                                <input class="form-control" type="text" id="lastDesig" name="lastDesig" value="" required>
+                            </div>
+                            <div class="form-group col-4 col-lg-12">
+                                <label for="lastCom">Current/Last Company</label>
+                                <input class="form-control" type="text" name="lastCom" id="lastCom" value="" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary" type="button" name="button" id="lastCTCComplete">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="basic_info" style="display:none">
+                <h5 class="card-header border-info">Personal Info</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <div class="form-group">
+                            <label for="cname"><h5>Name:</h5></label>
+                            <input id="cname" class="form-control" type="text" name="name" value="" required>
+                        </div><hr>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="cemail"><h5>Email:</h5></label>
+                            <input id="cemail" class="form-control" type="text" name="email"
+                                   value="{{request.session.email}}" required readonly>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="ph_no"><h5>Phone number:</h5></label>
+                            <input id="ph_no" class="form-control" type="number" name="ph_np" value="" required>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="dob"><h5>Date of birth:</h5></label>
+                            <input id="cdob" class="form-control" type="date" name="dob" value="" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="cgender" ><h5>Gender:</h5></label>
+                            <select id="cgender" class="form-control" name="gender" required>
+                                  <option>M</option>
+                                  <option>F</option>
+                                  <option>O</option>
+                                </select>
+                        </div>
+                        </div><hr>
+                        <div class="form-group">
+                            <label for="caddress"><h5>Address:</h5></label>
+                            <input id="caddress" class="form-control" type="text" name="address" value="" equired>
+                        </div><hr>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary" type="button" name="button" id="basicComplete">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="education_fillup" style="display:none">
+                <h5 class="card-header border-info">Education</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <label for="education" ><h5>Education:</h5></label>
+                        <div id="education" class="after-add-more" style="margin:10px">
+                            <div class="form-row">
+                                <div class="form-group col-12 col-lg-4">
+                                    <label for="deg">Degree:</label>
+                                    <input id="deg" type="text" class="form-control" name="degree[]" value="" required>
+                                </div>
+                                <div class="form-group col-12 col-lg-8">
+                                    <label for="inst">Institute:</label>
+                                    <input id="inst" type="text" class="form-control" name="institute[]" value="" required>
+                                </div>
+                                <div class="form-group col-12 col-lg-4">
+                                    <label for="brn">Branch/Specialization:</label>
+                                    <input id="brn" type="text" class="form-control" name="branch[]" value="" required>
+                                </div>
+                                <div class="form-group col-6 col-lg-2">
+                                    <label for="cg">Score/CGPA:</label>
+                                    <input id="cg" type="number" class="form-control" step="any" name="score[]" value="" required>
+                                </div>
+                                <div class="form-group col-6 col-lg-2">
+                                    <label for="cgOutOf">Out Of</label>
+                                    <select class="form-control" name="cgOutOf" id="cgOutOf" required>
+                                        <option value="100">100%</option>
+                                        <option value="10">10 - CGPA</option>
+                                        <option value="4">4 - CGPA</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-12 col-lg-4">
+                                    <label for="py">Passing year:</label>
+                                    <input id="py" type="number" class="form-control" min="1900" name="passingYear[]" value="" required>
+                                </div>
+                            </div>
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more">Add more</button>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary" type="button" name="button" id="eduComplete">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="experience_fillup" style="display:none">
+                <h5 class="card-header border-dark">Experience</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <label for="experience"><h5>Experience:</h5></label>
+                        <div id="experience" class="after-add-more-exp" style="margin:10px">
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more-exp">Add Experience</button>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary" type="button" name="button" id="expComplete">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="projects_fillup" style="display:none">
+                <h5 class="card-header border-warning">Projects</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <label for="projects"><h5>Projects:</h5></label>
+                        <div id="projects" class="after-add-more-pro" style="margin:10px">
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more-pro">Add a project</button>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary" type="button" name="button" id="proComplete">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="awards_fillup" style="display:none">
+                <h5 class="card-header border-warning">Awards and Achievements</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <label for="achievements"><h5>Achievements:</h5></label>
+                        <div id="achievements" class="after-add-more-award" style="margin:10px">
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more-award">Add an achievement</button>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary" type="button" name="button" id="awardComplete">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="leader_fillup" style="display:none">
+                <h5 class="card-header border-danger">Position of Responsibility</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <label for="leadership"><h5>Responsibilities</h5></label>
+                        <div id="leadership" class="after-add-more-lead" style="margin:10px">
+                            <button type="button" name="button" class="btn btn-success btn-sm add-more-lead">Add</button>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary" type="button" name="button" id="leadershipComplete">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3 shadow-cus" id="skills_fillup" style="display:none">
+                <h5 class="card-header border-danger">Skills</h5>
+                <div class="card-body">
+                    <div class="container">
+                        <div id="skillsSelectize" class="form-group">
+                            <label for="skills"><h5>Skills:</h5></label>
+                            <select id="skills" name="skills" id="skills" multiple="multiple" placeholder="" required>
+
+                            </select>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary" type="button" name="button" id="skillsComplete">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Copy Fields for education -->
+        <div class="copy-edu" style="display:none;">
+            <div id="education" class="remove-edu" style="margin-top:10px">
+                <div class="form-row">
+                    <div class="form-group col-12 col-lg-4">
+                        <label for="degree">Degree:</label>
+                        <input id="deg" type="text" class="form-control" name="degree[]" value="" required>
+                    </div>
+                    <div class="form-group col-12 col-lg-8">
+                        <label for="inst">Institute:</label>
+                        <input id="inst" type="text" class="form-control" name="institute[]" value="" required>
+                    </div>
+                    <div class="form-group col-12 col-lg-4">
+                        <label for="brn">Branch/Specialization:</label>
+                        <input id="brn" type="text" class="form-control" name="branch[]" value="" required>
+                    </div>
+                    <div class="form-group col-6 col-lg-4">
+                        <label for="cg">Score/CGPA:</label>
+                        <input id="cg" type="number" class="form-control" step="any" name="score[]" value="" required>
+                    </div>
+                    <div class="form-group col-12 col-lg-4">
+                        <label for="py">Passing year:</label>
+                        <input id="py" type="number" min="1900" class="form-control" name="passingYear[]" value="" required>
+                    </div>
+                </div>
+            <button type="button" name="button" class="btn btn-danger btn-sm remove">remove</button>
+            </div>
+        </div>
+        <!-- Copy Fields for experience -->
+            <div class="copy-exp" style="display:none;">
+                <div id="experience" class="remove-exp" style="margin-top:10px">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="desig">Designation:</label>
+                            <input id="desig" type="text" class="form-control" name="desig[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                                <label for="company">Company:</label>
+                            <input id="company" type="text" class="form-control" name="company[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="from">From:</label>
+                            <input id="from" type="month" class="form-control" name="from[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="to">To:</label>
+                            <input id="to" type="month" class="form-control" name="to[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="exptype">Experience Type:</label>
+                            <select class="form-control" id="expType" name="expType[]" value="" required>
+                                <option value="internship">Internship</option>
+                                <option value="job">Job</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="custom-file" style="margin-top: 32px;">
+                              <label class="custom-file-label" for="resume-doc">Certificate</label>
+                              <input type="file" accept="image/*, .pdf, .doc" onchange="uploadGetURL(1)" class="custom-file-input" id="resume-doc">
+                            </div>
+                            <div class="text-center" id="msgDoc" style="width:100%">
+
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <h6><b>Responsibilties:</b></h6>
+                            <small class="text-muted">Only 60 characters are Allowed for each bullet point.</small><br>
+                            <small class="text-muted">At least one bullet point is compulsary.</small><br>
+                            <label for="info1">Bullet Point 1:</label>
+                            <input id="info1" type="text" class="form-control" name="info[]" value="" maxlength="60" required>
+                            <label for="info2">Bullet Point 2:</label>
+                            <input id="info2" type="text" class="form-control" name="info[]" value="" maxlength="60">
+                            <label for="info3">Bullet Point 3:</label>
+                            <input id="info3" type="text" class="form-control" name="info[]" value="" maxlength="60">
+                        </div>
+                    </div>
+                <button type="button" name="button" class="btn btn-danger btn-sm remove-exp-b">remove</button>
+                </div>
+            </div>
+            <!-- Copy Fields for projects -->
+            <div class="copy-pro" style="display:none;">
+                <div id="projects" class="remove-pro" style="margin:10px">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="proName">Name:</label>
+                            <input id="proName" type="text" class="form-control" name="proName[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="proDis">Discription:</label>
+                            <input id="proDis" type="text" class="form-control" name="proDis[]" value="" required>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="proDate">Date:</label>
+                            <input id="proDate" type="month" class="form-control" name="proDate[]" value="" required>
+                        </div>
+                    </div>
+                    <button type="button" name="button" class="btn btn-danger btn-sm remove-pro-b">Remove</button>
+                </div>
+            </div>
+
+            <!-- Copy Fields for LeaderShip -->
+            <div class="copy-lead" style="display:none;">
+                <div id="leaderships" class="remove-lead" style="margin:10px">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-lg-6">
+                            <label for="leadTitle">Title:</label>
+                            <input id="leadTitle" type="text" class="form-control" name="leadTitle[]" value="" required>
+                            <small class="text-muted">Describe the leadership Experience in 3 bullet points.</small><br>
+                            <small class="text-muted">Only 60 characters are Allowed for each bullet point.</small><br>
+                            <small class="text-muted">At least one bullet point is compulsary.</small><br>
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="lead1">1:</label>
+                            <input id="lead1" type="text" class="form-control" name="lead1[]" value=""  maxlength="60" required>
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="lead2">2:</label>
+                            <input id="lead2" type="text" class="form-control" name="lead2[]"  maxlength="60" value="">
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="lead3">3:</label>
+                            <input id="lead3" type="text" class="form-control" name="lead3[]"  maxlength="60" value="">
+                        </div>
+                    </div>
+                    <button type="button" name="button" class="btn btn-danger btn-sm remove-lead-b">Remove</button>
+                </div>
+            </div>
+
+            <!-- Copy Fields for awards -->
+            <div class="copy-award" style="display:none;">
+                <div id="projects" class="remove-award" style="margin:10px">
+                    <div class="form-row">
+                        <div class="form-group col-12 col-lg-9">
+                            <label for="awardDis">Discription:</label>
+                            <input id="awardDis" type="text" class="form-control" maxlength="60" name="awardDis[]" value="" required>
+                            <small>Max 60 characters</small>
+                        </div>
+                        <div class="form-group col-12 col-lg-3">
+                            <label for="awardDate">Date:</label>
+                            <input id="awardDate" type="month" class="form-control" maxlength="60" name="awardDate[]" value="" required>
+                        </div>
+                    </div>
+                    <button type="button" name="button" class="btn btn-danger btn-sm remove-award-b">Remove</button>
+                </div>
+            </div>
+{% endblock %}
+
+{%block additionalJS%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.js"></script>
+<script>
+    var profilePicURL;
+    var documentsLinks = [];
+    var expCount = 0;
+
+    //refresh logic for avoiding resubmissions
+
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    //Main ajax calls
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+            }
+        }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    var skills = []
+
+    $('#skills').selectize({
+        plugins: ['remove_button'],
+        theme: 'links',
+        maxItems: null,
+        valueField: 'title',
+        searchField: 'title',
+        options: [
+            { title: 'HTML' },
+            { title: 'CSS' },
+            { title: 'Java' },
+        ],
+        render: {
+            option: function (data, escape) {
+                return '<div class="option">' +
+                '<span class="title">' + escape(data.title) + '</span>'
+                '</div>';
+            },
+            item: function (data, escape) {
+            return '<div class="item"><a href="#">' + escape(data.title) + '</a></div>';
+            }
+        },
+        create: function (input) {
+            return {
+            title: input,
+            };
+        },
+        onChange: function(value) {
+                skills = value;
+          }
+    });
+
+    $('#skills').on('change', function () {
+        var $wrapper = $('#skillsSelectize');
+        $('select.selectized,input.selectized', $wrapper).each(function () {
+            var $container = $('<div hidden >').addClass('value').html('Current Value: ');
+            var $value = $('<span>').appendTo($container);
+            var $input = $(this);
+            var update = function (e) { $value.text(JSON.stringify($input.val()));}
+            $(this).on('change', update);
+            update();
+            $container.insertAfter($input);
+        });
+    });
+
+    $(document).ready(function() {
+        var fresher = 0;
+        $("#splash1").slideDown("slow");
+
+        $("#fresher").click(function() {
+            $("#splash1").slideUp("fast");
+            $("#highestEduAndPicture").slideDown("slow");
+            fresher = 1;
+        });
+        $("#experienced").click(function() {
+            $("#splash1").slideUp("fast");
+            $("#highestExperience").slideDown("slow");
+        });
+        $("#highestEducationComplete").click(function() {
+            $("#highestEduAndPicture").slideUp("fast");
+            $("#basic_info").slideDown("slow");
+        });
+        $("#lastCTCComplete").click(function() {
+            $("#highestExperience").slideUp("fast");
+            $("#basic_info").slideDown("slow");
+        });
+        $("#basicComplete").click(function() {
+            $("#basic_info").slideUp("fast");
+            $("#education_fillup").slideDown("slow");
+        });
+        $("#eduComplete").click(function() {
+            $("#education_fillup").slideUp("fast");
+            if (fresher == 0){
+                $("#experience_fillup").slideDown("slow");
+            } else {
+                $("#awards_fillup").slideDown("slow");
+            }
+        });
+        $("#awardComplete").click(function(){
+            $("#awards_fillup").slideUp("fast");
+            $("#leader_fillup").slideDown("slow");
+        });
+        $("#leadershipComplete").click(function() {
+            $("#leader_fillup").slideUp("fast");
+            $("#skills_fillup").slideDown("slow");
+        });
+        $("#skillsComplete").click(function() {
+            $("#skills_fillup").slideUp("fast");
+            if (fresher == 1){
+                $("#basic_info,#highestEduAndPicture,#education_fillup,#skills_fillup,#experience_fillup,#projects_fillup,#awards_fillup,#leader_fillup,#submitDiv").slideDown("slow");
+            } else {
+                $("#basic_info,#highestExperience,#education_fillup,#skills_fillup,#experience_fillup,#projects_fillup,#awards_fillup,#leader_fillup,#submitDiv").slideDown("slow");
+            }
+
+            $("#basicComplete,#highestEducationComplete,#lastCTCComplete,#leadershipComplete,#eduComplete,#skillsComplete,#expComplete,#proComplete,#awardComplete").hide()
+        });
+
+        $("#expComplete").click(function() {
+            $("#experience_fillup").slideUp("fast");
+            $("#projects_fillup").slideDown("slow");
+        });
+
+        $("#proComplete").click(function() {
+            $("#projects_fillup").slideUp("fast");
+            $("#awards_fillup").slideDown("slow");
+        });
+
+      $(".add-more").click(function(){
+          var html = $(".copy-edu").html();
+          $(".after-add-more").after(html);
+      });
+
+      $("body").on("click",".remove",function(){
+          $(this).parents(".remove-edu").remove();
+      });
+
+      $(".add-more-exp").click(function(){
+          var html = $(".copy-exp").html();
+          $(".after-add-more-exp").after(html);
+          expCount += 1;
+      });
+
+      $(".add-more-award").click(function(){
+          var html = $(".copy-award").html();
+          $(".after-add-more-award").after(html);
+      });
+
+      $("body").on("click",".remove-award-b",function(){
+          $(this).parents(".remove-award").remove();
+      });
+
+      $(".add-more-lead").click(function(){
+          var html = $(".copy-lead").html();
+          $(".after-add-more-lead").after(html);
+      });
+
+      $("body").on("click",".remove-lead-b",function(){
+          $(this).parents(".remove-lead").remove();
+      });
+
+      $("body").on("click",".remove-exp-b",function(){
+          $(this).parents(".remove-exp").remove();
+          expCount -= 1;
+      });
+
+      $(".add-more-pro").click(function(){
+          var html = $(".copy-pro").html();
+          $(".after-add-more-pro").after(html);
+      });
+
+      $("body").on("click",".remove-pro-b",function(){
+          $(this).parents(".remove-pro").remove();
+      });
+
+      $('#resume_form').submit(function (e) {
+          e.preventDefault();
+          $.ajaxSetup({
+          beforeSend: function (xhr, settings) {
+              if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+              // Send the token to same-origin, relative URLs only.
+              // Send the token only if the method warrants CSRF protection
+              // Using the CSRFToken value acquired earlier
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+              }
+              $('#wait').show();
+          }
+          });
+        deg_arr = []
+        $('input[id="deg"]').each(function(input){
+          var value = $(this).val();
+          deg_arr.push(value);
+        });
+        inst_arr = []
+        $('input[id="inst"]').each(function(input){
+            inst_arr.push($(this).val());
+        });
+        brn_arr = []
+        $('input[id="brn"]').each(function(input){
+            brn_arr.push($(this).val());
+        });
+        scr_arr = []
+        $('input[id="cg"]').each(function(input){
+            scr_arr.push($(this).val());
+        });
+        py_arr = []
+        $('input[id="py"]').each(function(input){
+            py_arr.push($(this).val());
+        });
+        out_Of = []
+        $('select[id="cgOutOf"]').each(function(selected){
+          out_Of.push($(this).val());
+        });
+        out_Of.pop();
+        out_Of.push('');
+        desig_arr = []
+        $('input[id="desig"]').each(function(input){
+            desig_arr.push($(this).val());
+        });
+        com_arr = []
+        $('input[id="company"]').each(function(input){
+            com_arr.push($(this).val());
+        });
+        from_arr = []
+        $('input[id="from"]').each(function(input){
+            from_arr.push($(this).val());
+        });
+        to_arr = []
+        $('input[id="to"]').each(function(input){
+            to_arr.push($(this).val());
+        });
+        info1_arr = []
+        $('input[id="info1"]').each(function(input){
+            info1_arr.push($(this).val());
+        });
+        info2_arr = []
+        $('input[id="info2"]').each(function(input){
+            info2_arr.push($(this).val());
+        });
+        info3_arr = []
+        $('input[id="info3"]').each(function(input){
+            info3_arr.push($(this).val());
+        });
+        pro_name = []
+        $('input[id="proName"]').each(function(input){
+            pro_name.push($(this).val());
+        });
+        pro_dis = []
+        $('input[id="proDis"]').each(function(input){
+            pro_dis.push($(this).val());
+        });
+        pro_date = []
+        $('input[id="proDate"]').each(function(input){
+            pro_date.push($(this).val());
+        });
+
+        awd_dis = []
+        $('input[id="awardDis"]').each(function(input){
+            awd_dis.push($(this).val());
+        });
+        awd_date = []
+        $('input[id="awardDate"]').each(function(input){
+            awd_date.push($(this).val());
+        });
+        lead_title = []
+        $('input[id="leadTitle"]').each(function(input) {
+            lead_title.push($(this).val());
+        });
+        lead_1 = []
+        lead_2 = []
+        lead_3 = []
+        $('input[id="lead1"]').each(function(input) {
+            lead_1.push($(this).val());
+        });
+        $('input[id="lead2"]').each(function(input) {
+            lead_2.push($(this).val());
+        });
+        $('input[id="lead3"]').each(function(input) {
+            lead_3.push($(this).val());
+        });
+        exp_type = []
+        $('select[id="expType"]').each(function(selected){
+          exp_type.push($(this).val());
+        });
+        exp_type.pop();
+        exp_type.push('');
+        // $('select[id^="expType"]').each(function(input:selected){
+        //     exp_typ.push($(this).val());
+        // });
+        // console.log(profilePicURL);
+        data = {
+                    'name': document.getElementById('cname').value,
+                    'email': document.getElementById('cemail').value,
+                    'ph_no': document.getElementById('ph_no').value,
+                    'dob' : document.getElementById('cdob').value,
+                    'gender' : document.getElementById('cgender').value,
+                    'address' : document.getElementById('caddress').value,
+                    'profile_picture' : profilePicURL,
+                    'highestEducation' : document.getElementById('highestEducation').value,
+                    'totalExperience' : document.getElementById('totalExperience').value,
+                    'lastCTC' : document.getElementById('lastCTC').value,
+                    'lastJob' : document.getElementById('lastDesig').value,
+                    'lastCom' : document.getElementById('lastCom').value,
+                    'skills' : skills,
+                    'degree' : deg_arr,
+                    'institute' : inst_arr,
+                    'branch' : brn_arr,
+                    'score' : scr_arr,
+                    'passingYear' : py_arr,
+                    'outof' : out_Of,
+                    'designation' : desig_arr,
+                    'company' : com_arr,
+                    'from' : from_arr,
+                    'to': to_arr,
+                    'expType' : exp_type,
+                    'info1' : info1_arr,
+                    'info2' : info2_arr,
+                    'info3' : info3_arr,
+                    'proName' : pro_name,
+                    'proDis': pro_dis,
+                    'proDate' : pro_date,
+                    'docLinks' : documentsLinks,
+                    'awardDis' : awd_dis,
+                    'awardDate' : awd_date,
+                    'lead_title' : lead_title,
+                    'lead_1' : lead_1,
+                    'lead_2' : lead_2,
+                    'lead_3' : lead_3
+        }
+        // console.log(data);
+         $.ajax({
+             url: `{% url 'profile' %}`,
+             type: 'POST',
+             dataType: "json",
+             data: data,
+             success: function (data) {
+                 window.location.reload();
+             },
+             complete: function() {
+                 $('#wait').hide();
+              },
+         });
+      });
+
+    });
+</script>
+<script defer src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/6.3.0/firebase-storage.js"></script>
+<script defer src="{% static 'candidate/js/init-firebase.js' %}"></script>
+<script>
+function uploadGetURL(o){
+    var i;
+    if (o == 0){
+        id = "profilepicture";
+        storageLink = 'resumePictures/{{request.session.email}}';
+        msgId = "#msg"
+    } else {
+        id = "resume-doc"
+        storageLink = 'documents/{{request.session.email}}/'+expCount;
+        msgId = "#msgDoc"
+    }
+    if( document.getElementById(id).files.length != 0 ){
+        file = document.getElementById(id).files[0];
+        $('#submitForm').attr("disabled" ,true);
+        ext = file.type;
+        ext = ext.split('/')[1];
+            var storageRef = firebase.storage().ref();
+            var profilePictureRef = storageRef.child(storageLink);
+            var uploadTask = profilePictureRef.put(file);
+            uploadTask.on('state_changed', function(snapshot){
+              // Observe state change events such as progress, pause, and resume
+              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+              var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              // console.log('Upload is ' + progress + '% done');
+              $(msgId).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><small>Uploading ' + progress + '% </small>');
+              switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED: // or 'paused'
+                  console.log('Upload is paused');
+                  $(msgId).html('<small>Upload is paused</small>');
+                  break;
+                case firebase.storage.TaskState.RUNNING: // or 'running'
+                  console.log('Upload is running');
+                  break;
+              }
+            }, function(error) {
+              // Handle unsuccessful uploads
+            }, function() {
+              // Handle successful uploads on complete
+              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+              uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                // console.log('File available at', downloadURL);
+                $(msgId).html('<small>uploaded</small>');
+                if (o == 0){
+                    profilePicURL = downloadURL;
+                } else {
+                    documentsLinks.push(downloadURL);
+                    console.log(storageLink);
+                    console.log(documentsLinks);
+                }
+              });
+            });
+    } else {
+        return null;
+    }
+}
+</script>
+{%endblock%}

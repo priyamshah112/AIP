@@ -1,0 +1,46 @@
+   <canvas id="marksChart{{ job_app.appid|slice:'1:' }}"></canvas>
+              <script>
+
+let o{{ job_app.appid| slice:'1:'}} = {{ job_app.app_dict.skills_score.o}};
+let c{{ job_app.appid| slice:'1:'}} = {{ job_app.app_dict.skills_score.c}};;
+let e{{ job_app.appid| slice:'1:'}} = {{ job_app.app_dict.skills_score.e}}; ;
+let a{{ job_app.appid| slice:'1:'}} = {{ job_app.app_dict.skills_score.a}};;
+let n{{ job_app.appid| slice:'1:'}} = {{ job_app.app_dict.skills_score.n}};;
+
+                var marksCanvas{{ job_app.appid| slice:'1:'}} = document.getElementById("marksChart{{job_app.appid |slice:'1:'}}");
+
+                var marksData{{ job_app.appid | slice:'1:'}} = {
+                  labels: ["Openness", "Conscientiousness", "Extroversion", "Agreeableness", "Neuroticism"],
+                    datasets: [{
+                      label: "Skill Level",
+                      backgroundColor: "rgba(255,86,64,0.5)",
+                      data: [o{{ job_app.appid| slice:'1:'}},c{{ job_app.appid| slice:'1:'}},e{{ job_app.appid| slice:'1:'}},a{{ job_app.appid| slice:'1:'}},n{{ job_app.appid| slice:'1:'}}]
+                    },]
+                };
+
+                var chartOptions{{ job_app.appid | slice:'1:'}} = {
+                  scale: {
+                    ticks: {
+                      beginAtZero: true,
+                        min: 0,
+                          max: 5,
+                            stepSize: 1
+                    },
+                    pointLabels: {
+                      fontSize: 12
+                    }
+                  },
+                  legend: {
+                    display: false
+                  },
+                  maintainAspectRatio: false
+                }
+                ;
+
+                var radarChart{{ job_app.appid |slice:'1:'}} = new Chart(marksCanvas{{ job_app.appid |slice:'1:'}}, {
+                  type: 'radar',
+                  data: marksData{{ job_app.appid | slice:'1:'}},
+                  options: chartOptions{{ job_app.appid | slice:'1:'}}
+
+                });
+              </script>

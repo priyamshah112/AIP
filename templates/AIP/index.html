@@ -1,9 +1,247 @@
-<html>
-Index Page ! AIP started.
-Basic Details about project structure
-1] Main Project AIP which connects all decoupled modules and has index page.
-2] Accounts app to handle all login,signup,forget password,logout related functionality.
-3] Recruiter app to handle create job, assess candidate, library, feedback+faq, edit profile.
-4] Candidate app to handle view jobs, apply to job (video interview), pending interview or applied for results.
-5] Maintainer app to handle accounts (delete,block), analysis of platform (num of jobs, company, application)
+<<<<<<< HEAD
+{% extends "./nav.html" %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="../../static/AIP/css/index.css">
+{% block content %}
+      <section class="first-sec">
+        <div class="container-fluid ">
+            <div class="row row1">
+                <div class="col-sm text-center text-col">
+                      <div class="intro-text">
+                        <h1>
+                            The <span class="fast">Fastest</span>
+                        </h1>
+                        <h2>
+                            Way to Hire
+                        </h2>
+                        <div id="wrapper">
+                                <h1>
+                                  <span id="word-holder"></span>
+                                </h1>
+                                <br/>
+                             <a href="./login"> <button class="btn fourth"> Sign In &nbsp;<i class="fa fa-long-arrow-right"></i></button></a>
+                              </div>
+                              
+                        </div>
+                </div>
+                <div class="col-sm image-col">
+                    <img src="../../static/AIP/img/btech 1.jpg" class="rounded mx-auto d-block" alt="AMP view image">
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <section class="second-sec">
+        
+      </section>
+
+{% endblock content %}     
+      
+
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- link for fontawesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <!-- link for local css -->
+    <link rel="stylesheet" href="../../static/AIP/css/index.css">
+
+    <!-- link for jquery 3 minified -->
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+</head>
+<body class="has-navbar-fixed-top">
+    
+    <nav id="top-nav" class="navbar is-fixed-top is-vcentered">
+        <div class="navbar-brand">
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                  </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                </div>
+                <div class="navbar-item">
+                    <a href="/accounts/recruiter_signup">Recruiter Signup</a>
+                </div>
+                <div class="navbar-item">
+                    <a href="/accounts/candidate_signup">Candidate Signup</a>
+                </div>
+                <div class="navbar-item">
+                    <a href="/accounts/login">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+            
+    <section id="landing" class="hero is-fullheight-with-navbar">
+        <div class="hero-body">
+            <div class="columns is-vcentered">
+                <div class="column">
+                    <div class="title is-1">
+                        <h1>Video Interview & Soft Skills Training Platform with AI</h1>
+                    </div>
+                </div>
+                <div class="column" style="margin-left: -20px;">
+                    <img src="../../static/AIP/img/hero-rec.png" alt="hero-gif">
+                </div>
+            </div>       
+        </div>
+    </section>
+
+    <section class="section" id="meet-apli">
+        <div class="container">
+            <h3 class="title has-text-centered">Meet Amp Tech</h3>
+        </div>
+
+        <div class="section">
+
+            <div class="columns is-mobile is-vcentered is-multiline">
+        
+                <div class="column">
+                        <img src="../../static/AIP/img/apli-for-students.png" alt="">
+                </div>
+                <div class="column">
+                    <h3 class="column-heading">AMP Tech for Students</h3>
+                    <p class="column-subheading">Increase your hiring chances</p>
+                    <ul class="column-list">
+                        <div class="list-container">
+                                <li><span class="heading">Profile</span>: Standardised CV and video profile to stand out</li>
+
+                        </div>
+                        <div class="list-container">
+                                <li><span class="heading">Personality Test</span>: Feedback from mentors to improve interview skills</li>
+
+                        </div>
+                        <div class="list-container">
+                                <li><span class="heading">Application</span>: Apply to jobs, internship and international</li>
+
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section columns is-mobile is-vcentered is-multiline">
+
+                <div class="column">
+                    <h3 class="column-heading">AMP Tech for Companies</h3>
+                    <p class="column-subheading">Get Insights on Candidates</p>
+                    <ul class="column-list">
+                        <div class="list-container">
+                                <li><span class="heading">Automated Screening</span>: Organised resume's with inbuilt Algorithm</li>
+
+                        </div>
+                        <div class="list-container">
+                                <li><span class="heading">Deep Insights</span>: Reports with benchmark scores and more accuracy than traditional one's</li>
+
+                        </div>
+                    </ul>
+                </div>
+                <div class="column">
+                    <img src="../../static/AIP/img/apli-for-companies.png" alt="">
+
+                    </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="container" id="features">
+        <div class="container"> 
+            <div class="container">
+                <h3 class="has-text-centered title">Access AMP Tech On The Go</h3>
+            </div>
+            <div class="section columns">
+                    <div class="column">
+                        <div class="card">
+                            <div class="card-image">
+                                <img class="image" src="../../static/AIP/img/life_insurance_A1_Rectangle_5_pattern.png" alt="">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="title has-text-centered">Security</h3>
+                                <p class="subheading">Database is encrypted by using multiple firewalls and we update it to comply with legal and technical changes.</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="column">
+                        <div class="card">
+                            <div class="card-image">
+                                <img class="image" src="../../static/AIP/img/insurance_1__A1_Rectangle_7_pattern.png" alt="">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="title has-text-centered">Multiple Stake Holders</h3>
+                                <p class="subheading">Connecting various stakeholders such as recruiters, students and alumni on a single platform for better engagement.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="card">
+                            <div class="card-image">
+                                <img class="image" src="../../static/AIP/img/insurance_A1_Rectangle_9_pattern.png" alt="">
+                            </div>
+                            <div class="card-content">
+                                <h3 class="title has-text-centered">Personalized Insights</h3>
+                                <p class="subheading">Providing insights on actual proficiency by comprehensive reports which is more accurate than traditional methods.</p>
+                            </div>
+                        </div>
+                    </div>            
+
+            </div>
+        </div>
+    </section>
+
+
+    <section class="section  is-vcentered has-text-centered" id="request-demo">
+                <h3 class="column-heading">Discover AMP Tech</h3>
+                <p class="column-subheading">It's free and very simple to use!</p>
+
+    </section>
+    
+    
+
+    <footer class="footer">
+
+        <div id="copyright" class="has-text-centered">
+            Copyright 2019 © AMP Tech
+        </div>
+    </footer>
+
+    <script>
+        $(function () {
+            $(document).scroll(function () {
+                var $nav = $("#top-nav");
+                $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+            })
+        })
+        $(document).ready(function() {
+
+// Check for click events on the navbar burger icon
+$(".navbar-burger").click(function() {
+
+    // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+    $(".navbar-burger").toggleClass("is-active");
+    $(".navbar-menu").toggleClass("is-active");
+
+});
+});
+    </script>
+    
+    
+
+</body>
 </html>
+>>>>>>> 0e6b95c44511a26dba9a45b68d3f1e230508ae2f

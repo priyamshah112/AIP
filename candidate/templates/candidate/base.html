@@ -1,3 +1,70 @@
-<html>
-base nav and header footer to be placed here
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{% static 'candidate/css/bootstrap.css'%}" type="text/css">
+        <link rel="stylesheet" href="{% static 'candidate/css/base.css' %}" type="text/css">
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <script src="{% static 'candidate/js/bootstrap.js' %}"></script>
+        <script src="{% static 'candidate/js/base.js' %}"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/js/regular.min.js"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+        <title>{% block title %}AMP Tech{% endblock title %}</title>
+        {% block additionalCSS %} {% endblock additionalCSS%}
+    </head>
+    <body id="body">
+        <div class="wrapper">
+            <nav id="sidebar">
+                <ul class="list-unstyled components">
+                    <li class="{% if request.resolver_match.url_name == 'jobs' %}active{% endif %}"><a href="{% url 'jobsboard'  %}"><i class="fas fa-briefcase"></i> Jobs</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><a href="{% url 'profile'  %}"><i class="fas fa-id-card"></i> Profile</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'resume' %}active{% endif %}"><a href="{% url 'resume'  %}">Edit Resume</a></li>
+                    <li class="{% if request.resolver_match.url_name == 'applications' %}active{% endif %}"><a href="{% url 'applications'  %}"><i class="fas fa-print"></i>My Interviews</a></li>
+                    <li><a href="{% url 'accounts:logout'  %}"><i class="fas fa-sign-out-alt"></i> logout</a></li>
+                </ul>
+            </nav>
+            <div class="navbar fixed-top navbar-expand-lg">
+                <a class="navbar-brand" href="#">AMP Tech</a>
+                <a id="sidebarToggle" href="#">
+                    <i class="fas fa-align-left"></i>
+                </a>
+                <ul class="navbar-nav ml-auto  ">
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {% if request.session.name %}
+                                {{request.session.name}}
+                            {% else %}
+                                {{request.session.email}}
+                            {% endif %}
+                            <i class="fas fa-user-circle fa-fw"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{% url 'profile' %}" id="profileLi">Profile</a>
+                            <a class="dropdown-item" href="{% url 'accounts:logout'  %}" >Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="content">
+                {% block content%} 
+
+                {% endblock %}
+            </div>
+        </div>
+
+        <a class="scroll-to-top rounded" href="#page-top" >
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <div class="overlay"></div>
+        {% block additionalJS %} {% endblock %}
+    </body>
 </html>

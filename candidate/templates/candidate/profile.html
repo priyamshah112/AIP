@@ -1,0 +1,235 @@
+{% extends "candidate/base.html" %}
+{% block title %}AMP Tech | Profile{% endblock title %}
+{% load static %}
+{% block content %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+    <div class="container">
+        <div class="card mb-3 shadow-cus" id="resume">
+            <div class="card-header border-info">
+                <div class="row">
+                    <div class="col-10">
+                        <h4>RESUME</h4>
+                    </div>
+                    <div class="col-2">
+                        <a href="#" id="download-btn" onclick='printDiv();'><i></i>download</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="container">
+                    <h4>Basic Information</h4>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4 col-lg-4" style="max-height:360px; overflow-y:hidden;">
+                            <img id="profilepicture" src="{{candidate.profile_picture}}" alt="Error/Please upload a profile picture." width="100%">
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-8 col-lg-8">
+                            <div class="row">
+                                <div class="col-4">
+                                    Name :
+                                </div>
+                                <div class="col-8">
+                                    {{candidate.name}}
+                                </div>
+                            </div><hr>
+                            <div class="row">
+                                <div class="col-4">
+                                    Email :
+                                </div>
+                                <div class="col-8">
+                                    {{candidate.email}}
+                                </div>
+                            </div><hr>
+                            <div class="row">
+                                <div class="col-4">
+                                    Phone Number :
+                                </div>
+                                <div class="col-8">
+                                    {{candidate.ph_no}}
+                                </div>
+                            </div><hr>
+                            <div class="row">
+                                <div class="col-4">
+                                    Date of Birth :
+                                </div>
+                                <div class="col-8">
+                                    {{candidate.dob}}
+                                </div>
+                            </div><hr>
+                            <div class="row">
+                                <div class="col-4">
+                                    Gender :
+                                </div>
+                                <div class="col-8">
+                                    {{candidate.gender}}
+                                </div>
+                            </div><hr>
+                            <div class="row">
+                                <div class="col-4">
+                                    Address :
+                                </div>
+                                <div class="col-8">
+                                    {{candidate.address}}
+                                </div>
+                            </div><hr>
+                        </div>
+                    </div><hr>
+                    <div class="row">
+                        {% if candidate.education %}
+                        <div class="col-12">
+                            <h4>Education</h4>
+                            <div class="row">
+                                <table class="table table-bordered table-striped">
+                                    <tr>
+                                        <th>Degree</th>
+                                        <th>Branch</th>
+                                        <th>Institute</th>
+                                        <th>Passing Year</th>
+                                        <th>CGPA/Percentage</th>
+                                    </tr>
+                                {% for dict in candidate.education %}
+                                    <tr>
+                                        <td>{{dict.education}}</td>
+                                        <td>{{dict.specialisation}}</td>
+                                        <td>{{dict.institute}}</td>
+                                        <td>{{dict.passYear}}</td>
+                                        <td>{{dict.score}}</td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div><hr>
+                        </div>
+                        {% endif %}
+                        {% if candidate.skills %}
+                        <div class="col-12">
+                            <h4>Skills</h4>
+                            <div class="row container">
+                                {% for skill in candidate.skills %}
+                                {{skill}},
+                                {% endfor %}
+                            </div><hr>
+                        </div>
+                        {% endif %}
+                        {% if candidate.experience %}
+                        <div class="col-12">
+                            <h4>Experience</h4>
+                            <div class="row">
+                                <table class="table table-bordered table-striped">
+                                    <tr>
+                                        <th>Designation</th>
+                                        <th>Type</th>
+                                        <th>Company</th>
+                                        <th>Info</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                    {% for dict in candidate.experience%}
+                                    <tr>
+                                        <td>{{dict.designation}}</td>
+                                        <td>{{dict.type}}</td>
+                                        <td>{{dict.company}}</td>
+                                        <td>
+                                            {% for bullet in dict.info %}
+                                            <ul style="margin:0px">
+                                                <li>{{bullet}}</li>
+                                            </ul>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{dict.from}} to {{dict.to}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div><hr>
+                        {% endif %}
+                        {% if candidate.projects %}
+                        <div class="col-12">
+                            <h4>Projects</h4>
+                            <div class="row">
+                                <table class="table table-bordered table-striped">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Info</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    {% for pro in candidate.projects%}
+                                    <tr>
+                                        <td>{{pro.name}}</td>
+                                        <td>{{pro.info}}</td>
+                                        <td>{{pro.date}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div><hr>
+                        {% endif %}
+                        {% if candidate.award %}
+                        <div class="col-12">
+                            <h4>Awards</h4>
+                            <div class="row">
+                                <table class="table table-bordered table-striped">
+                                    <tr>
+                                        <th>Info</th>
+                                        <th>Date</th>
+                                    </tr>
+                                    {% for award in candidate.award%}
+                                    <tr>
+                                        <td>{{award.description}}</td>
+                                        <td>{{award.date}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div><hr>
+                        {% endif %}
+                        {% if candidate.lead %}
+                        <div class="col-12">
+                            <h4>Responsibilties</h4>
+                            <div class="row">
+                                <table class="table table-boreded table-striped">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Discription</th>
+                                    </tr>
+                                    {% for res in candidate.lead %}
+                                    <tr>
+                                        <td>{{res.title}}</td>
+                                        <td>
+                                            <ul>
+                                                {% for lead in res.lead %}
+                                                    <li>{{lead}}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+    </div>
+
+{% endblock content%}
+{% block additionalJS%}
+<script>
+    function printDiv() {
+        var divToPrint = document.getElementById('resume');
+        var newWin = window.open('', 'Print-Window');
+        newWin.document.open();
+        newWin.document.write('<html><body onload="window.print()"><style>@media print{#download-btn{display:none!important}}</style><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">' + divToPrint.innerHTML + '</body ></html > ');
+        newWin.document.close();
+        setTimeout(function () { newWin.close(); }, 1000);
+    }
+</script>
+{% endblock additionalJS%}
