@@ -8,7 +8,7 @@ html, body {
 }
 
 body {
-  background: linear-gradient(to right top, #5399e5, #4b8ee1, #4683dd, #4377d8, #446bd2, #5968d4, #6d64d5, #7f60d5, #a164dc, #c268e1, #e16ce5, #ff71e6);
+  background: linear-gradient(45deg, #3399ff 0%, #00bfff 45%, #33ccff 66%, #00ffff 100%);
   background-repeat: no-repeat;
   background-size: 100%;
 }
