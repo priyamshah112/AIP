@@ -7,7 +7,7 @@ html {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: #b2dfdb;
+    background: #7d94fa;
     color: #000;
     max-width: 100%;
     overflow-x: hidden;
@@ -22,7 +22,7 @@ a:focus {
 }
 
 .navbar {
-    background: #007c91;
+    background: #004cff;
     color: #FFF;
     border: none;
     border-radius: 0;
@@ -45,7 +45,7 @@ a:focus {
     left: -250px;
     height: 100vh;
     z-index: 999;
-    background: #00acc1;
+    background: #3399ff;
     color: #fff;
     transition: all 0.3s;
     overflow-y: hidden;
