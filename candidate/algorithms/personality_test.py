@@ -89,4 +89,3 @@ def personality_insights(video_path):
 
   return float(p['personality'][0]['percentile'])*100,float(p['personality'][1]['percentile'])*100,float(p['personality'][2]['percentile'])*100,float(p['personality'][3]['percentile'])*100,float(p['personality'][4]['percentile'])*100
 
-print(personality_insights("Ans1.mp4"))

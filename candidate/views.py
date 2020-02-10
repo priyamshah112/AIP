@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.views import View
 from firebase_admin import firestore
 from collections import namedtuple
+import threading 
+from candidate.algorithms.personality_test import personality_insights
+from candidate.algorithms.answer_relevancy import general_question_answer
 
 db = firestore.client()
 
@@ -45,32 +48,18 @@ A candidate has the following fields:
 
 
 def profile(request):
+    
+
     if request.method == 'GET':
         candidate_id = request.session.get('email')
         candidate_ref = db.collection('candidates').document(candidate_id).get()
         profile_status = candidate_ref.get('profile_status')
+        context = {
+            'candidate': db.collection('candidates').document(candidate_id).get().to_dict()
+        }
         if profile_status == 'empty':
             messages.error(request, 'please complete your basic details')
             return render(request, 'candidate/resume_profile_buildup.html', {'profile_status': profile_status})
-
-        context = {
-            'candidate': candidate_ref.to_dict()
-        }
-
-        # patch
-        if context['candidate']['psycho_ques'] is not None:
-            all_ques = db.collection('candPsychoQues').document('all_ques').get().to_dict()
-            all_ques = sorted(all_ques.items(), key=lambda x: x[0])
-
-            context['candidate']['psycho_ques'] = sorted(context['candidate']['psycho_ques'].items(),
-                                                         key=lambda x: x[0]
-                                                         )
-            for i in range(0, len(context['candidate']['psycho_ques'])):
-                context['candidate']['psycho_ques'][i] = (context['candidate']['psycho_ques'][i][0],
-                                                          all_ques[i][1],
-                                                          context['candidate']['psycho_ques'][i][1])
-        # print(context)
-        return render(request, 'candidate/profile.html', context)
 
     elif request.method == 'POST':
         """
@@ -94,6 +83,7 @@ def profile(request):
             }
         """
         # we can remove this one dev is complete
+
         print(request.POST)
 
         def get_(x):
@@ -184,8 +174,12 @@ def profile(request):
 
         db.collection('candidates').document(candidate_dict['email']).set(candidate_dict)
         messages.success(request, 'your profile has been updated')
+        context = {
+            'candidate': db.collection('candidates').document(candidate_id).get().to_dict()
+        }        
         return JsonResponse({'success': 'True'})
-
+    
+    return render(request, 'candidate/profile.html', context)
 
 
 def jobsboard(request):
@@ -516,13 +510,10 @@ def jobInterview(request, ifext=False):
                 'candidate_name': candidate_dict['name'],
                 'status': "PENDING",
                 'video_interview_links': {},
-                'resume_score': "7",
-                'video_resume_score': "6",
-                'skills_score': {'a': 4, 'c': 3, 'e': 5, 'n': 5, 'o': 3},
-                'grades': {'1': 3, '2': 6, '3': 6, '4': 5},
+                'grades': {},
             })
 
-            # increment_link_count(jobId, )
+            print("jobs in que",que)
 
             return render(request, 'candidate/job_interview.html',
                           {'jobId': jobId, 'job': job_doc, 'questions': que, 'startFrom': 0})
@@ -538,7 +529,7 @@ def jobInterview(request, ifext=False):
                     que.append(q.to_dict())
                 d = {k: v for k, v in apdic['video_interview_links'].items() if v != ""}
                 startFrom = len(d)
-                messages.success(request, 'Continue the mock interview')
+                messages.success(request, 'Continue the interview')
                 # print("lmao bruh")
                 return render(request, 'candidate/job_interview.html',
                               {'jobId': jobId, 'job': job_doc, 'questions': que, 'startFrom': startFrom})
@@ -567,6 +558,9 @@ def addApplication(request):
         job = request.POST.get('job')
         ids = request.POST.get('ids')
         video_link = request.POST.get('video_link')
+        que = request.POST.get('que')
+        qtype = request.POST.get('qtype')
+        print("add video backend",que,qtype,video_link,ids) # make threads for algos
         doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)
         vd_dic = doc_ref.get().to_dict()['video_interview_links']
         vd_dic.update({ids: video_link})

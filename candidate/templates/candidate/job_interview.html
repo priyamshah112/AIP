@@ -121,8 +121,8 @@ var qi = 0;
 var id = "";
 ids = [{% for x in questions%}'{{x.id}}',{% endfor %}];
 qu = [{% for x in questions%}'{{x.question}}',{% endfor%}];
-
-
+qtype = [{% for x in questions%}'{{x.type}}',{% endfor%}];
+console.log(qtype);
 async function loadQuestions(){
 
     $('#loadNext').attr("disabled", true);
@@ -130,6 +130,7 @@ async function loadQuestions(){
     if (i < qu.length){
         qi = i+1;
         id = ids[i];
+        console.log(i);
         $('#playerDiv').slideUp();
         $('#questionSpan').html("<h5>"+qi+"."+qu[i]+"</h5>");
         $('#minfo').html("<h4>Read the Question</h4>");
@@ -279,8 +280,11 @@ function startEverything() {
             'job' : '{{jobId}}',
             'type' : 'addVideo',
             'ids' : ids[i-1],
+            'que' : qu[i-1],
+            'qtype': qtype[i-1],
             'video_link' : links ,
             }
+        console.log(data);
         event.preventDefault();
         $.ajax({
             url: `{% url 'addApplication' %}`,
@@ -343,7 +347,7 @@ function startEverything() {
             uploadTask.on('state_changed', function(snapshot){
               // Observe state change events such as progress, pause, and resume
               // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-              var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              var progress = parseInt((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
               // console.log('Upload is ' + progress + '% done');
               $('#minfo').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><h5>Uploading ' + progress + '% </h5>');
               switch (snapshot.state) {

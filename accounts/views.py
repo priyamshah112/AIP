@@ -154,16 +154,11 @@ def candidate_signup(request):
                 })
 
                 db.collection('candidates').document(email).set({
-                    'name':
-                    name,
-                    'profile_picture':
-                    settings.DEFAULT_CAND_PICTURE,
-                    'profile_status':
-                    'empty',
-                    'email':
-                    email,
-                    'job_applications':
-                    list(),
+                    'name':name,
+                    'profile_picture':settings.DEFAULT_CAND_PICTURE,
+                    'profile_status':'empty',
+                    'email':email,
+                    'job_applications':list(),
                 })
 
                 messages.success(request, 'Signup completed successfully.')

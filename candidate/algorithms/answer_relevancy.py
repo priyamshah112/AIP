@@ -12,7 +12,7 @@ from sumy.summarizers.lsa import LsaSummarizer as Summarizer
 from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 import nltk
-from scoring import scoring
+from candidate.algorithms.scoring import scoring
 nltk.download('punkt')
 LANGUAGE = "english"
 SENTENCES_COUNT = 10
@@ -55,7 +55,7 @@ def general_question_answer(q):
     for i in output:
       summarized_data_from_url(i)
 
-question = "What do you mean by DevOps"
-my_answer = 'DevOps (development and operations) is an enterprise software development phrase used to mean a type of agile relationship between development and IT operations. The goal of DevOps is to change and improve the relationship by advocating better communication and collaboration between these two business units.'
-general_question_answer(question)
-print(scoring(relevant_answers,my_answer))
+#question = "What do you mean by DevOps"
+#my_answer = 'DevOps (development and operations) is an enterprise software development phrase used to mean a type of agile relationship between development and IT operations. The goal of DevOps is to change and improve the relationship by advocating better communication and collaboration between these two business units.'
+#general_question_answer(question)
+#print(scoring(relevant_answers,my_answer))
