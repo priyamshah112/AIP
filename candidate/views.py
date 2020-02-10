@@ -561,6 +561,15 @@ def addApplication(request):
         que = request.POST.get('que')
         qtype = request.POST.get('qtype')
         print("add video backend",que,qtype,video_link,ids) # make threads for algos
+        if qtype=='SoftSkills':
+            print("running personlaity algo for ",que)
+            threading.Thread(target=personality_insights, args=(candidate,job,ids,que,video_link,)).start() 
+
+        elif qtype=='SubjectSkills':
+            print("running answer relevancy algo for ",que)
+            threading.Thread(target=general_question_answer, args=(candidate,job,ids,que,video_link,)).start()
+        else:
+            print("error in question type")
         doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)
         vd_dic = doc_ref.get().to_dict()['video_interview_links']
         vd_dic.update({ids: video_link})

@@ -13,7 +13,14 @@ from sumy.nlp.stemmers import Stemmer
 from sumy.utils import get_stop_words
 import nltk
 from candidate.algorithms.scoring import scoring
-nltk.download('punkt')
+import speech_recognition as sr 
+import moviepy.editor as mp
+import time
+import os
+from django.conf import settings
+import subprocess
+
+#nltk.download('punkt')
 LANGUAGE = "english"
 SENTENCES_COUNT = 10
 relevant_answers = []
@@ -40,9 +47,48 @@ headers_Get = {
     }
 
 
-def general_question_answer(q):
+def general_question_answer(candidate,job,ids,que,video_path):
+    a = time.time()
+    print("from answer ",candidate,job,ids,que,video_path)
+    # download frm firestorage
+    r = requests.get(video_path)
+    inp = ids+'.webm'
+    print(inp)
+    with open(inp,"wb") as f:
+        f.write(r.content)
+    print("writing video in file")
+    time.sleep(3)
+    # Video to Audio 
+    op = ids+'.mp4'
+    cmds = ['ffmpeg', '-i', inp, op]
+    subprocess.Popen(cmds)
+    clip = mp.VideoFileClip(op) #.mp4 path
+    video_wav = ids+'.wav'
+    clip.audio.write_audiofile(video_wav) #.wav path
+
+    # # Audio to Text
+
+    AUDIO_FILE = (video_wav) #.wav path  
+    r = sr.Recognizer() 
+        
+    with sr.AudioFile(AUDIO_FILE) as source: 
+        audio = r.record(source)   
+        
+    try: 
+        temp = r.recognize_google(audio,language="en-US")
+        print(temp)
+        my_answer = temp
+
+    except sr.UnknownValueError: 
+        print("Google Speech Recognition could not understand audio")
+        exit()
+        
+    except sr.RequestError as e: 
+        print("Could not request results from Google Speech  Recognition service; {0}".format(e)) 
+        exit()
+
     s = requests.Session()
-    q = '+'.join(q.split())
+    q = '+'.join(que.split())
     url = 'https://www.google.com/search?q=' + q + '&ie=utf-8&oe=utf-8'
     r = s.get(url, headers=headers_Get)
 
@@ -54,6 +100,10 @@ def general_question_answer(q):
     #print(output,"\n")
     for i in output:
       summarized_data_from_url(i)
+    
+    print(scoring(relevant_answers,my_answer))
+    b = time.time()
+    print("Answer Processing time : ",(b-a))
 
 #question = "What do you mean by DevOps"
 #my_answer = 'DevOps (development and operations) is an enterprise software development phrase used to mean a type of agile relationship between development and IT operations. The goal of DevOps is to change and improve the relationship by advocating better communication and collaboration between these two business units.'

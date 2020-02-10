@@ -213,6 +213,7 @@ six==1.12.0
 snowballstemmer==2.0.0
 sortedcollections==1.1.2
 sortedcontainers==2.1.0
+SpeechRecognition==3.8.1
 soupsieve==1.9.3
 Sphinx==2.2.0
 sphinxcontrib-applehelp==1.0.1
