@@ -151,54 +151,57 @@
             </thead>
             <tbody class="">
                     {% for key,value in jobsss.items %}
-                    <tr class="new-card shadow-cus">
-                        <td class="d-none"></td>
-                        <!-- <td>{{ key }}</td> -->
-                        <!-- <td>{{value.add_detail}}</td> -->
-                        <!-- <td>{{value.bond}}</td> -->
-                        <td class="top-row"><img src="" alt=""></td>
-                        <td class="top-row">
-                            <h1>{{value.post}},</h1>
-                        </td>
-                        <td class="top-row" style="flex-grow: 1">
-                            <h1>{{value.cmpnm}}</h1>
-                        </td>
 
-                        <td class="btn-group top-row">
-                            <button class="btn btn-info more-info"><i class="fas fa-eye"></i></button>
-                            <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
-                                <input type="text" name="job" value="{{key}}" hidden>
-                                <button class="btn blue-grey apply" type="submit">Apply Now</button>
-                            </form>
-                        </td>
-                        <td class="break"></td>
-                        <!-- <td class="imp"><b>Contact Email: </b>{{value.email}}</td> -->
-                        <td class="imp"><b>Location: </b>
-                            <div class="badge blue-grey">{{value.place}}</div>
-                        </td>
-                        <td class="imp"><b>Salary: </b>{{value.salary}}</td>
-                        <td class="imp"><b>Deadline: </b>{{value.deadline}}</td>
-                        <td class="imp"><b>Start Date: </b>{{value.start_date}}</td>
-                        <td class="jobdesc extra-info"><b>Job Description: </b>{{value.job_description}}</td>
-                        <td class="extra-info"><b>Key Responsibilities: </b>{{value.key_responsibility}}</td>
-                        <td class="extra-info"><b>Other Responsibilities: </b>
-                            <ul class="list-group">{% for i in value.other %}
-                                <li class="list-group-item">{{i}}</li>
-                                {%endfor%}</ul>
-                        </td>
-                        <td class="extra-info">{{value.package_id}}</td>
-                        <td class="extra-info"><b>Soft Skills: </b>
-                            <ul class="list-group">{% for j in value.sskill %}
-                                <li class="list-group-item">{{j}}</li>
-                                {%endfor%}</ul>
-                        </td>
-                        <td class="extra-info"><b>Technical Skills: </b>
-                            <ul class="list-group">{% for k in value.tskill %}
-                                <li class="list-group-item">{{k}}</li>
-                                {%endfor%}</ul>
-                        </td>
-                        <td class="extra-info"><b>Time: </b>{{value.timestamp}}</td>
-                    </tr>
+                    {% if value.status == 0 %}
+                        <tr class="new-card shadow-cus">
+                            <td class="d-none"></td>
+                            <!-- <td>{{ key }}</td> -->
+                            <!-- <td>{{value.add_detail}}</td> -->
+                            <!-- <td>{{value.bond}}</td> -->
+                            <td class="top-row"><img src="" alt=""></td>
+                            <td class="top-row">
+                                <h1>{{value.post}},</h1>
+                            </td>
+                            <td class="top-row" style="flex-grow: 1">
+                                <h1>{{value.cmpnm}}</h1>
+                            </td>
+
+                            <td class="btn-group top-row">
+                                <button class="btn btn-info more-info"><i class="fas fa-eye"></i></button>
+                                <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
+                                    <input type="text" name="job" value="{{key}}" hidden>
+                                    <button class="btn blue-grey apply" type="submit">Apply Now</button>
+                                </form>
+                            </td>
+                            <td class="break"></td>
+                            <!-- <td class="imp"><b>Contact Email: </b>{{value.email}}</td> -->
+                            <td class="imp"><b>Location: </b>
+                                <div class="badge blue-grey">{{value.place}}</div>
+                            </td>
+                            <td class="imp"><b>Salary: </b>{{value.salary}}</td>
+                            <td class="imp"><b>Deadline: </b>{{value.deadline}}</td>
+                            <td class="imp"><b>Start Date: </b>{{value.start_date}}</td>
+                            <td class="jobdesc extra-info"><b>Job Description: </b>{{value.job_description}}</td>
+                            <td class="extra-info"><b>Key Responsibilities: </b>{{value.key_responsibility}}</td>
+                            <td class="extra-info"><b>Other Responsibilities: </b>
+                                <ul class="list-group">{% for i in value.other %}
+                                    <li class="list-group-item">{{i}}</li>
+                                    {%endfor%}</ul>
+                            </td>
+                            <td class="extra-info">{{value.package_id}}</td>
+                            <td class="extra-info"><b>Soft Skills: </b>
+                                <ul class="list-group">{% for j in value.sskill %}
+                                    <li class="list-group-item">{{j}}</li>
+                                    {%endfor%}</ul>
+                            </td>
+                            <td class="extra-info"><b>Technical Skills: </b>
+                                <ul class="list-group">{% for k in value.tskill %}
+                                    <li class="list-group-item">{{k}}</li>
+                                    {%endfor%}</ul>
+                            </td>
+                            <td class="extra-info"><b>Time: </b>{{value.timestamp}}</td>
+                        </tr>
+                        {% endif %}
                     {% endfor %}
             </tbody>
         </table>

@@ -62,6 +62,7 @@ def profile(request):
             return render(request, 'candidate/resume_profile_buildup.html', {'profile_status': profile_status})
 
     elif request.method == 'POST':
+        candidate_id = request.session.get('email')   
         """
         This is the request structure:
         >>> {
@@ -104,7 +105,8 @@ def profile(request):
             'skills': request.POST.getlist('skills[]'),
             'profile_status': 'partial',
             'psycho_ques': None,
-            'award': []     # to be filled
+            'award': [],     # to be filled
+            'jobs_applied':[]
         }
 
         def null_filter(x):
@@ -185,6 +187,8 @@ def profile(request):
 def jobsboard(request):
     # getting the generator for the jobs whose status is opened.
     job_docs = db.collection(u'jobs').where(u'status',u'==',u'Opened').get()
+    jobs_applied = db.collection('candidates').document(request.session.get('email')).get().to_dict()['jobs_applied']
+    
     # company_jobs is the list of job_id's whose status is defined as opened.
     company_jobs = []
     # counting the number of jobs by 'post' and storing it in jobs_count
@@ -196,6 +200,18 @@ def jobsboard(request):
         # print(job.to_dict()['email'])
         jobs_opnd[job.id.strip()]=job.to_dict()
         jobs_opnd[job.id.strip()]["cmpnm"] = db.collection(u'users').document(job.to_dict()['email']).get().to_dict()['company_name']
+        jobs_opnd[job.id.strip()]["status"] = 0
+        print(jobs_opnd,"dygcfdsyugfyusdgfygbdsy")
+        print("job applied")
+        print(jobs_applied)
+
+        for j in jobs_opnd:
+            print(j,jobs_opnd[j]['status'])
+            if j in jobs_applied:
+                jobs_opnd[j]['status']=1
+
+        for i in jobs_opnd:
+            print(jobs_opnd[i]['status'])
         #appending the job-id's to the company_jobs array.
         # the logic for counting the number of jobs postwise.
         company_jobs.append(job.id.strip())
@@ -547,9 +563,17 @@ def addApplication(request):
     if type == 'final':
         candidate = request.session.get('email')
         job = request.POST.get('job')
+        print("from final")
+        print(job)
         db.collection(u'applications').document(job).collection(u'applicants').document(candidate).update({
             'status': "APPLIED"
         })
+        #jobs_applied=db.collection('candidates').document(candidate).update({'jobs_applied':FieldValue.arrayUnion(job)})
+        jobs_applied1=db.collection('candidates').document(candidate).get().to_dict()['jobs_applied']
+        jobs_applied1.append(job)
+        print(jobs_applied1)
+        db.collection('candidates').document(candidate).update({'jobs_applied':firestore.DELETE_FIELD})
+        db.collection('candidates').document(candidate).update({'jobs_applied':jobs_applied1})
         messages.success(request, 'Application added successfully.')
 
         return JsonResponse({"success": "True"})
