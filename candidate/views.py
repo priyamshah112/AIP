@@ -488,7 +488,8 @@ def applications(request):
     for job_doc in docs:
         if job_doc.reference.collection('applicants').document(email).get().exists:
             req = db.collection('jobs').document(job_doc.id).get().to_dict()
-            # print(req)
+            print(job_doc.id)
+
             status = job_doc.reference.collection('applicants').document(email).get().to_dict()['status']
             req['status'] = status
 
@@ -526,10 +527,7 @@ def jobInterview(request, ifext=False):
                 'candidate_name': candidate_dict['name'],
                 'status': "PENDING",
                 'video_interview_links': {},
-                'grades': {},
-                'resume_score':'7',
-                'skills_score':{'a':4,'c':5,'e':3,'n':2,'o':1},
-                'video_resume_score':'8'
+                'video_interview_score': {}
             })
 
             print("jobs in que",que)
@@ -580,6 +578,7 @@ def addApplication(request):
         messages.success(request, 'Application added successfully.')
 
         return JsonResponse({"success": "True"})
+
     if type == 'addVideo':
         candidate = request.session.get('email')
         job = request.POST.get('job')
@@ -588,6 +587,9 @@ def addApplication(request):
         que = request.POST.get('que')
         qtype = request.POST.get('qtype')
         print("add video backend",que,qtype,video_link,ids) # make threads for algos
+        db.collection(u'applications').document(job).collection(u'applicants').document(candidate).update({
+            'status': "PENDING"
+        })
         if qtype=='SoftSkills':
             print("running personlaity algo for ",que)
             threading.Thread(target=personality_insights, args=(candidate,job,ids,que,video_link,)).start() 

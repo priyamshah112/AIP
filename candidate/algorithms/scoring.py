@@ -190,6 +190,7 @@ def cosine_similarity(k,query,relevant_answers,N):
     for d in D:
         d_cosines.append(cosine_sim(query_vector, d))
     out = np.array(d_cosines).argsort()[-k:][::-1]
+    print(out)
     final_score = int(round(max(d_cosines)*100,2)/10)
     return final_score 
 
