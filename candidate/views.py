@@ -527,6 +527,9 @@ def jobInterview(request, ifext=False):
                 'status': "PENDING",
                 'video_interview_links': {},
                 'grades': {},
+                'resume_score':'7',
+                'skills_score':{'a':4,'c':5,'e':3,'n':2,'o':1},
+                'video_resume_score':'8'
             })
 
             print("jobs in que",que)
@@ -585,15 +588,15 @@ def addApplication(request):
         que = request.POST.get('que')
         qtype = request.POST.get('qtype')
         print("add video backend",que,qtype,video_link,ids) # make threads for algos
-        # if qtype=='SoftSkills':
-        #     print("running personlaity algo for ",que)
-        #     threading.Thread(target=personality_insights, args=(candidate,job,ids,que,video_link,)).start() 
+        if qtype=='SoftSkills':
+            print("running personlaity algo for ",que)
+            threading.Thread(target=personality_insights, args=(candidate,job,ids,que,video_link,)).start() 
 
-        # elif qtype=='SubjectSkills':
-        #     print("running answer relevancy algo for ",que)
-        #     threading.Thread(target=general_question_answer, args=(candidate,job,ids,que,video_link,)).start()
-        # else:
-        #     print("error in question type")
+        elif qtype=='SubjectSkills':
+            print("running answer relevancy algo for ",que)
+            threading.Thread(target=general_question_answer, args=(candidate,job,ids,que,video_link,)).start()
+        else:
+            print("error in question type")
             
         doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)
         vd_dic = doc_ref.get().to_dict()['video_interview_links']

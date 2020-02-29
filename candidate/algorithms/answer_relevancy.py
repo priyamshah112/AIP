@@ -19,6 +19,7 @@ import time
 import os
 from django.conf import settings
 import subprocess
+from subprocess import Popen, PIPE
 
 #nltk.download('punkt')
 LANGUAGE = "english"
@@ -51,18 +52,27 @@ def general_question_answer(candidate,job,ids,que,video_path):
     a = time.time()
     print("from answer ",candidate,job,ids,que,video_path)
     # download frm firestorage
-    r = requests.get(video_path)
+    r1 = requests.get(video_path)
     inp = ids+'.webm'
     print(inp)
     with open(inp,"wb") as f:
-        f.write(r.content)
+        f.write(r1.content)
     print("writing video in file")
     time.sleep(3)
+    print("preprocessing personality insights algorithm")
+    video_path = inp
+    video_path = os.path.splitext(video_path)[0]
+    print(video_path)
+    r = "ffmpeg -i "+video_path+".webm "+video_path+".mp4"
+    print(r)
+    p1 = Popen(r,shell=True)
+    print(p1.communicate())
+    time.sleep(5)
+    print("sleeping done conversion")
+    video_path+=".mp4"
+    print("final ",video_path)
     # Video to Audio 
-    op = ids+'.mp4'
-    cmds = ['ffmpeg', '-i', inp, op]
-    subprocess.Popen(cmds)
-    clip = mp.VideoFileClip(op) #.mp4 path
+    clip = mp.VideoFileClip(video_path) #.mp4 path
     video_wav = ids+'.wav'
     clip.audio.write_audiofile(video_wav) #.wav path
 
@@ -89,7 +99,7 @@ def general_question_answer(candidate,job,ids,que,video_path):
 
     s = requests.Session()
     q = '+'.join(que.split())
-    url = 'https://www.google.com/search?q=' + q + '&ie=utf-8&oe=utf-8'
+    url = 'http://www.google.com/search?q=' + q + '&ie=utf-8&oe=utf-8'
     r = s.get(url, headers=headers_Get)
 
     soup = BeautifulSoup(r.text, "html.parser")
