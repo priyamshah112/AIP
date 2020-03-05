@@ -191,9 +191,9 @@
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Post</th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Location</th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px"></th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">resume score</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Soft Skill score</th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">overall score</th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">video score</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Subject Skill score</th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px"></th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 0px 0px 1px">Status</th>
                 <th></th>
@@ -201,69 +201,7 @@
                 <tbody>
                 
                 {% for job_app in job_apps%}
-        
-                
-                <div aria-hidden="true" aria-labelledby="myExtraLargeModalLabel" class="modal fade bd-example2-modal-xl"
-                     role="dialog" tabindex="-1" id="video_resume_{{job_app.appid}}">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            {% if job_app.video_resume %}
-                            <object data="{{job_app.video_resume}}" height="600">
-                                <!-- <object height="600" data="{% static 'recruiter/pdf/resume.pdf' %}"> -->
-                            </object>
-                            <div class="list-group justify-content-center p-1 container">
-                                <h5>Grade:</h5>
-                                <div class="btn-group mt-1" id="vide-grade-{{job_app.appid}}">
-                                    <button class="btn btn-outline-success">1</button>
-                                    <button class="btn btn-outline-success">2</button>
-                                    <button class="btn btn-outline-success">3</button>
-                                    <button class="btn btn-outline-success">4</button>
-                                    <button class="btn btn-outline-success">5</button>
-                                    <button class="btn btn-outline-success">6</button>
-                                    <button class="btn btn-outline-success">7</button>
-                                    <button class="btn btn-outline-success">8</button>
-                                    <button class="btn btn-outline-success">9</button>
-                                    <button class="btn btn-outline-success">10</button>
-                                </div>
-                            </div>
-                            {% else %}
-                                NO - DATA
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                
-                <div aria-hidden="true" aria-labelledby="myExtraLargeModalLabel" class="modal fade bd-example-modal-xl"
-                     role="dialog" tabindex="-1" id="resume_{{job_app.appid}}">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                                {% if job_app.video_resume %}
-                            <object data="{{job_app.candidate_resume}}" height="600">
-                                <!-- <object height="600" data="{% static 'recruiter/pdf/resume.pdf' %}"> -->
-                            </object>
-                            <div class="list-group justify-content-center p-1 container">
-                                <h5>Grade:</h5>
-                                <div class="btn-group mt-1" id="resume-grade-{{job_app.appid}}">
-                                    <button class="btn btn-outline-success">1</button>
-                                    <button class="btn btn-outline-success">2</button>
-                                    <button class="btn btn-outline-success">3</button>
-                                    <button class="btn btn-outline-success">4</button>
-                                    <button class="btn btn-outline-success">5</button>
-                                    <button class="btn btn-outline-success">6</button>
-                                    <button class="btn btn-outline-success">7</button>
-                                    <button class="btn btn-outline-success">8</button>
-                                    <button class="btn btn-outline-success">9</button>
-                                    <button class="btn btn-outline-success">10</button>
-                                </div>
-                            </div>
-                            {% else %}
-                                NO - DATA
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                
+                        
                 <tr class="text-center tr-{{job_app.app_dict.status}}">
                     <td class="sel-box"></td>
                     <td class="text-left cursor-pointer align-middle" onclick="viewInterview('{{job_app.job_info.id}}','{{job_app.cand_profile.cand_id}}')">
@@ -278,13 +216,7 @@
                              style="width: 50px; height: 50px"/>
                         <b>{{job_app.app_dict.candidate_name}}</b>
                         {% endif%}
-                        <!-- <li class="font-weight-bolder text-center list-unstyled" style="margin-top:16px;">
-                          {{ job_app.cand_profile.cand_id }}
-                        </li> -->
-                        <!-- <li class="text-decoration-none text-center list-unstyled">
-                          <a href="{% url 'view_interview' %}">See Audio Video Interview</a>
-                          <button onclick="viewInterview('{{job_app.job_info.id}}','{{job_app.candidate_id}}')" type="button" class="btn btn-customblue">View Interview</button>
-                        </li> -->
+
                     </td>
                     <td class="align-middle font-weight-bold">
                         {{job_app.job_info.post}}
@@ -314,7 +246,7 @@
                             <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Soft Skills Score">
                                 <!-- <img style="height: 2.5em" src="{% static 'recruiter/image/resume.svg' %}"> -->
                                 <div style="border: 2px solid grey; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
-                                    {{job_app.app_dict.resume_score}}
+                                    {% comment %} {{job_app.app_dict.resume_score}} {% endcomment %}4
                                 </div>
                                 <div style="font-size: 0.7em;">Soft<br>Skill Score</div>
                             </div>
@@ -357,20 +289,6 @@
                             {% else %}
                             {% endif %}
                         </td>
-                        
-                        <!-- <li class="list-unstyled">
-                    <div class="row">
-                      <div class="col-xl-12 col-sm-6 btn-group">
-                        <button type="button" class="btn btn-customblue"
-                          data-toggle="modal" data-target=".bd-example-modal-xl">View
-                          Resume</button>
-                        <button type="button"
-                          class="btn btn-customblue" data-toggle="modal"
-                          data-target=".bd-example2-modal-xl">View
-                          Video Resume</button>
-                      </div>
-                    </div>
-                  </li> -->
 
                     <td class="align-middle position-relative" width="15%">
                         <li class="list-unstyled text-center" style="color:#34495e;font-weight: bold">
@@ -383,7 +301,7 @@
                             <i class="fas fa-times-circle"></i>
                             {% endif%}
                         </li>
-                        {% if job_app.app_dict.status == "PENDING" %}
+                        {% if job_app.app_dict.status == "APPLIED" %}
                         <li class="list-unstyled">
                                 <div class="justify-content-around row">
                                     <button class="btn btn-outline-success col-5" data-target="#acceptModal{{job_app.appid}}"
@@ -739,7 +657,8 @@
         dataType: "json",
         data: data,
         success: function (data) {
-         // window.location.reload();
+            console.log("reached here");
+         window.location.reload();
         }
 
       });
@@ -771,7 +690,7 @@
         dataType: "json",
         data: data,
         success: function (data) {
-        //  window.location.reload();
+          window.location.reload();
         }
 
       });

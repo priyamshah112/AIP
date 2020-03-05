@@ -16,6 +16,7 @@ import shutil
 import os
 from random import randint
 from collections import namedtuple
+from . import emails
 # Database init
 # Use a service account
 
@@ -132,186 +133,171 @@ def deletepost(request):
 
 
 def candidates(request):
-    if request.method == 'GET':
 
-        main_email = request.session['email']
-        company_jobs_docs = web_db.collection(u'jobs').where(u'email', u'==', main_email).get()
-        company_jobs_ids = [job.reference.id for job in company_jobs_docs]
-        # print(f'1 = {company_jobs_ids}')
+    main_email = request.session['email']
+    company_jobs_docs = web_db.collection(u'jobs').where(u'email', u'==', main_email).get()
+    company_jobs_ids = [job.reference.id for job in company_jobs_docs]
+    # print(f'1 = {company_jobs_ids}')
+    print(main_email,company_jobs_ids)
+    job_docs = web_db.collection('applications').get()
+    print("job docs applications")
+    job_docs = [(job.to_dict(), job.id) for job in job_docs]
+    total_jobs = len(job_docs)
+    print(job_docs)
+    print(total_jobs)
+    company_jobs: List[Tuple[Dict, str]] = []
+    """
+    company_jobs will contain data of all jobs posted by company. Each item will be a 
+    tuple of (1)Job Dict & (2)job id
+    """
+    itr = 0
 
-        job_docs = web_db.collection('applications').get()
-
-        job_docs = [(job.to_dict(), job.id) for job in job_docs]
-        total_jobs = len(job_docs)
-
-        company_jobs: List[Tuple[Dict, str]] = []
-        """
-        company_jobs will contain data of all jobs posted by company. Each item will be a 
-        tuple of (1)Job Dict & (2)job id
-        """
-        itr = 0
-
-        for job_id in company_jobs_ids:
-            while itr < total_jobs and job_docs[itr][1] != job_id:
-                itr += 1
-
-            if itr >= total_jobs:
-                break
-            company_jobs.append(job_docs[itr])
+    for job_id in company_jobs_ids:
+        print(job_id, job_docs[itr][1],itr)
+        while itr < total_jobs and job_docs[itr][1] != job_id:
             itr += 1
 
-        # print(company_jobs)
+        print(itr)
+        if itr >= total_jobs:
+            break
+        company_jobs.append(job_docs[itr])
+        print("company doc innerv ",company_jobs)
+        itr += 1
+        print(itr)
 
-        counts = {'APPLIED': 0, 'REJECTED': 0, 'ACCEPTED': 0}
-        application = namedtuple('application', ['job_info',
-                                                    'cand_profile',
-                                                    'app_dict',
-                                                    'appid',
-                                                    'video_interview',
-                                                    'video_resume',
-                                                    'resume',
-                                                    'video_interview_score',
-                                                    ]
-                                    )
-        job_apps = []
-        # print(company_jobs)
+    print("company jobs")
+    print(company_jobs)
 
-        for job, job_id in company_jobs:
+    counts = {'APPLIED': 0, 'REJECTED': 0, 'ACCEPTED': 0}
+    application = namedtuple('application', ['job_info',
+                                                'cand_profile',
+                                                'app_dict',
+                                                'appid',
+                                                'video_interview',
+                                                'video_interview_score',
+                                                ]
+                                )
+    job_apps = []
+    # print(company_jobs)
+
+    for job, job_id in company_jobs:
+        # print(job_id)
+        # get all applicant documents for a particular job
+        applicants = web_db.collection('applications').document(job_id).collection('applicants').get()
+        job_info = web_db.collection('jobs').document(job_id).get().to_dict()
+        job_info['id'] = job_id
+
+
+        questions = web_db.collection(u'users').document(main_email).collection(
+            u'packages').document(job_info['packageId']).collection(u'questions').get()
+
+        vid_interview_score = True
+
+
+        for applicant in applicants:
             # print(job_id)
-            # get all applicant documents for a particular job
-            applicants = web_db.collection('applications').document(job_id).collection('applicants').get()
-            job_info = web_db.collection('jobs').document(job_id).get().to_dict()
-            job_info['id'] = job_id
+            app_info = applicant.to_dict()
+            appid: str = applicant.reference.id + job_id
 
-
-            questions = web_db.collection(u'users').document(main_email).collection(
-                u'packages').document(job_info['packageId']).collection(u'questions').get()
-
-            vid_interview_score = True
-
-
-            for applicant in applicants:
-                # print(job_id)
-                app_info = applicant.to_dict()
-                appid: str = applicant.reference.id + job_id
-
-                if vid_interview_score:
-                    if 'video_interview_grades' not in app_info.keys():
-                        vid_interview_score = None
-                    else:
-                        total = 0
-                        scores = app_info['video_interview_grades'].values()
-
-                        for score in scores:
-                            if score is None:
-                                total = None
-                                break
-                            total += score
-
-                        if isinstance(total, int) and len(scores) != 0:
-                            total //= len(scores)
-
-                        vid_interview_score = total
-
-                if app_info['status'] == 'INVITED':
-                    cand_profile = None
-
+            if vid_interview_score:
+                if 'video_interview_grades' not in app_info.keys():
+                    vid_interview_score = None
                 else:
-                    cand_profile = web_db.collection('candidates').document(applicant.id).get().to_dict()
-                    if cand_profile is None:
-                        continue
-                    try:
-                        counts[app_info['status']] += 1
-                    except KeyError:
-                        web_db.collection('applications').document(job_id).collection(
-                            'applicants').document(applicant.id).delete()
-                        continue
+                    total = 0
+                    scores = app_info['video_interview_grades'].values()
 
-                    # get profile dict of each candidate
-                    cand_profile['cand_id'] = applicant.id
+                    for score in scores:
+                        if score is None:
+                            total = None
+                            break
+                        total += score
 
+                    if isinstance(total, int) and len(scores) != 0:
+                        total //= len(scores)
 
-                    vid_interviews = []
+                    vid_interview_score = total
 
-                    questions_dict = {}
-                    for ques in questions:
-                        questions_dict[ques.id] = ques.reference.get().to_dict()
-
-                    # print(questions_dict)
-                    # sum_interview_score = 0
-                    count = 0
-
-                    try:
-                        for ques_id, video in app_info['video_interview_links'].items():
-                            try:
-                                que: str = questions_dict[ques_id]['question']
-                            except KeyError:
-                                continue
-
-                            # sum_interview_score += app_info
-                            ques_vid = (que, video)
-                            vid_interviews.append(ques_vid)
-                    except AttributeError:
-                        vid_interviews = None
-
-                if cand_profile is not None:
-                    resume = cand_profile.get('pdfResume', None)
-                else:
-                    resume = None
-
-                app = application(job_info=job_info, cand_profile=cand_profile, resume=resume,
-                                    app_dict=app_info, appid=appid.replace('@', '').replace('.', ''),
-                                    video_interview=vid_interviews,video_resume=False,
-                                    video_interview_score=vid_interview_score)
-                # print(app)
-                """
-                app is a namedtuple(think of it like a immutable dict), with shown attributes, 
-                to access an attribute of app, use: app.attribute_name, i.e. app.job_info
-                """
-                job_apps.append(app)
-                # print(cand_profile)
-
-        def sort_key(x):
-            try:
-                res_score = int(x.app_dict['resume_score'])
-            except (ValueError, TypeError):
-                res_score = 0
-
-            if x.video_interview_score is None:
-                return res_score//2
-
-            elif not x.video_interview_score:
-                return res_score//2
+            if app_info['status'] == 'INVITED':
+                cand_profile = None
 
             else:
-                return (res_score + x.video_interview_score)//2
+                cand_profile = web_db.collection('candidates').document(applicant.id).get().to_dict()
+                if cand_profile is None:
+                    continue
+                try:
+                    counts[app_info['status']] += 1
+                except KeyError:
+                    web_db.collection('applications').document(job_id).collection(
+                        'applicants').document(applicant.id).delete()
+                    continue
 
-        job_apps.sort(key=sort_key, reverse=True)
-        unique_jobs = [(job.job_info['id'], job.job_info['post']) for job in job_apps]
-        unique_jobs = list(set(unique_jobs))
+                # get profile dict of each candidate
+                cand_profile['cand_id'] = applicant.id
 
-        unique_jobs = [{'id': job[0], 'post': job[1]} for job in unique_jobs]
-        # print(job_apps)
-        smessage = """
-            Congratulations! You are selected as the top performer for the position of {} to receive an offer to join Apli.ai.
-            We all are looking forward to working with you and are
-            certain that you are going to be a great fit for the team.
+
+                vid_interviews = []
+
+                questions_dict = {}
+                for ques in questions:
+                    questions_dict[ques.id] = ques.reference.get().to_dict()
+
+                # print(questions_dict)
+                # sum_interview_score = 0
+                count = 0
+
+                try:
+                    for ques_id, video in app_info['video_interview_links'].items():
+                        try:
+                            que: str = questions_dict[ques_id]['question']
+                        except KeyError:
+                            continue
+
+                        # sum_interview_score += app_info
+                        ques_vid = (que, video)
+                        vid_interviews.append(ques_vid)
+                except AttributeError:
+                    vid_interviews = None
+
+
+            app = application(job_info=job_info, cand_profile=cand_profile,
+                                app_dict=app_info, appid=appid.replace('@', '').replace('.', ''),
+                                video_interview=vid_interviews,video_interview_score=vid_interview_score)
+            # print(app)
             """
-        ssubject = 'Hooray! You have been selected for the job'
-
-        rmessage = """
-            Thank you for your interest in the position of {} at Apli.ai.We received many promising applications and regret to inform you that we have decided to proceed with other candidates
-            and will not take your application further.
-            We wish you all the best in your job search and all the other future professional endeavours.
+            app is a namedtuple(think of it like a immutable dict), with shown attributes, 
+            to access an attribute of app, use: app.attribute_name, i.e. app.job_info
             """
-        rsubject = 'Sorry, Please Try again later.'
+            job_apps.append(app)
+            # print(cand_profile)
 
-        return render(request, 'recruiter/candidates.html',
-                        {'job_apps': job_apps, 'counts': counts, 'smessage': smessage,
-                        'ssubject': ssubject, 'rmessage': rmessage, 'rsubject': rsubject,
-                        'unique_jobs': unique_jobs,'company_name':request.session['cname'],'name':request.session['name']
-                        }
-                        )
+
+    #job_apps.sort(key=sort_key, reverse=True)
+    unique_jobs = [(job.job_info['id'], job.job_info['post']) for job in job_apps]
+    unique_jobs = list(set(unique_jobs))
+
+    unique_jobs = [{'id': job[0], 'post': job[1]} for job in unique_jobs]
+    # print(job_apps)
+    smessage = """
+        Congratulations! You are selected as the top performer for the position of {}.
+        We all are looking forward to working with you and are
+        certain that you are going to be a great fit for the team.
+        """
+    ssubject = 'Hooray! You have been selected for the job'
+
+    rmessage = """
+        Thank you for your interest in the position of {}.We received many promising applications and regret to inform you that we have decided to proceed with other candidates
+        and will not take your application further.
+        We wish you all the best in your job search and all the other future professional endeavours.
+        """
+    rsubject = 'Sorry, Please Try again later.'
+
+    return render(request, 'recruiter/candidates.html',
+                    {'job_apps': job_apps, 'counts': counts, 'smessage': smessage,
+                    'ssubject': ssubject, 'rmessage': rmessage, 'rsubject': rsubject,
+                    'unique_jobs': unique_jobs,'company_name':request.session['cname'],'name':request.session['name']
+                    }
+                    )
+
 
         # except:
         #     return render(request, 'recruiter/candidates.html',
@@ -326,7 +312,6 @@ def candidates(request):
 
 
 def view_interview(request, jid, candidate_id):
-
 
     application_dict = web_db.collection('applications').document(jid).collection(
         'applicants').document(candidate_id).get().to_dict()
@@ -437,11 +422,13 @@ def hiremail(request):
             sub = request.POST.get('c_sub').strip()
             messg = request.POST.get('c_messg').strip()
             messg = messg.format(post)
-            # db.reference('JOBS APPLICATIONS/' + jid + '/' + candidate_id + '/', config.android_app).update({
-            #     u'status': u'ACCEPTED'
-            # })
+            
+            print("hire mailing",c_email,name,post,sub,messg)
             emails.selmail(sub, messg, c_email, name, post)
-
+            web_db.collection(u'applications').document(jid).collection(u'applicants').document(c_email).update({
+                'status': "ACCEPTED"
+            })
+            print("mailed")
             return JsonResponse({"success": "true"})
     except:
         messages.error(request, 'Something went wrong! Try Again Later.')
@@ -459,9 +446,10 @@ def rejmail(request):
             sub = request.POST.get('c_sub').strip()
             messg = request.POST.get('c_messg').strip()
             messg = messg.format(post)
-            # db.reference('JOBS APPLICATIONS/' + jid + '/' + candidate_id + '/', config.android_app).update({
-            #     u'status': u'REJECTED'
-            # })
+            print("rej mailing",jid,c_email)
+            web_db.collection(u'applications').document(jid).collection(u'applicants').document(c_email).update({
+                'status': "REJECTED"
+            })
             emails.rejmail(sub, messg, c_email, name, post)
             return JsonResponse({"success": "true"})
     except:

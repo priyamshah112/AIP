@@ -127,6 +127,14 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+#For mailing purposes
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mum.amptech@gmail.com'
+EMAIL_HOST_PASSWORD = 'amp@2019'
+OPERATIONS_EMAIL = 'mum.amptech@gmail.com'
 
 MAX_FILE_SIZE_MB = 5
 MAX_FILE_COUNT = 5
