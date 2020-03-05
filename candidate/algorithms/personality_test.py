@@ -9,12 +9,20 @@ from subprocess import Popen, PIPE
 import os
 import requests
 from firebase_admin import firestore
+from django.conf import settings
 db = firestore.client()
 
 def personality_insights(candidate,job,ids,que,video_path):
   try:
+    path = settings.BASE_DIR + '/media/'+candidate+'/'
+
+    # if no such folder exists, creates an empty folder
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print("folder created ", path)
+
     r1 = requests.get(video_path)
-    inp = ids+'.webm'
+    inp = path+ids+'.webm'
     print(inp)
     with open(inp,"wb") as f:
         f.write(r1.content)
@@ -53,7 +61,9 @@ def personality_insights(candidate,job,ids,que,video_path):
     try: 
         temp = r.recognize_google(audio,language="en-US")
         print(temp)
-        with open("profile.json",'w') as w:
+        cp = path+"profile.json"
+        print("profile.json path ",cp)
+        with open(cp,'a') as w:
             w.write('{"contentItems": [{"content": "'+temp+'","contenttype": "text/plain","created":1447639154000,"id": "666073008692314113","language": "en"}]}')
 
     except sr.UnknownValueError: 
@@ -77,7 +87,7 @@ def personality_insights(candidate,job,ids,que,video_path):
 
         personality_insights.set_service_url('https://gateway-lon.watsonplatform.net/personality-insights/api')
 
-        with open('profile.json') as profile_json:
+        with open(cp) as profile_json:
             profile = personality_insights.profile(
                 profile_json.read(),
                 'application/json',
@@ -119,8 +129,8 @@ def personality_insights(candidate,job,ids,que,video_path):
     d = time.time()
     print("Overall Processing Time : ",(d-a))
   
-  except:
-      print("algo complete failure personality")
+  except Exception as e:
+      print("algo complete failure personality ",e)
       score = [0,0,0,0,0]
       print(score)
       doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)

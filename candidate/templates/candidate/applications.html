@@ -162,9 +162,9 @@
                     <th class="btn btn-cust shadow-cus" style="font-weight: 100;">TimeStamp&emsp;</th>
                 </tr>
             </thead>
-            <tbody >
+            <tbody id="appliedTable">
                     {% for key,value in comp_apps.items %}
-                    <tr class="new-card shadow-cus" id="appliedTable">
+                    <tr class="new-card shadow-cus" >
                         <td class="d-none"></td>
                         <!-- <td>{{ key }}</td> -->
                         <!-- <td>{{value.add_detail}}</td> -->
@@ -210,54 +210,54 @@
                     {% endfor %}
             </tbody>
             <tbody id="pendingTable" style="display:none;">
-                {% for key,value in pend_apps.items %}
-
-
+                
+                {% for key1,value1 in pend_apps.items %}
+                
                 <tr class="new-card shadow-cus">
                     <td class="d-none"></td>
                     <!-- <td>{{ key }}</td> -->
                     <!-- <td>{{value.add_detail}}</td> -->
                     <!-- <td>{{value.bond}}</td> -->
                     <td>
-                        <h1>{{value.post}},</h1>
+                        <h1>{{value1.post}},</h1>
                     </td>
                     <td style="flex-grow: 1">
-                        <h1>{{value.cmpnm}}</h1>
+                        <h1>{{value1.cmpnm}}</h1>
                     </td>
                     <td class="btn-group">
                         <button class="btn btn-secondary more-info">More Info</button>
                         <form action="{% url 'jobInterview'%}" method="post">{% csrf_token %}
-                        <input type="text" name="job" value="{{key}}" hidden>
+                        <input type="text" name="job" value="{{key1}}" hidden>
                         <button class="btn btn-warning apply" type="submit">RESUME</button>
                         </form>
                     </td>
                     <td class="break"></td>
                     <!-- <td class="imp"><b>Contact Email: </b>{{value.email}}</td> -->
                     <td class="imp"><b>Location: </b>
-                        <div class="badge badge-info">{{value.place}}</div>
+                        <div class="badge badge-info">{{value1.place}}</div>
                     </td>
-                    <td class="imp"><b>Salary: </b>{{value.salary}}</td>
-                    <td class="imp"><b>Deadline: </b>{{value.deadline}}</td>
-                    <td class="imp"><b>Start Date: </b>{{value.start_date}}</td>
-                    <td class="jobdesc extra-info"><b>Job Description: </b>{{value.job_description}}</td>
-                    <td class="extra-info"><b>Key Responsibilities: </b>{{value.key_responsibility}}</td>
+                    <td class="imp"><b>Salary: </b>{{value1.salary}}</td>
+                    <td class="imp"><b>Deadline: </b>{{value1.deadline}}</td>
+                    <td class="imp"><b>Start Date: </b>{{value1.start_date}}</td>
+                    <td class="jobdesc extra-info"><b>Job Description: </b>{{value1.job_description}}</td>
+                    <td class="extra-info"><b>Key Responsibilities: </b>{{value1.key_responsibility}}</td>
                     <td class="extra-info"><b>Other Responsibilities: </b>
-                        <ul class="list-group">{% for i in value.other %}
+                        <ul class="list-group">{% for i in value1.other %}
                             <li class="list-group-item">{{i}}</li>
                             {%endfor%}</ul>
                     </td>
-                    <td class="extra-info">{{value.package_id}}</td>
+                    <td class="extra-info">{{value1.package_id}}</td>
                     <td class="extra-info"><b>Soft Skills: </b>
-                        <ul class="list-group">{% for j in value.sskill %}
+                        <ul class="list-group">{% for j in value1.sskill %}
                             <li class="list-group-item">{{j}}</li>
                             {%endfor%}</ul>
                     </td>
                     <td class="extra-info"><b>Technical Skills: </b>
-                        <ul class="list-group">{% for k in value.tskill %}
+                        <ul class="list-group">{% for k in value1.tskill %}
                             <li class="list-group-item">{{k}}</li>
                             {%endfor%}</ul>
                     </td>
-                    <td class="extra-info"><b>Time: </b>{{value.timestamp}}</td>
+                    <td class="extra-info"><b>Time: </b>{{value1.timestamp}}</td>
                 </tr>
 
                 {% endfor %}

@@ -492,12 +492,12 @@ def applications(request):
 
             status = job_doc.reference.collection('applicants').document(email).get().to_dict()['status']
             req['status'] = status
-
+            print(job_doc.id,status)
             if status == 'PENDING':
                 pend_apps[job_doc.id] = req
             else:
                 comp_apps[job_doc.id] = req
-
+            print(pend_apps)
     return render(request, 'candidate/applications.html', {'comp_apps': comp_apps,
                                                            'pend_apps': pend_apps}
                   )
