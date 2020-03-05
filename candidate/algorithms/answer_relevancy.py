@@ -52,11 +52,18 @@ headers_Get = {
 
 def general_question_answer(candidate,job,ids,que,video_path):
     try:
+        path = settings.BASE_DIR + '/media/'+candidate+'/'
+
+        # if no such folder exists, creates an empty folder
+        if not os.path.exists(path):
+            os.makedirs(path)
+            print("folder created ", path)
+
         a = time.time()
         print("from answer ",candidate,job,ids,que,video_path)
         # download frm firestorage
         r1 = requests.get(video_path)
-        inp = ids+'.webm'
+        inp = path+ids+'.webm'
         print(inp)
         with open(inp,"wb") as f:
             f.write(r1.content)
@@ -76,7 +83,7 @@ def general_question_answer(candidate,job,ids,que,video_path):
         print("final ",video_path)
         # Video to Audio 
         clip = mp.VideoFileClip(video_path) #.mp4 path
-        video_wav = ids+'.wav'
+        video_wav = path+ids+'.wav'
         clip.audio.write_audiofile(video_wav) #.wav path
 
         # # Audio to Text
@@ -127,8 +134,8 @@ def general_question_answer(candidate,job,ids,que,video_path):
         b = time.time()
         print("Answer Processing time : ",(b-a))
 
-    except:
-        print("Answer algo failed")
+    except Exception as e:
+        print("Answer algo failed",e)
         score = 0
         print(score)
         doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)
