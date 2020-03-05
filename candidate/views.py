@@ -607,7 +607,7 @@ def addApplication(request):
             'video_interview_links': vd_dic
         })
 
-        messages.success(request, 'Application added successfully.')
+        #messages.success(request, 'Application added successfully.')
 
         return JsonResponse({"success": "True"})
 

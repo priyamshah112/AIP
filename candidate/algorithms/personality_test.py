@@ -10,6 +10,7 @@ import os
 import requests
 from firebase_admin import firestore
 from django.conf import settings
+import math
 db = firestore.client()
 
 def personality_insights(candidate,job,ids,que,video_path):
@@ -44,7 +45,7 @@ def personality_insights(candidate,job,ids,que,video_path):
     # Video to Audio 
 
     clip = mp.VideoFileClip(video_path) #.mp4 path
-    video_wav = ids+".wav"
+    video_wav = path+ids+".wav"
     clip.audio.write_audiofile(video_wav) #.wav path
 
     b = time.time()
@@ -61,10 +62,15 @@ def personality_insights(candidate,job,ids,que,video_path):
     try: 
         temp = r.recognize_google(audio,language="en-US")
         print(temp)
+        pp = path+"mywords.txt"
+        with open(pp,'a') as w:
+            w.write(temp)
         cp = path+"profile.json"
+        f = open(pp,'r')
+        cptext = f.read()
         print("profile.json path ",cp)
-        with open(cp,'a') as w:
-            w.write('{"contentItems": [{"content": "'+temp+'","contenttype": "text/plain","created":1447639154000,"id": "666073008692314113","language": "en"}]}')
+        with open(cp,'w') as w:
+            w.write('{"contentItems": [{"content": "'+cptext+'","contenttype": "text/plain","created":1447639154000,"id": "666073008692314113","language": "en"}]}')
 
     except sr.UnknownValueError: 
         print("Google Speech Recognition could not understand audio")
@@ -112,7 +118,7 @@ def personality_insights(candidate,job,ids,que,video_path):
         print(p['personality'][4]['name'])
         print(float(p['personality'][4]['percentile'])*100)  
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        score = [(float(p['personality'][0]['percentile'])*10)//2 , (float(p['personality'][1]['percentile'])*10)//2 ,(float(p['personality'][2]['percentile'])*10)//2 ,(float(p['personality'][3]['percentile'])*10)//2 ,(float(p['personality'][4]['percentile'])*10)//2]
+        score = [int(math.ceil((float(p['personality'][0]['percentile'])*10)/2)) , int(math.ceil((float(p['personality'][1]['percentile'])*10)/2)) ,int(math.ceil((float(p['personality'][2]['percentile'])*10)/2)) ,int(math.ceil((float(p['personality'][3]['percentile'])*10)/2)) ,int(math.ceil((float(p['personality'][4]['percentile'])*10)/2))]
         print(score)
         doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)
         vd_dic = doc_ref.get().to_dict()['video_interview_score']
