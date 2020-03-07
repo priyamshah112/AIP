@@ -150,20 +150,14 @@ def candidates(request):
     company_jobs will contain data of all jobs posted by company. Each item will be a 
     tuple of (1)Job Dict & (2)job id
     """
-    itr = 0
+    #itr = 0
 
     for job_id in company_jobs_ids:
-        print(job_id, job_docs[itr][1],itr)
-        while itr < total_jobs and job_docs[itr][1] != job_id:
-            itr += 1
-
-        print(itr)
-        if itr >= total_jobs:
-            break
-        company_jobs.append(job_docs[itr])
-        print("company doc innerv ",company_jobs)
-        itr += 1
-        print(itr)
+        print(job_id)
+        for i in range(total_jobs):
+            if job_id == job_docs[i][1]:
+                company_jobs.append(job_docs[i])
+                print(company_jobs, job_id,i)
 
     print("company jobs")
     print(company_jobs)
@@ -175,13 +169,15 @@ def candidates(request):
                                                 'appid',
                                                 'video_interview',
                                                 'video_interview_score',
+                                                'soft_skill_avg',
+                                                'subject_skill_avg'
                                                 ]
                                 )
     job_apps = []
     # print(company_jobs)
 
     for job, job_id in company_jobs:
-        # print(job_id)
+        print("fetching applicant ",job_id)
         # get all applicant documents for a particular job
         applicants = web_db.collection('applications').document(job_id).collection('applicants').get()
         job_info = web_db.collection('jobs').document(job_id).get().to_dict()
@@ -193,30 +189,46 @@ def candidates(request):
 
         vid_interview_score = True
 
-
         for applicant in applicants:
-            # print(job_id)
+            
             app_info = applicant.to_dict()
             appid: str = applicant.reference.id + job_id
-
+            print("applicant ",appid)
             if vid_interview_score:
-                if 'video_interview_grades' not in app_info.keys():
-                    vid_interview_score = None
+                if 'video_interview_score' not in app_info.keys():
+                    vid_interview_score = 0
                 else:
                     total = 0
-                    scores = app_info['video_interview_grades'].values()
+                    soft_skill_avg=[0,0,0,0,0]
+                    subject_skill_avg=0
+                    ss = 0
+                    sbs = 0
+                    scores = app_info['video_interview_score'].values()
+                    print("scores ",scores)
+                    try:
+                        for score in scores:
+                            if isinstance(score, list):
+                                soft_skill_avg = [soft_skill_avg[i] + int(score[i]) for i in range(len(soft_skill_avg))] 
+                                ss+=1
+                                print(soft_skill_avg,ss)
+                            else:
+                                subject_skill_avg+=int(score)
+                                sbs+=1
+                        print("taking average ",ss,sbs)
+                        if ss>0:
+                            for i in range(len(soft_skill_avg)):
+                                soft_skill_avg[i]=int(soft_skill_avg[i])//ss
+                        if sbs>0:        
+                            subject_skill_avg/=sbs
 
-                    for score in scores:
-                        if score is None:
-                            total = None
-                            break
-                        total += score
+                        print("average is ",subject_skill_avg,soft_skill_avg)
 
-                    if isinstance(total, int) and len(scores) != 0:
-                        total //= len(scores)
+                    except Exception as e:
+                            print("list err ",e, score)
 
                     vid_interview_score = total
-
+            
+            print("vide interview score ", vid_interview_score)
             if app_info['status'] == 'INVITED':
                 cand_profile = None
 
@@ -261,14 +273,15 @@ def candidates(request):
 
             app = application(job_info=job_info, cand_profile=cand_profile,
                                 app_dict=app_info, appid=appid.replace('@', '').replace('.', ''),
-                                video_interview=vid_interviews,video_interview_score=vid_interview_score)
-            # print(app)
+                                video_interview=vid_interviews,video_interview_score=vid_interview_score,subject_skill_avg=round(subject_skill_avg,2),soft_skill_avg=soft_skill_avg)
+            #print(app)
+            print("\n\n\n\n\n\n")
             """
             app is a namedtuple(think of it like a immutable dict), with shown attributes, 
             to access an attribute of app, use: app.attribute_name, i.e. app.job_info
             """
             job_apps.append(app)
-            # print(cand_profile)
+            #print("final job apps ",job_apps)
 
 
     #job_apps.sort(key=sort_key, reverse=True)
@@ -326,23 +339,25 @@ def view_interview(request, jid, candidate_id):
     for q in questions_doc:
         que.append(q.to_dict())
 
-    if 'video_interview_grades' not in application_dict.keys():
+    print(que)
+
+    if 'video_interview_score' not in application_dict.keys():
         grades = dict()
         for ques in que:
             grades[ques['id']] = None
 
         web_db.collection('applications').document(jid).collection(
-            'applicants').document(candidate_id).update({'video_interview_grades': grades})
-        application_dict['video_interview_grades'] = grades
+            'applicants').document(candidate_id).update({'video_interview_score': grades})
+        application_dict['video_interview_score'] = grades
 
-    if 'video_interview_comments' not in application_dict.keys():
-        comments = dict()
-        for ques in que:
-            comments[ques['id']] = None
+    # if 'video_interview_comments' not in application_dict.keys():
+    #     comments = dict()
+    #     for ques in que:
+    #         comments[ques['id']] = None
 
-        web_db.collection('applications').document(jid).collection(
-            'applicants').document(candidate_id).update({'video_interview_comments': comments})
-        application_dict['video_interview_comments'] = comments
+    #     web_db.collection('applications').document(jid).collection(
+    #         'applicants').document(candidate_id).update({'video_interview_comments': comments})
+    #     application_dict['video_interview_comments'] = comments
 
     if 'video_interview_links' not in application_dict.keys():
         links = dict()
@@ -361,12 +376,12 @@ def view_interview(request, jid, candidate_id):
         question_dict['id'] = ques['id']
         question_dict['video'] = application_dict['video_interview_links'].get(ques['id'], None)
         # print(question_dict['video'])
-        question_dict['grade'] = application_dict['video_interview_grades'].get(ques['id'], None)
+        question_dict['grade'] = application_dict['video_interview_score'].get(ques['id'], None)
 
         if question_dict['grade'] is None:
             question_dict['grade'] = 0
 
-        question_dict['comment'] = application_dict['video_interview_comments'].get(ques['id'], None)
+        #question_dict['comment'] = application_dict['video_interview_comments'].get(ques['id'], None)
         questions.append(question_dict)
 
     questions_length = len(questions)
@@ -384,15 +399,15 @@ def view_interview(request, jid, candidate_id):
     application = namedtuple('application', ['job_info',
                                                             'cand_profile',
                                                             'app_dict',
-                                                            'appid',
-                                                            'skills_score'])
-    skills_score = app_info['skills_score']
+                                                            'appid'])
+    #skills_score = app_info['skills_score']
     # print(skills_score)
     app = application(job_info=job_info, cand_profile=cand_profile, app_dict=app_info,
-                        appid=appid.replace('@', '').replace('.', ''), skills_score=skills_score)
+                        appid=appid.replace('@', '').replace('.', ''))
 
     # job_apps = [app]
     # print(job_apps[0].skills_score)
+    print(questions)
     return render(request, 'recruiter/viewinterview.html',
                     {'application_dict': application_dict, 'questions': questions,
                     'questions_length': questions_length, 

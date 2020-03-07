@@ -119,7 +119,7 @@
                 </div>
               </div>
             </div>-->
-            <div class="form-row m-1 mb-3">
+            {% comment %} <div class="form-row m-1 mb-3">
                     <!-- <label for="jobs-filter">Jobs</label> -->
                     <select class="form-control col-3" name="jobs-filter" id="jobs-filter">
                         <option value=" ">All Jobs</option>
@@ -182,28 +182,30 @@
                     <option>Reject</option>
                     <option>Remove</option>
                 </select>
-            </div>
+            </div> {% endcomment %}
 
             <table class="table" id="jobsTable">
-                <thead class="d-none" style="background-color: rgb(249, 249, 255); font-size: 1.15rem;">
-                <th></th>
+                <thead  style="background-color: rgb(249, 249, 255); font-size: 1.15rem;">
+                
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 0px">Profile</th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Post</th>
                 <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Location</th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px"></th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Soft Skill score</th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">overall score</th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Subject Skill score</th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px"></th>
-                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 0px 0px 1px">Status</th>
-                <th></th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Status</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Openness</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Conscientious</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Extraversion</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Agreeable</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Neuroticism</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Avg. Subject Skill score</th>
+                <th class="text-center" style="border: 1px solid #ececec; border-width: 0px 1px 0px 1px">Hire/Reject</th>
+
                 </thead>
                 <tbody>
                 
                 {% for job_app in job_apps%}
                         
                 <tr class="text-center tr-{{job_app.app_dict.status}}">
-                    <td class="sel-box"></td>
+                   
                     <td class="text-left cursor-pointer align-middle" onclick="viewInterview('{{job_app.job_info.id}}','{{job_app.cand_profile.cand_id}}')">
                         {% if job_app.cand_profile %}
                         <img class="rounded-circle" src="{{ job_app.cand_profile.profile_picture }}"
@@ -242,25 +244,66 @@
                     <!-- <td style="max-width: 50px; max-height: 50px">
                       {% include "recruiter/radarchart.html" %}
                     </td> -->
-                    <td class="align-middle"  data-target="#resume_{{job_app.appid}}" data-toggle="modal">
-                            <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Soft Skills Score">
+                    <td class="align-middle" >
+                            <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Openness">
                                 <!-- <img style="height: 2.5em" src="{% static 'recruiter/image/resume.svg' %}"> -->
-                                <div style="border: 2px solid grey; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
-                                    {% comment %} {{job_app.app_dict.resume_score}} {% endcomment %}4
+                                <div style="border: 2px solid blue; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
+                                  {{job_app.soft_skill_avg.0}}
                                 </div>
-                                <div style="font-size: 0.7em;">Soft<br>Skill Score</div>
+                        
+                                <div style="font-size: 0.7em;"><b>Openness</b></div>
                             </div>
                         </td>
+                        <td class="align-middle" >
+                                <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Conscientious">
+                                    <!-- <img style="height: 2.5em" src="{% static 'recruiter/image/resume.svg' %}"> -->
+                                    <div style="border: 2px solid blue; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
+                                    {{job_app.soft_skill_avg.1}}
+                                    </div>
+                            
+                                    <div style="font-size: 0.7em;"><b>Conscientious</b></div>
+                                </div>
+                            </td>
+                            <td class="align-middle" >
+                                    <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Extraversion">
+                                        <!-- <img style="height: 2.5em" src="{% static 'recruiter/image/resume.svg' %}"> -->
+                                        <div style="border: 2px solid blue; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
+                                        {{job_app.soft_skill_avg.2}}
+                                        </div>
+                                
+                                        <div style="font-size: 0.7em;"><b>Extraversion</b></div>
+                                    </div>
+                                </td>  
+                                <td class="align-middle" >
+                                        <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Agreeable">
+                                            <!-- <img style="height: 2.5em" src="{% static 'recruiter/image/resume.svg' %}"> -->
+                                            <div style="border: 2px solid blue; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
+                                            {{job_app.soft_skill_avg.3}}
+                                            </div>
+                                    
+                                            <div style="font-size: 0.7em;"><b>Agreeable</b></div>
+                                        </div>
+                                    </td>  
+                                    <td class="align-middle" >
+                                            <div class="d-inline-block cursor-pointer" data-placement="bottom" data-toggle="tooltip" title="Neuroticism">
+                                                <!-- <img style="height: 2.5em" src="{% static 'recruiter/image/resume.svg' %}"> -->
+                                                <div style="border: 2px solid blue; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
+                                                {{job_app.soft_skill_avg.4}}
+                                                </div>
+                                        
+                                                <div style="font-size: 0.7em;"><b>Neuroticism</b></div>
+                                            </div>
+                                        </td>                                               
                         <td class="align-middle">
-                            <div class="d-inline-block" data-placement="bottom" data-toggle="tooltip" title="Overall Score">
+                            <div class="d-inline-block" data-placement="bottom" data-toggle="tooltip" title="Avg. Subject Skill Score">
                                 
                                 <div style="border: 2px solid blue; border-radius: 50%;width: 2.6em;line-height: 2.5em;">
-                                        10
+                                        {{job_app.subject_skill_avg}}
                                 </div>
-                                <div style="font-size: 0.7em;"><b>OVERALL</b></div>
+                                <div style="font-size: 0.7em;"><b>Avg. Subject<br>Skill Score</b></div>
                             </div>
                         </td>
-                        <td class="align-middle">
+                        {% comment %} <td class="align-middle">
                             {% if job_app.app_dict.video_resume_score %}
                             {% if job_app.app_dict.video_resume_score == 0 %}
                             <!-- class .not-evaluated is only for counting -->
@@ -288,7 +331,7 @@
                             {% endif %}
                             {% else %}
                             {% endif %}
-                        </td>
+                        </td> {% endcomment %}
 
                     <td class="align-middle position-relative" width="15%">
                         <li class="list-unstyled text-center" style="color:#34495e;font-weight: bold">
@@ -478,97 +521,46 @@
 
 
   $(document).ready(function () {
-    var jobTable = $('#jobsTable').DataTable(
-      {
-        dom:'rit',"bPaginate": false,
-        buttons: [
-            'pageLength'
-        ],
-        columnDefs: [ {
-            orderable: false,
-            className: 'select-checkbox',
-            targets:   0
-        },
-        {
-            type: "html",
-            targets: [1, 2, 5, 6, 7],
+        var jobTable = $('#jobsTable').DataTable();
 
-        },
-        {
-            orderable: false,
-            targets:   [3, 4, 8, 9, 10]
-        } ],
-      }
-    );
-    function unique(list) {
-        var result = [];
-        $.each(list, function(i, e) {
-            if ($.inArray(e, result) == -1) result.push(e);
-        });
-        return result;
-    }
-    function count(l, k){
-        var result = [];
-        for(var i=0;i<k.length;i++){
-                result[i]=0;
-                for(var j=0;j<l.length;j++){
-                    if (k[i]==l[j]){
-                            result[i]+=1;
+        function unique(list) {
+            var result = [];
+            $.each(list, function(i, e) {
+                if ($.inArray(e, result) == -1) result.push(e);
+            });
+            return result;
+        }
+        function count(l, k){
+            var result = [];
+            for(var i=0;i<k.length;i++){
+                    result[i]=0;
+                    for(var j=0;j<l.length;j++){
+                        if (k[i]==l[j]){
+                                result[i]+=1;
+                        }
                     }
                 }
-            }
-            return (result);
-    }
-    updatejobs();
-    function updatejobs(){
-        a = jobTable.column(2).data().toArray();
-        b = unique(a);
-        c = count(a, b);
-        s_index = $('#jobs-filter').prop('selectedIndex');
-        $('#jobs-filter').html(`<option value=" "> 
-                                    All Jobs (${a.length}) 
-                                </option>`);
-        $.each(b, function( index, value ) {
-            $('#jobs-filter').append(`<option value="${value}"> 
-                                        ${value} (${c[index]})
-                                    </option>`)
-        });
-        $('#jobs-filter').prop('selectedIndex', s_index);
-    }
-    
-    
-    $('#selectall').click(function () {
-        jobTable.rows({ search: 'applied'}).nodes().to$().toggleClass( 'selected' );
-        $('#selectedno').text($('.selected').length);
-    });
+                return (result);
+        }
 
-    // Event listener to the two range filtering inputs to redraw on input
-    $('#jobs-filter').on('change', function (event) {
-        jobTable.search( $('#jobs-filter').val() + " " + $('#status-filter').val() + " " + $('#search').val()).draw();
-        refreshdd();
-    } );
-    $('#status-filter').on('change', function (event) {
-        jobTable.search( $('#jobs-filter').val() + " " + $('#status-filter').val() + " " + $('#search').val()).draw();
-        refreshdd();updatejobs();
-    } );
-    $('#search').on('change', function (event) {
-        jobTable.search( $('#jobs-filter').val() + " " + $('#status-filter').val() + " " + $('#search').val()).draw();
-        refreshdd();updatejobs();
-    } );
-    $('.sel-box').click(function () {
-        $(this).parent('tr').toggleClass('selected');
-        $('#selectedno').text($('.selected').length);
-    } );
-    $("#select-none").click(function (){
-        jobTable.rows('.selected').nodes().to$().removeClass( 'selected' );
-        $('#selectall')[0].checked = false;
-        $('#selectedno').text($('.selected').length);
-    });
-    $("#select-all").click(function (){
-        jobTable.rows({ search: 'applied'}).nodes().to$().addClass( 'selected' );
-        $('#selectall')[0].checked = true;
-        $('#selectedno').text($('.selected').length);
-    });
+        updatejobs();
+        function updatejobs(){
+            a = jobTable.column(2).data().toArray();
+            b = unique(a);
+            c = count(a, b);
+            s_index = $('#jobs-filter').prop('selectedIndex');
+            $('#jobs-filter').html(`<option value=" "> 
+                                        All Jobs (${a.length}) 
+                                    </option>`);
+            $.each(b, function( index, value ) {
+                $('#jobs-filter').append(`<option value="${value}"> 
+                                            ${value} (${c[index]})
+                                        </option>`)
+            });
+            $('#jobs-filter').prop('selectedIndex', s_index);
+    }
+
+    
     // document.j = jobTable;
     // $('#sort-by').click(function (){
     //     if ($(this).val() == 'name'){
