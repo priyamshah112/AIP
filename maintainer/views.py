@@ -24,7 +24,38 @@ def mdashboard(request):
     try:
         name = request.session['name']
         email = request.session['email']
-        return render(request,'maintainer/mdashboard.html',{'name':name})
+        total_companies=0
+        total_candidates=0
+        total_jobs_posted=0
+        total_applied_candidates=0
+        total_accepted_candidates=0
+        total_rejected_candidates=0
+        users = db.collection('users').get()
+        for user in users:
+            #print(user.id)
+            temp=db.collection('users').document(user.id).get().to_dict()
+            if temp['user_type']=='Candidate':
+                total_candidates+=1
+
+            if temp['user_type']=='Company':
+                total_companies+=1
+                temp1 = db.collection('jobs').where(u'email', u'==', user.id).stream()
+                for t in temp1:
+                    total_jobs_posted+=1
+                    temp2 = db.collection('applications').document(t.id).collection('applicants').where(u'status', u'==', 'APPLIED').stream()
+                    for t1 in temp2:
+                        total_applied_candidates+=1
+
+                    temp3 = db.collection('applications').document(t.id).collection('applicants').where(u'status', u'==', 'ACCEPTED').stream()
+                    for t2 in temp3:
+                        total_accepted_candidates+=1
+
+                    temp4 = db.collection('applications').document(t.id).collection('applicants').where(u'status', u'==', 'REJECTED').stream()
+                    for t3 in temp4:
+                        total_rejected_candidates+=1
+
+        print(total_companies,total_candidates,total_jobs_posted,total_applied_candidates,total_rejected_candidates,total_accepted_candidates)
+        return render(request,'maintainer/mdashboard.html',{'name':name,'total_companies':total_companies,'total_candidates':total_candidates,'total_jobs_posted':total_jobs_posted,'total_applied_candidates':total_applied_candidates,'total_rejected_candidates':total_rejected_candidates,'total_accepted_candidates':total_accepted_candidates})
     except:
         messages.error(request, 'Something went wrong! Try Again Later.')
     return HttpResponseRedirect('/')
