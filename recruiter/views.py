@@ -270,7 +270,7 @@ def candidates(request):
                 except AttributeError:
                     vid_interviews = None
 
-
+            
             app = application(job_info=job_info, cand_profile=cand_profile,
                                 app_dict=app_info, appid=appid.replace('@', '').replace('.', ''),
                                 video_interview=vid_interviews,video_interview_score=vid_interview_score,subject_skill_avg=round(subject_skill_avg,2),soft_skill_avg=soft_skill_avg)
@@ -341,15 +341,38 @@ def view_interview(request, jid, candidate_id):
 
     print(que)
 
-    if 'video_interview_score' not in application_dict.keys():
-        grades = dict()
-        for ques in que:
-            grades[ques['id']] = None
+    if 'video_interview_score' in application_dict.keys():
+        soft_skill_avg=[0,0,0,0,0]
+        subject_skill_avg=0
+        ss = 0
+        sbs = 0
+        scores = application_dict['video_interview_score'].values()
+        print("scores ",scores)
+        try:
+            for score in scores:
+                if isinstance(score, list):
+                    soft_skill_avg = [soft_skill_avg[i] + int(score[i]) for i in range(len(soft_skill_avg))] 
+                    ss+=1
+                    print(soft_skill_avg,ss)
+                else:
+                    subject_skill_avg+=int(score)
+                    sbs+=1
+            print("taking average ",ss,sbs)
+            if ss>0:
+                for i in range(len(soft_skill_avg)):
+                    soft_skill_avg[i]=int(soft_skill_avg[i])//ss
+            if sbs>0:        
+                subject_skill_avg/=sbs
 
-        web_db.collection('applications').document(jid).collection(
-            'applicants').document(candidate_id).update({'video_interview_score': grades})
-        application_dict['video_interview_score'] = grades
-
+            print("average is ",subject_skill_avg,soft_skill_avg)
+        
+        except Exception as e:
+            print("failed score",e,score)
+    
+    else:
+        print("errorneous video interview")
+        subject_skill_avg = [0,0,0,0,0]
+        subject_skill_avg = 0
     # if 'video_interview_comments' not in application_dict.keys():
     #     comments = dict()
     #     for ques in que:
@@ -396,18 +419,14 @@ def view_interview(request, jid, candidate_id):
         candidate_id).get().to_dict()
 
     appid = candidate_id + jid
-    application = namedtuple('application', ['job_info',
-                                                            'cand_profile',
-                                                            'app_dict',
-                                                            'appid'])
-    #skills_score = app_info['skills_score']
+    application = namedtuple('application', ['job_info','cand_profile','app_dict','appid','soft_skill_avg','subject_skill_avg'] )
     # print(skills_score)
-    app = application(job_info=job_info, cand_profile=cand_profile, app_dict=app_info,
-                        appid=appid.replace('@', '').replace('.', ''))
+    print("subject skill avg ",subject_skill_avg)
+    app = application(job_info=job_info, cand_profile=cand_profile, app_dict=app_info,appid=appid.replace('@', '').replace('.', ''),subject_skill_avg=round(subject_skill_avg,2),soft_skill_avg=soft_skill_avg)
 
     # job_apps = [app]
     # print(job_apps[0].skills_score)
-    print(questions)
+    #print(questions)
     return render(request, 'recruiter/viewinterview.html',
                     {'application_dict': application_dict, 'questions': questions,
                     'questions_length': questions_length, 

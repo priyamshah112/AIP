@@ -26,11 +26,9 @@
         </div>
                 <div style="padding-top:10px;">
                     
-                    <div style="padding-left:30px;float:left;"><h4><b>INTERVIEW SCORE</b></h4></div>
-                    <div style="float:right;padding-right:40px;">
-                    <div class="circle" id="circle">0</div>
-
-                    </div>
+                    <div style="padding-left:30px;float:left;"><h5><b>Avg. Subject Skill : {{job_app.subject_skill_avg}} / 5</b></h5></div>
+                    <br>
+                    
                 </div>
 
                 <div style="padding:0px;"></div>
@@ -42,7 +40,7 @@
                 
 <script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
 <script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
-{% comment %}  
+
 <script>
 
 
@@ -84,15 +82,15 @@
                             "dataset": [{
                                 //  "seriesname": "SKILLSET",
                                 "data": [{
-                                    "value": "{{ job_app.skills_score.o}}"
+                                    "value": "{{ job_app.soft_skill_avg.0}}"
                                 }, {
-                                    "value": "{{ job_app.skills_score.c}}"
+                                    "value": "{{ job_app.soft_skill_avg.1}}"
                                 }, {
-                                    "value": "{{ job_app.skills_score.e}}"
+                                    "value": "{{ job_app.soft_skill_avg.2}}"
                                 }, {
-                                    "value": "{{ job_app.skills_score.a}}"
+                                    "value": "{{ job_app.soft_skill_avg.3}}"
                                 }, {
-                                    "value": "{{ job_app.skills_score.n}}"
+                                    "value": "{{ job_app.soft_skill_avg.4}}"
                                 }]
                             }]
                         }
@@ -100,7 +98,7 @@
                     );
                                 chartObj.render();
                             });
-    </script> {% endcomment %}
+    </script> 
 
             </div>
             <!--
@@ -160,7 +158,8 @@
             </div>
 
             <div class="card-header">
-                <h4 id="question-text"></h4>
+                <h4 id="question-text" style="display:inline;"></h4> &nbsp;
+                SCORE: <h4 id="question-grade" style="display:inline;"></h4> / 5
             </div>
             <div class="card-body" >
                 <div class="container p-1" >
@@ -207,17 +206,18 @@
     ug.push({{question.grade}});
     console.log(questions);
     console.log(ug);
-    document.getElementById("circle").innerHTML=+document.getElementById("circle").innerHTML+{{question.grade}}
+    //document.getElementById("circle").innerHTML=+document.getElementById("circle").innerHTML+{{question.grade}}
     {% endfor %}
 
     var videoframe = $('#videoframe');
     var question_text = $('#question-text');
+    var question_grade = $('#question-grade');
     var current_question = 1;
 
     function init() {
         videoframe.attr("src", questions[0].video);
         question_text.text(questions[0].question);
-
+        question_grade.text(questions[0].grade);
         $('#grade :nth-child(' + questions[0].grade + ')').toggleClass('btn-outline-success btn-success');
         
     } 
@@ -230,6 +230,7 @@
         $('#ques-' + current_question).parent().toggleClass('active');
         videoframe.attr("src", temp_new.video);
         question_text.text(temp_new.question);
+        question_grade.text(temp_new.grade);
         $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
         $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         //comment_text.val(temp_new.comments);
@@ -246,6 +247,7 @@
         $('#ques-' + current_question).parent().toggleClass('active');
         videoframe.attr("src", temp_new.video);
         question_text.text(temp_new.question);
+        question_grade.text(temp_new.grade);
         $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
         $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         //comment_text.val(temp_new.comments);
@@ -277,6 +279,7 @@
         $('#ques-' + current_question).parent().toggleClass('active');
         videoframe.attr("src", temp_new.video);
         question_text.text(temp_new.question);
+        question_grade.text(temp_new.grade);
         $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
         $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         //comment_text.val(temp_new.comments);
