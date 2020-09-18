@@ -16,7 +16,7 @@ db = firestore.client()
 def personality_insights(candidate,job,ids,que,video_path):
   try:
     path = settings.BASE_DIR + '/media/'+candidate+'/'
-
+    print("Running personality algorithm ",path)
     # if no such folder exists, creates an empty folder
     if not os.path.exists(path):
         os.makedirs(path)

@@ -53,7 +53,7 @@ headers_Get = {
 def general_question_answer(candidate,job,ids,que,video_path):
     try:
         path = settings.BASE_DIR + '/media/'+candidate+'/'
-
+        print("Running Answer Relevancy Algorithm ",path)
         # if no such folder exists, creates an empty folder
         if not os.path.exists(path):
             os.makedirs(path)

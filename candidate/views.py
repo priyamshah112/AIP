@@ -489,7 +489,7 @@ def applications(request):
         if job_doc.reference.collection('applicants').document(email).get().exists:
             req = db.collection('jobs').document(job_doc.id).get().to_dict()
             print(job_doc.id)
-
+            req['cmpnm']=db.collection(u'users').document(req['email']).get().to_dict()['company_name']
             status = job_doc.reference.collection('applicants').document(email).get().to_dict()['status']
             req['status'] = status
             print(job_doc.id,status)

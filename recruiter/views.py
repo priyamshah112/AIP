@@ -143,8 +143,8 @@ def candidates(request):
     print("job docs applications")
     job_docs = [(job.to_dict(), job.id) for job in job_docs]
     total_jobs = len(job_docs)
-    print(job_docs)
-    print(total_jobs)
+    # print(job_docs)
+    # print(total_jobs)
     company_jobs: List[Tuple[Dict, str]] = []
     """
     company_jobs will contain data of all jobs posted by company. Each item will be a 
@@ -180,6 +180,7 @@ def candidates(request):
         print("fetching applicant ",job_id)
         # get all applicant documents for a particular job
         applicants = web_db.collection('applications').document(job_id).collection('applicants').get()
+        print(applicants)
         job_info = web_db.collection('jobs').document(job_id).get().to_dict()
         job_info['id'] = job_id
 
@@ -194,6 +195,7 @@ def candidates(request):
             app_info = applicant.to_dict()
             appid: str = applicant.reference.id + job_id
             print("applicant ",appid)
+            print(app_info.keys())
             if vid_interview_score:
                 if 'video_interview_score' not in app_info.keys():
                     vid_interview_score = 0
@@ -274,7 +276,7 @@ def candidates(request):
             app = application(job_info=job_info, cand_profile=cand_profile,
                                 app_dict=app_info, appid=appid.replace('@', '').replace('.', ''),
                                 video_interview=vid_interviews,video_interview_score=vid_interview_score,subject_skill_avg=round(subject_skill_avg,2),soft_skill_avg=soft_skill_avg)
-            #print(app)
+            print(app)
             print("\n\n\n\n\n\n")
             """
             app is a namedtuple(think of it like a immutable dict), with shown attributes, 
@@ -458,10 +460,10 @@ def hiremail(request):
             messg = messg.format(post)
             
             print("hire mailing",c_email,name,post,sub,messg)
-            emails.selmail(sub, messg, c_email, name, post)
             web_db.collection(u'applications').document(jid).collection(u'applicants').document(c_email).update({
                 'status': "ACCEPTED"
             })
+            emails.selmail(sub, messg, c_email, name, post)
             print("mailed")
             return JsonResponse({"success": "true"})
     except:
