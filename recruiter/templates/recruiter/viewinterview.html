@@ -6,102 +6,106 @@
 
 {% endblock %}
 {% block content %}
-                {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <link rel="stylesheet" type="text/css" href="{% static 'recruiter/css/viewinterview.css' %}">
 <div class="row">
 
 
     <div class="col-4">
-        <div class="card profile container" style="width:390px;" >
+        <div class="card profile container" style="width:390px;">
             <div style="padding: 30px;">
-                <img src="{{job_app.cand_profile.profile_picture}}" class="profilepic card-img-top"  style="width:40%;" align="left">
-                <div class="card-title" align="center" ><b>{{job_app.app_dict.candidate_name}}</b>
-            </div>
-        </div>
-                <div style="padding-top:10px;">
-                    
-                    <div style="padding-left:30px;float:left;"><h5><b>Avg. Subject Skill : {{job_app.subject_skill_avg}} / 5</b></h5></div>
-                    <br>
-                    
+                <img src="{{job_app.cand_profile.profile_picture}}" class="profilepic card-img-top" style="width:40%;"
+                    align="left">
+                <div class="card-title" align="center"><b>{{job_app.app_dict.candidate_name}}</b>
                 </div>
+            </div>
+            <div style="padding-top:10px;">
 
-                <div style="padding:0px;"></div>
-                    <div id="chart-container_1">
-                        <a id="chart-container"></a>
-                    </div>
+                <div style="padding-left:30px;float:left;">
+                    <h5><b>Avg. Subject Skill : {{job_app.subject_skill_avg}} / 5</b></h5>
+                </div>
+                <br>
+
+            </div>
+
+            <div style="padding:0px;"></div>
+            <div id="chart-container_1">
+                <a id="chart-container"></a>
+            </div>
         </div>
     </div>
-                
-<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
-<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
 
-<script>
+    <script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
+
+    <script>
 
 
-                        FusionCharts.ready(function(){
-                                var chartObj = new FusionCharts({
-                        type: 'radar',
-                        renderAt: 'chart-container',
-                        width: '360',
-                        height: '380',
-                        dataFormat: 'json',
-                        dataSource: {
-                            "chart": {
-                                "yAxisMaxValue":'5',
-                                "bgColor": "#ffffff",
-                                "chartLeftMargin": "10",
-                                "chartTopMargin": "0",
-                                "chartRightMargin": "0",
-                                "chartBottomMargin": "0",
-                                "borderColor": "#ffffff",
-                                "theme": "fusion",
-                                "radarfillcolor": "#ffffff",
-                                "baseFontSize": "12",
-                                "labelDisplay": "rotate",
-                            },
-    
-                            "categories": [{
-                                "category": [{
-                                    "label": "Openness"
-                                }, {
-                                    "label": "Conscientiousness"
-                                }, {
-                                    "label": "Extroversion"
-                                }, {
-                                    "label": "Agreeableness"
-                                }, {
-                                    "label": "Neuroticism"
-                                }]
-                            }],
-                            "dataset": [{
-                                //  "seriesname": "SKILLSET",
-                                "data": [{
-                                    "value": "{{ job_app.soft_skill_avg.0}}"
-                                }, {
-                                    "value": "{{ job_app.soft_skill_avg.1}}"
-                                }, {
-                                    "value": "{{ job_app.soft_skill_avg.2}}"
-                                }, {
-                                    "value": "{{ job_app.soft_skill_avg.3}}"
-                                }, {
-                                    "value": "{{ job_app.soft_skill_avg.4}}"
-                                }]
-                            }]
-                        }
-                    }
-                    );
-                                chartObj.render();
-                            });
-    </script> 
+        FusionCharts.ready(function () {
+            var chartObj = new FusionCharts({
+                type: 'radar',
+                renderAt: 'chart-container',
+                width: '360',
+                height: '380',
+                dataFormat: 'json',
+                dataSource: {
+                    "chart": {
+                        "yAxisMaxValue": '5',
+                        "bgColor": "#ffffff",
+                        "chartLeftMargin": "10",
+                        "chartTopMargin": "0",
+                        "chartRightMargin": "0",
+                        "chartBottomMargin": "0",
+                        "borderColor": "#ffffff",
+                        "theme": "fusion",
+                        "radarfillcolor": "#ffffff",
+                        "baseFontSize": "12",
+                        "labelDisplay": "rotate",
+                    },
 
-            </div>
-            <!--
+                    "categories": [{
+                        "category": [{
+                            "label": "Openness"
+                        }, {
+                            "label": "Conscientiousness"
+                        }, {
+                            "label": "Extroversion"
+                        }, {
+                            "label": "Agreeableness"
+                        }, {
+                            "label": "Neuroticism"
+                        }]
+                    }],
+                    "dataset": [{
+                        //  "seriesname": "SKILLSET",
+                        "data": [{
+                            "value": "{{ job_app.soft_skill_avg.0}}"
+                        }, {
+                            "value": "{{ job_app.soft_skill_avg.1}}"
+                        }, {
+                            "value": "{{ job_app.soft_skill_avg.2}}"
+                        }, {
+                            "value": "{{ job_app.soft_skill_avg.3}}"
+                        }, {
+                            "value": "{{ job_app.soft_skill_avg.4}}"
+                        }]
+                    }]
+                }
+            }
+            );
+            chartObj.render();
+        });
+    </script>
+
+</div>
+<!--
             <div class="card-body">
                 
                 <div class="card-title" align="center"><b>{{job_app.app_dict.candidate_name}}</b></div>
@@ -111,7 +115,7 @@
                 
             </div>
             -->
-            <!--
+<!--
             <ul class="list-group list-group-flush">
                 <li class="list-group-item text-center">
                     <button style="line-height: 1.0;margin-top: 8px;" type="button" class="btn btn-customblue"
@@ -127,17 +131,18 @@
                 <li class="list-group-item"><b>Video Resume Score : </b>{{job_app.app_dict.video_resume_score}}</li>
             </ul>
             -->
-        </div>
-    </div>
-    <div class="col-8" >
-        <div class="card"  id="right" >
-<div >
-            <div class="card-header mb-0" >
+</div>
+</div>
+<div class="col-8">
+    <div class="card" id="right">
+        <div>
+            <div class="card-header mb-0">
                 <nav aria-label="NavBar">
                     <ul class="pagination justify-content-center" id="question-nav">
-                        <li class="page-item"><a class="page-link" href="#question-text" id="prev-ques">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#question-text" id="prev-ques">Previous</a>
+                        </li>
                         {% for question in questions %}
-                            
+
                         {% if forloop.counter  == 1 %}
 
                         <li class="page-item active"><a class="page-link" href="#question-text" id="ques-1">Q 1</a></li>
@@ -161,27 +166,27 @@
                 <h4 id="question-text" style="display:inline;"></h4> &nbsp;
                 SCORE: <h4 id="question-grade" style="display:inline;"></h4> / 5
             </div>
-            <div class="card-body" >
-                <div class="container p-1" >
-                    <div class="row" style="margin: 0;" id="r2" >
-                    <div class="embed-responsive embed-responsive-16by9"  >
-                        <video width="320" height="240" controls
-                       id="videoframe" src="https://www.youtube.com/embed/dhYOPzcsbGM"> </video>
+            <div class="card-body">
+                <div class="container p-1">
+                    <div class="row" style="margin: 0;" id="r2">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <video width="320" height="240" controls id="videoframe"
+                                src="https://www.youtube.com/embed/dhYOPzcsbGM"> </video>
+                        </div>
+
+
                     </div>
 
-
                 </div>
-                
-            </div>
-                
+
 
             </div>
 
         </div>
-        
- 
-</div>
+
+
     </div>
+</div>
 
 </div>
 
@@ -192,17 +197,17 @@
     let questions = [];
     let candidate_id = "{{job_app.cand_profile.email}}";
     let jid = "{{job_app.job_info.id}}";
-    let re=document.getElementById("right").innerHTML;
-    let ug=[];
+    let re = document.getElementById("right").innerHTML;
+    let ug = [];
     {% for question in questions %}
-    
+
     questions.push({
         no: "{{ question.id }}",
         question: "{{question.question}}",
         video: "{{question.video}}",
         grade: "{{question.grade}}",
     });
-    ug.push({{question.grade}});
+    ug.push({{ question.grade }});
     console.log(questions);
     console.log(ug);
     //document.getElementById("circle").innerHTML=+document.getElementById("circle").innerHTML+{{question.grade}}
@@ -217,9 +222,11 @@
         videoframe.attr("src", questions[0].video);
         question_text.text(questions[0].question);
         question_grade.text(questions[0].grade);
-        $('#grade :nth-child(' + questions[0].grade + ')').toggleClass('btn-outline-success btn-success');
-        
-    } 
+        console.log(questions[0].question);
+        console.log(questions[0].grade);
+        // $('#grade:nth-child(' + questions[0].grade + ')').toggleClass('btn-outline-success btn-success');
+
+    }
     function change_question() {
 
         var new_question = parseInt(this.id.slice(-1));
@@ -230,8 +237,8 @@
         videoframe.attr("src", temp_new.video);
         question_text.text(temp_new.question);
         question_grade.text(temp_new.grade);
-        $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
-        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        // $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
+        // $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         //comment_text.val(temp_new.comments);
         current_question = new_question;
     }
@@ -247,30 +254,30 @@
         videoframe.attr("src", temp_new.video);
         question_text.text(temp_new.question);
         question_grade.text(temp_new.grade);
-        $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
-        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        // $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
+        // $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         //comment_text.val(temp_new.comments);
         current_question = new_question;
     }
 
     function next_question() {
         if (current_question == 4) {
-            let ht="";
-            ht=ht+"<div id='ree'>";
+            let ht = "";
+            ht = ht + "<div id='ree'>";
             {% for question in questions %}
-            
-            ht=ht+"<br>";
-            ht=ht+"<a class='page-link' href='' id='ques-{{forloop.counter}}'> Q{{forloop.counter}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QUESTION:&nbsp;&nbsp;&nbsp;{{question.question}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SCORE:&nbsp;&nbsp;&nbsp;&nbsp; ";
-            ht=ht+ug[{{forloop.counter}}-1]+"</a>";
-            {% endfor %}
-            ht=ht+"</div>";
-            
-            re=document.getElementById("right").innerHTML;
-            //console.log(re);
-            document.getElementById("right").innerHTML=ht;
 
-                }
-          else{      
+            ht = ht + "<br>";
+            ht = ht + "<a class='page-link' href='' id='ques-{{forloop.counter}}'> Q{{forloop.counter}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QUESTION:&nbsp;&nbsp;&nbsp;{{question.question}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SCORE:&nbsp;&nbsp;&nbsp;&nbsp; ";
+            ht = ht + ug[{{ forloop.counter }}-1]+"</a>";
+        {% endfor %}
+        ht = ht + "</div>";
+
+        re = document.getElementById("right").innerHTML;
+        //console.log(re);
+        document.getElementById("right").innerHTML = ht;
+
+    }
+          else {
         var new_question = current_question + 1;
         var temp_new = questions[new_question - 1];
         var temp_current = questions[current_question - 1];
@@ -279,11 +286,11 @@
         videoframe.attr("src", temp_new.video);
         question_text.text(temp_new.question);
         question_grade.text(temp_new.grade);
-        $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
-        $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
+        // $('#grade :nth-child(' + temp_new.grade + ')').toggleClass('btn-outline-success btn-success');
+        // $('#grade :nth-child(' + temp_current.grade + ')').toggleClass('btn-outline-success btn-success');
         //comment_text.val(temp_new.comments);
         current_question = new_question;
-          }
+    }
     }
 
     init();
