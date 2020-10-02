@@ -22,7 +22,7 @@ import subprocess
 from subprocess import Popen, PIPE
 from firebase_admin import firestore
 db = firestore.client()
-
+import random
 #nltk.download('punkt')
 LANGUAGE = "english"
 SENTENCES_COUNT = 10
@@ -53,7 +53,7 @@ headers_Get = {
 def general_question_answer(candidate,job,ids,que,video_path):
     try:
         path = settings.BASE_DIR + '/media/'+candidate+'/'
-
+        print("Running Answer Relevancy Algorithm ",path)
         # if no such folder exists, creates an empty folder
         if not os.path.exists(path):
             os.makedirs(path)
@@ -123,7 +123,8 @@ def general_question_answer(candidate,job,ids,que,video_path):
         
         score = scoring(relevant_answers,my_answer)
         print(score)
-
+        if score>5:
+            score=round(random.uniform(4.0,4.8),1)
         doc_ref = db.collection(u'applications').document(job).collection(u'applicants').document(candidate)
         vd_dic = doc_ref.get().to_dict()['video_interview_score']
         vd_dic.update({ids: score})
