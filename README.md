@@ -1,26 +1,57 @@
-# AIP
-Automation in Interview Process
+﻿# AIP
+
+AIP is a Django-based recruiting platform prototype that combines role-specific portals with candidate evaluation, personality, and answer-relevancy logic.
+
+## Repository Status
+
+- Current role: Django recruiting platform with candidate, recruiter, maintainer, and scoring workflows
+- Documentation status: refreshed for public review
+- Primary audience: engineers, product reviewers, and collaborators evaluating the project context
+
+## What This Project Does
+
+- Django project with account, candidate, recruiter, and maintainer apps
+- Algorithms for scoring, personality, and answer relevancy
+- Template and static asset structure
+- Role-aware web application flow
+
+## Technology Stack
+
+- Python and Django
+- requirements.txt for Python dependencies
+- Django templates and static assets
+- manage.py for local operations
+
+## Repository Map
+
+- AIP/ contains Django project settings
+- accounts/, candidate/, recruiter/, and maintainer/ contain role-specific apps
+- templates/ and static/ contain frontend assets
+- manage.py is the Django command entry point
+
+## Getting Started
+
+- Create a Python virtual environment
+- Install dependencies with pip install -r requirements.txt
+- Configure a safe local Django settings environment
+- Run python manage.py migrate
+- Run python manage.py runserver
+
+## Documentation
+
+- docs/overview.md - product context, users, scope, and outcomes
+- docs/architecture.md - components, data flow, and sequence diagrams
+- docs/product.md - user journeys, requirements, constraints, and roadmap ideas
+- docs/operations.md - setup, validation, maintenance, and known risks
+
+## Known Limitations
+
+- Scoring workflows need fairness, explainability, and validation before real hiring use
+- Candidate data handling must be reviewed carefully
+- Model or heuristic outputs should support human decisions, not replace them
+
+## Notes For Future Maintainers
+
+This repository documents the original project intent and the implementation shape visible in the codebase. Before production use, review dependencies, environment configuration, data handling, and deployment assumptions against current standards.
 
 
-# Structure
-## Modules and Apps
-1. AIP main project
-2. accounts app for login,signup,forget pass, logout
-3. recruiter app for create job, hire candidate, library, feedback+faq
-4. candidate app for view jobs, apply jobs, job status, profile
-5. maintainer app for anaysis and account handling
-
-## Working Structure
-<p> Clone the master and create a new branch with your name and then work on it never push your changes directly to master make a merge request only</p>
-<p> Write html in templates of specific app only and css of the same page in external css file and place under static folder css of same app (same for js and img).</p>
-<p> The AIP is main app whose template and static is placed in main folder which has index, 404 error page use them while referencing errors</p>
-<p> while working on an app basic requirements would be url creation, html pg, view function to call it so currently have developed some dummy pages and linked urls use them or create as per need.</p>
-
-## Basic git
-1. git clone <proj url>
-2. git add .
-3. git commit -m "message"
-4. git pull origin <branch name>
-5. git branch <branch name>
-6. git checkout <branch name>
- 
